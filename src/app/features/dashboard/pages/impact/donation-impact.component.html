@@ -1,0 +1,77 @@
+<div class="impact-page" [class.rtl]="isRtl()">
+  <app-navbar />
+
+  <div class="impact-layout">
+    <app-dash-sidebar />
+
+    <main class="impact-main">
+      <h1 class="impact-title">{{ 'IMPACT.TITLE' | translate }}</h1>
+      <p class="impact-subtitle">{{ 'IMPACT.SUBTITLE' | translate }}</p>
+
+      <!-- My impact stats -->
+      <div class="impact-stats">
+        <div class="impact-stat-card">
+          <span class="material-icons impact-stat-icon" style="color:#1B6B3A">family_restroom</span>
+          <span class="impact-stat-value">{{ myStats.families }}</span>
+          <span class="impact-stat-label">{{ 'IMPACT.STATS.FAMILIES' | translate }}</span>
+        </div>
+        <div class="impact-stat-card">
+          <span class="material-icons impact-stat-icon" style="color:#C5952A">handshake</span>
+          <span class="impact-stat-value">{{ myStats.projects }}</span>
+          <span class="impact-stat-label">{{ 'IMPACT.STATS.PROJECTS' | translate }}</span>
+        </div>
+        <div class="impact-stat-card">
+          <span class="material-icons impact-stat-icon" style="color:#1A2D5A">attach_money</span>
+          <span class="impact-stat-value">${{ myStats.amount }}</span>
+          <span class="impact-stat-label">{{ 'IMPACT.STATS.AMOUNT' | translate }}</span>
+        </div>
+      </div>
+
+      <!-- Before / After -->
+      <div class="section-block">
+        <h2 class="section-block__title">{{ 'IMPACT.BEFORE_AFTER.TITLE' | translate }}</h2>
+        <div class="before-after-grid">
+          @for (item of beforeAfterItems; track $index) {
+            <div class="ba-item">
+              <h4 class="ba-item__title">{{ getTitle(item) }}</h4>
+              <div class="ba-item__images">
+                <div class="ba-side">
+                  <img [src]="item.beforeUrl" [alt]="'Before'" loading="lazy"/>
+                  <span class="ba-label ba-label--before">{{ 'IMPACT.BEFORE_AFTER.BEFORE' | translate }}</span>
+                </div>
+                <div class="ba-divider"><span class="material-icons">compare_arrows</span></div>
+                <div class="ba-side">
+                  <img [src]="item.afterUrl" [alt]="'After'" loading="lazy"/>
+                  <span class="ba-label ba-label--after">{{ 'IMPACT.BEFORE_AFTER.AFTER' | translate }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Reports -->
+      <div class="section-block">
+        <h2 class="section-block__title">{{ 'IMPACT.REPORTS.TITLE' | translate }}</h2>
+        <div class="reports-list">
+          @for (r of reports; track $index) {
+            <div class="report-item">
+              <div class="report-item__icon"><span class="material-icons">description</span></div>
+              <div class="report-item__info">
+                <span class="report-item__title">{{ getTitle(r) }}</span>
+                <span class="report-item__date">{{ r.date }}</span>
+              </div>
+              <button mat-stroked-button class="report-dl-btn">
+                <span class="material-icons">download</span>
+                {{ 'IMPACT.REPORTS.DOWNLOAD' | translate }}
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <app-site-footer />
+</div>

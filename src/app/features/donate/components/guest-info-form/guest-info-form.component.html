@@ -1,0 +1,63 @@
+<div class="step-content">
+
+  <div class="step-header">
+    <h3>{{ 'DONATE.INFO.TITLE' | translate }}</h3>
+    <p>{{ 'DONATE.INFO.SUBTITLE' | translate }}</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onNext()" novalidate>
+
+    <!-- Name -->
+    @if (!anonCtrl.value) {
+      <mat-form-field appearance="outline" class="full-width form-field-gap">
+        <mat-label>{{ 'DONATE.INFO.NAME_LABEL' | translate }}</mat-label>
+        <mat-icon matPrefix class="field-prefix-icon">person_outline</mat-icon>
+        <input matInput type="text" formControlName="name"
+               [placeholder]="'DONATE.INFO.NAME_PLACEHOLDER' | translate"
+               autocomplete="name"/>
+        @if (nameCtrl.touched && nameCtrl.invalid) {
+          <mat-error>{{ getNameError() | translate }}</mat-error>
+        }
+      </mat-form-field>
+    }
+
+    <!-- Email -->
+    <mat-form-field appearance="outline" class="full-width form-field-gap">
+      <mat-label>{{ 'DONATE.INFO.EMAIL_LABEL' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-prefix-icon">mail_outline</mat-icon>
+      <input matInput type="email" formControlName="email"
+             [placeholder]="'DONATE.INFO.EMAIL_PLACEHOLDER' | translate"
+             autocomplete="email" dir="ltr"/>
+      @if (emailCtrl.touched && emailCtrl.invalid) {
+        <mat-error>{{ getEmailError() | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Phone (optional) -->
+    <mat-form-field appearance="outline" class="full-width form-field-gap">
+      <mat-label>{{ 'DONATE.INFO.PHONE_LABEL' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-prefix-icon">phone_outlined</mat-icon>
+      <input matInput type="tel" formControlName="phone"
+             [placeholder]="'DONATE.INFO.PHONE_PLACEHOLDER' | translate"
+             autocomplete="tel" dir="ltr"/>
+    </mat-form-field>
+
+    <!-- Anonymous toggle -->
+    <div class="anon-toggle">
+      <mat-checkbox formControlName="is_anonymous" color="primary">
+        {{ 'DONATE.INFO.ANONYMOUS_LABEL' | translate }}
+      </mat-checkbox>
+      <p class="anon-toggle__hint">{{ 'DONATE.INFO.ANONYMOUS_HINT' | translate }}</p>
+    </div>
+
+    <!-- Next button -->
+    <button mat-flat-button type="submit" class="step-next-btn">
+      <span class="btn-content">
+        <span>{{ 'DONATE.INFO.NEXT' | translate }}</span>
+        <span class="material-icons btn-arrow">arrow_forward</span>
+      </span>
+    </button>
+
+  </form>
+
+</div>

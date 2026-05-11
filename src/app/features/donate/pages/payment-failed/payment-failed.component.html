@@ -1,0 +1,36 @@
+<div class="failed-page" [class.rtl]="isRtl()">
+  <header class="failed-page__header">
+    <a routerLink="/home" class="header-logo">
+      <div class="header-logo__dot"></div>
+      <span class="header-logo__text">منصة بنيان</span>
+    </a>
+  </header>
+
+  <div class="failed-card">
+    <div class="failed-card__icon-ring">
+      <div class="failed-card__icon">
+        <span class="material-icons">error_outline</span>
+      </div>
+    </div>
+
+    <h1 class="failed-card__title">{{ 'PAYMENT.FAILED.TITLE' | translate }}</h1>
+    <p class="failed-card__subtitle">{{ 'PAYMENT.FAILED.SUBTITLE' | translate }}</p>
+
+    @if (reason) {
+      <div class="failed-card__reason">
+        <span class="reason-label">{{ 'PAYMENT.FAILED.REASON' | translate }}:</span>
+        <span class="reason-value">{{ ('PAYMENT.FAILED.REASONS.' + reason) | translate }}</span>
+      </div>
+    }
+
+    <div class="failed-card__actions">
+      <a routerLink="/donate/guest" mat-flat-button class="try-again-btn">
+        <span class="material-icons">refresh</span>
+        {{ 'PAYMENT.FAILED.TRY_AGAIN' | translate }}
+      </a>
+      <a routerLink="/home" mat-stroked-button class="home-btn">
+        {{ 'PAYMENT.FAILED.CONTACT' | translate }}
+      </a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+<section class="section testimonials-section">
+  <div class="section-inner">
+
+    <div class="section-header">
+      <div class="section-header__text">
+        <h2 class="section-title">{{ 'HOME.TESTIMONIALS.TITLE' | translate }}</h2>
+        <p class="section-subtitle">{{ 'HOME.TESTIMONIALS.SUBTITLE' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="testimonials-grid">
+      @for (t of testimonials; track t.id) {
+        <div class="testimonial-card">
+
+          <!-- Stars -->
+          <div class="testimonial-card__stars">
+            @for (s of getStars(t.rating); track $index) {
+              <span class="material-icons star-icon">star</span>
+            }
+          </div>
+
+          <!-- Quote text -->
+          <p class="testimonial-card__text">"{{ getText(t) }}"</p>
+
+          <!-- Author -->
+          <div class="testimonial-card__author">
+            <div class="author-avatar" [style.background]="t.avatarColor">
+              {{ t.initials }}
+            </div>
+            <div class="author-info">
+              <span class="author-name">{{ getName(t) }}</span>
+              <span class="author-role">{{ getRole(t) }}</span>
+            </div>
+          </div>
+
+        </div>
+      }
+    </div>
+
+  </div>
+</section>

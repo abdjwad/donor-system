@@ -1,0 +1,124 @@
+@use '../../../../styles/variables' as *;
+
+.cta-section {
+  position: relative;
+  background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
+  padding: $space-3xl $space-2xl;
+  overflow: hidden;
+
+  &__pattern {
+    position: absolute;
+    inset: 0;
+    background-image: url('/assets/images/auth-pattern.svg');
+    background-size: 120px;
+    opacity: 0.06;
+    pointer-events: none;
+  }
+
+  &__inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-3xl;
+    align-items: center;
+    position: relative;
+
+    @media (max-width: $bp-tablet) {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+  }
+
+  &__title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin: 0 0 $space-md;
+
+    @media (max-width: $bp-mobile) { font-size: 1.75rem; }
+  }
+
+  &__subtitle {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+    align-items: center;
+  }
+}
+
+.cta-chips {
+  display: flex;
+  gap: $space-sm;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cta-chip {
+  width: 72px;
+  height: 48px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: $radius-md;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.85);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-latin);
+  transition: $transition-base;
+  letter-spacing: 0.01em;
+
+  &:hover {
+    border-color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.16);
+    color: #fff;
+  }
+
+  &--active {
+    border-color: $color-gold;
+    background: $color-gold;
+    color: $color-primary-dark;
+    box-shadow: 0 4px 16px rgba($color-gold, 0.4);
+  }
+}
+
+.cta-donate-btn {
+  width: 100%;
+  height: 56px !important;
+  font-size: 1.125rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  border-radius: $radius-md !important;
+  background: $color-gold !important;
+  color: $color-primary-dark !important;
+  font-family: inherit !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: $space-sm;
+  box-shadow: 0 4px 20px rgba($color-gold, 0.4);
+  transition: $transition-base;
+
+  &:hover {
+    background: $color-gold-light !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba($color-gold, 0.5);
+  }
+
+  .material-icons { font-size: 1.25rem; }
+}
+
+.cta-trust {
+  display: flex;
+  gap: $space-sm;
+  flex-wrap: wrap;
+  justify-content: center;
+}

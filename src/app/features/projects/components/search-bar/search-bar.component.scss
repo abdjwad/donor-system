@@ -1,0 +1,63 @@
+@use '../../../../styles/variables' as *;
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: $color-card-bg;
+  border: 1.5px solid $color-border;
+  border-radius: $radius-full;
+  padding: 0 $space-md;
+  height: 52px;
+  transition: $transition-base;
+  width: 100%;
+
+  &:focus-within {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+
+  &__icon {
+    color: $color-text-muted;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    margin-inline-end: $space-sm;
+    transition: color $transition-fast;
+  }
+
+  &:focus-within &__icon {
+    color: $color-primary;
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: $color-text-primary;
+    font-family: inherit;
+    height: 100%;
+
+    &::placeholder {
+      color: $color-text-muted;
+      font-weight: 400;
+    }
+  }
+
+  &__clear {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $color-text-muted;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: $transition-fast;
+    flex-shrink: 0;
+
+    .material-icons { font-size: 1.125rem; }
+
+    &:hover { color: $color-error; }
+  }
+}

@@ -1,0 +1,64 @@
+@use '../../../../app/styles/variables' as *;
+
+.register-card {
+  max-width: 460px;
+  width: 100%;
+}
+
+// ── Terms checkbox row ───────────────────────────────────────
+.register__terms {
+  margin-bottom: $space-lg;
+
+  .terms-text {
+    font-size: 0.9rem;
+    color: $color-text-secondary;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  .terms-link {
+    color: $color-primary;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.terms-error {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: $color-error;
+  margin: $space-xs 0 0 $space-lg;
+  letter-spacing: 0.01em;
+}
+
+// ── Field prefix icons ───────────────────────────────────────
+.field-prefix-icon {
+  color: $color-text-muted;
+  font-size: 1.125rem !important;
+  width: 1.125rem !important;
+  height: 1.125rem !important;
+  line-height: 1 !important;
+  margin-inline-end: $space-xs;
+  transition: color $transition-fast;
+}
+
+// ── Visibility toggle ────────────────────────────────────────
+.visibility-toggle {
+  color: $color-text-muted !important;
+  transition: color $transition-fast !important;
+
+  &:hover {
+    color: $color-primary !important;
+  }
+}
+
+// ── Button icon ──────────────────────────────────────────────
+.btn-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}

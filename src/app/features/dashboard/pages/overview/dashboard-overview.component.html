@@ -1,0 +1,121 @@
+<div class="dashboard" [class.rtl]="isRtl()">
+  <app-navbar />
+
+  <div class="dashboard__layout">
+
+    <!-- Sidebar nav -->
+    <aside class="dashboard__nav">
+      <app-dash-sidebar />
+    </aside>
+
+    <!-- Main content -->
+    <main class="dashboard__content">
+
+      <!-- Welcome -->
+      <div class="dashboard__welcome">
+        <div>
+          <h1 class="dashboard__title">{{ 'DASHBOARD.TITLE' | translate }}</h1>
+          <p class="dashboard__subtitle">{{ 'DASHBOARD.WELCOME' | translate }}, أحمد</p>
+        </div>
+        <a routerLink="/donate/guest" mat-flat-button class="donate-now-btn">
+          <span class="material-icons">volunteer_activism</span>
+          {{ isRtl() ? 'تبرع الآن' : 'Donate Now' }}
+        </a>
+      </div>
+
+      <!-- Stats cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--green"><span class="material-icons">attach_money</span></div>
+          <div>
+            <span class="stat-card__value">${{ stats.totalDonated }}</span>
+            <span class="stat-card__label">{{ 'DASHBOARD.STATS.TOTAL_DONATED' | translate }}</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--gold"><span class="material-icons">handshake</span></div>
+          <div>
+            <span class="stat-card__value">{{ stats.projectsSupported }}</span>
+            <span class="stat-card__label">{{ 'DASHBOARD.STATS.PROJECTS_SUPPORTED' | translate }}</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--navy"><span class="material-icons">family_restroom</span></div>
+          <div>
+            <span class="stat-card__value">{{ stats.familiesHelped }}</span>
+            <span class="stat-card__label">{{ 'DASHBOARD.STATS.FAMILIES_HELPED' | translate }}</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--green"><span class="material-icons">favorite</span></div>
+          <div>
+            <span class="stat-card__value">{{ stats.donationsCount }}</span>
+            <span class="stat-card__label">{{ 'DASHBOARD.STATS.DONATIONS_COUNT' | translate }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-column lower -->
+      <div class="dashboard__lower">
+
+        <!-- Recent donations -->
+        <div class="dash-card">
+          <div class="dash-card__header">
+            <h3 class="dash-card__title">{{ 'DASHBOARD.RECENT.TITLE' | translate }}</h3>
+            <a routerLink="/dashboard/history" class="dash-card__link">{{ 'DASHBOARD.RECENT.SEE_ALL' | translate }}</a>
+          </div>
+          <div class="recent-list">
+            @for (d of recentDonations; track d.id) {
+              <div class="recent-item">
+                <div class="recent-item__icon"><span class="material-icons">volunteer_activism</span></div>
+                <div class="recent-item__info">
+                  <span class="recent-item__project">{{ getProject(d) }}</span>
+                  <span class="recent-item__date">{{ d.date }} · {{ d.method }}</span>
+                </div>
+                <span class="recent-item__amount">${{ d.amount }}</span>
+                <span class="status-badge status-badge--{{ d.status }}">{{ ('HISTORY.STATUS.' + d.status.toUpperCase()) | translate }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="dash-card">
+          <div class="dash-card__header">
+            <h3 class="dash-card__title">{{ 'DASHBOARD.NOTIFICATIONS.TITLE' | translate }}</h3>
+          </div>
+          <div class="notif-list">
+            @for (n of notifications; track n.id) {
+              <div class="notif-item">
+                <div class="notif-icon" [style.background]="n.color + '1A'">
+                  <span class="material-icons" [style.color]="n.color">{{ n.typeIcon }}</span>
+                </div>
+                <div class="notif-text">
+                  <p>{{ getNotifText(n) }}</p>
+                  <span class="notif-time">{{ n.time }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Saved projects -->
+      <div class="dash-card">
+        <div class="dash-card__header">
+          <h3 class="dash-card__title">{{ 'DASHBOARD.SAVED.TITLE' | translate }}</h3>
+          <a routerLink="/projects" class="dash-card__link">{{ 'DASHBOARD.SAVED.BROWSE' | translate }}</a>
+        </div>
+        <div class="saved-grid">
+          @for (p of savedProjects; track p.id) {
+            <app-project-card [project]="p" />
+          }
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <app-site-footer />
+</div>

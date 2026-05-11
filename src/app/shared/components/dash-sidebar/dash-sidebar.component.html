@@ -1,0 +1,81 @@
+<aside class="dash-sidebar-comp">
+
+  <!-- ── Section: My Account ──────────────────────────────────── -->
+  <div class="sidebar-section">
+    <div class="sidebar-section__label">
+      {{ isRtl() ? 'حسابي' : 'My Account' }}
+    </div>
+
+    <a routerLink="/dashboard" routerLinkActive="active"
+       [routerLinkActiveOptions]="{exact:true}" class="sidebar-link">
+      <span class="material-icons sidebar-link__icon">dashboard</span>
+      <span class="sidebar-link__text">{{ 'DASHBOARD.TITLE' | translate }}</span>
+    </a>
+
+    <a routerLink="/dashboard/history" routerLinkActive="active" class="sidebar-link">
+      <span class="material-icons sidebar-link__icon">history</span>
+      <span class="sidebar-link__text">{{ 'HISTORY.TITLE' | translate }}</span>
+    </a>
+
+    <a routerLink="/dashboard/impact" routerLinkActive="active" class="sidebar-link">
+      <span class="material-icons sidebar-link__icon">trending_up</span>
+      <span class="sidebar-link__text">{{ 'IMPACT.TITLE' | translate }}</span>
+    </a>
+  </div>
+
+  <!-- ── Section: Settings & Notifications ────────────────────── -->
+  <div class="sidebar-section">
+    <div class="sidebar-section__label">
+      {{ isRtl() ? 'الإعدادات' : 'Settings' }}
+    </div>
+
+    <a routerLink="/notifications" routerLinkActive="active" class="sidebar-link">
+      <span class="material-icons sidebar-link__icon">notifications</span>
+      <span class="sidebar-link__text">{{ 'NOTIFICATIONS.TITLE' | translate }}</span>
+      @if (unreadNotifications > 0) {
+        <span class="sidebar-badge">{{ unreadNotifications }}</span>
+      }
+    </a>
+
+    <a routerLink="/profile" routerLinkActive="active" class="sidebar-link">
+      <span class="material-icons sidebar-link__icon">manage_accounts</span>
+      <span class="sidebar-link__text">{{ 'PROFILE.TITLE' | translate }}</span>
+    </a>
+  </div>
+
+  <!-- ── Section: Explore ─────────────────────────────────────── -->
+  <div class="sidebar-section">
+    <div class="sidebar-section__label">
+      {{ isRtl() ? 'استكشف' : 'Explore' }}
+    </div>
+
+    <a routerLink="/projects" routerLinkActive="active" class="sidebar-link">
+      <span class="material-icons sidebar-link__icon">handshake</span>
+      <span class="sidebar-link__text">{{ 'PROJECTS.TITLE' | translate }}</span>
+    </a>
+
+    <a routerLink="/campaigns" routerLinkActive="active" class="sidebar-link">
+      <span class="material-icons sidebar-link__icon">campaign</span>
+      <span class="sidebar-link__text">{{ 'CAMPAIGNS.TITLE' | translate }}</span>
+    </a>
+
+    <a routerLink="/donate/general-fund" routerLinkActive="active" class="sidebar-link">
+      <span class="material-icons sidebar-link__icon">account_balance</span>
+      <span class="sidebar-link__text">{{ 'GENERAL_FUND.TITLE' | translate }}</span>
+    </a>
+  </div>
+
+  <!-- ── Section: Admin ────────────────────────────────────────── -->
+  <div class="sidebar-section sidebar-section--admin">
+    <div class="sidebar-section__label">
+      {{ isRtl() ? 'الإدارة' : 'Administration' }}
+    </div>
+
+    <a routerLink="/admin" routerLinkActive="active" class="sidebar-link sidebar-link--admin">
+      <span class="material-icons sidebar-link__icon">admin_panel_settings</span>
+      <span class="sidebar-link__text">{{ 'ADMIN.TITLE' | translate }}</span>
+      <span class="sidebar-admin-chip">{{ isRtl() ? 'أدمن' : 'Admin' }}</span>
+    </a>
+  </div>
+
+</aside>

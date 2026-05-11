@@ -1,0 +1,669 @@
+{
+  "AUTH": {
+    "LAYOUT": {
+      "TAGLINE": "Together We Rebuild Our Homeland",
+      "DESCRIPTION": "Bunian Platform — your trusted partner in supporting Syria's reconstruction projects with full transparency",
+      "DONORS": "Donors",
+      "FAMILIES": "Families Supported",
+      "PROJECTS": "Projects Completed",
+      "TRUST_BADGE": "Globally Trusted & Verified"
+    },
+    "OR_CONTINUE_WITH": "Or continue with",
+    "SOCIAL": {
+      "GOOGLE": "Sign in with Google"
+    },
+    "FIELDS": {
+      "FULL_NAME": "Full Name",
+      "FULL_NAME_PLACEHOLDER": "Enter your full name",
+      "EMAIL": "Email Address",
+      "EMAIL_PLACEHOLDER": "example@domain.com",
+      "PHONE": "Phone Number",
+      "PHONE_PLACEHOLDER": "+963 9XX XXX XXX",
+      "PASSWORD": "Password",
+      "PASSWORD_PLACEHOLDER": "At least 8 characters",
+      "CONFIRM_PASSWORD": "Confirm Password",
+      "CONFIRM_PASSWORD_PLACEHOLDER": "Re-enter your password"
+    },
+    "ERRORS": {
+      "EMAIL_REQUIRED": "Email address is required",
+      "EMAIL_INVALID": "Please enter a valid email address",
+      "PASSWORD_REQUIRED": "Password is required",
+      "PASSWORD_MIN": "Password must be at least 8 characters",
+      "PASSWORD_PATTERN": "Password must contain at least one letter and one number",
+      "PASSWORD_MISMATCH": "Passwords do not match",
+      "NAME_REQUIRED": "Full name is required",
+      "NAME_MIN": "Name must be at least 3 characters",
+      "NAME_PATTERN": "Name may only contain letters",
+      "PHONE_REQUIRED": "Phone number is required",
+      "PHONE_INVALID": "Please enter a valid phone number",
+      "TERMS_REQUIRED": "You must accept the terms and conditions to continue",
+      "OTP_REQUIRED": "Verification code is required",
+      "OTP_LENGTH": "Verification code must be exactly 6 digits",
+      "GENERIC": "An unexpected error occurred. Please try again"
+    },
+    "LOGIN": {
+      "TITLE": "Sign In",
+      "SUBTITLE": "Welcome back — we're glad to have you here",
+      "REMEMBER_ME": "Remember me",
+      "FORGOT_PASSWORD": "Forgot your password?",
+      "SUBMIT": "Sign In",
+      "NO_ACCOUNT": "Don't have an account?",
+      "REGISTER": "Create one now",
+      "LOADING": "Signing in..."
+    },
+    "REGISTER": {
+      "TITLE": "Create an Account",
+      "SUBTITLE": "Join thousands of donors and be part of real, lasting change",
+      "TERMS_PREFIX": "I agree to the",
+      "TERMS_LINK": "Terms of Service and Privacy Policy",
+      "SUBMIT": "Create Account",
+      "HAVE_ACCOUNT": "Already have an account?",
+      "LOGIN": "Sign In",
+      "LOADING": "Creating your account...",
+      "SUCCESS": "Account created successfully! Please verify your email to continue"
+    },
+    "FORGOT_PASSWORD": {
+      "TITLE": "Reset Your Password",
+      "SUBTITLE": "Enter your email address and we'll send you a reset link",
+      "SUBMIT": "Send Reset Link",
+      "SUCCESS_TITLE": "Email Sent!",
+      "SUCCESS_MESSAGE": "Check your inbox for the password reset link. It may take a few minutes to arrive.",
+      "BACK_TO_LOGIN": "Back to Sign In",
+      "LOADING": "Sending...",
+      "RESEND": "Resend Email"
+    },
+    "RESET_PASSWORD": {
+      "TITLE": "Set New Password",
+      "SUBTITLE": "Choose a strong new password for your account",
+      "SUBMIT": "Save New Password",
+      "SUCCESS": "Password updated successfully",
+      "LOADING": "Saving...",
+      "BACK_TO_LOGIN": "Back to Sign In"
+    },
+    "VERIFY_EMAIL": {
+      "TITLE": "Verify Your Email",
+      "SUBTITLE": "Enter the 6-digit code we sent to your email address",
+      "SUBMIT": "Verify Now",
+      "RESEND": "Resend Code",
+      "RESEND_TIMER": "Resend available in {{seconds}} seconds",
+      "LOADING": "Verifying...",
+      "SUCCESS": "Email verified successfully!",
+      "HINT": "Didn't receive the code? Check your spam or junk folder"
+    },
+    "GUEST_DONATE": "Donate as a guest without creating an account"
+  },
+
+  "DONATE": {
+    "GUEST": {
+      "TITLE": "Donate as Guest",
+      "SUBTITLE": "Donate now without an account — fast, secure, and guaranteed",
+      "HAVE_ACCOUNT": "Already have an account?",
+      "LOGIN": "Sign In"
+    },
+    "STEPS": {
+      "INFO": "Your Details",
+      "AMOUNT": "Donation Amount",
+      "PAYMENT": "Payment"
+    },
+    "INFO": {
+      "TITLE": "Your Personal Details",
+      "SUBTITLE": "We'll send your donation receipt to your email immediately after payment",
+      "NAME_LABEL": "Full Name",
+      "NAME_PLACEHOLDER": "Enter your full name",
+      "EMAIL_LABEL": "Email Address",
+      "EMAIL_PLACEHOLDER": "example@domain.com",
+      "PHONE_LABEL": "Phone Number (optional)",
+      "PHONE_PLACEHOLDER": "+963 9XX XXX XXX",
+      "ANONYMOUS_LABEL": "Donate anonymously",
+      "ANONYMOUS_HINT": "Your name will not appear on any public listing",
+      "NEXT": "Next"
+    },
+    "AMOUNT": {
+      "TITLE": "Donation Amount",
+      "SUBTITLE": "Choose how much you'd like to contribute",
+      "CUSTOM": "Custom Amount",
+      "CUSTOM_LABEL": "Enter amount",
+      "CURRENCY": "US Dollar",
+      "TYPE_ONE_TIME": "One-time donation",
+      "TYPE_MONTHLY": "Monthly donation",
+      "PROJECT_LABEL": "Project",
+      "GENERAL_FUND": "General Fund",
+      "DEDICATION_LABEL": "Dedication message (optional)",
+      "DEDICATION_PLACEHOLDER": "I dedicate this donation to...",
+      "DEDICATION_HINT": "{{remaining}} characters remaining",
+      "NEXT": "Next",
+      "BACK": "Back"
+    },
+    "PAYMENT": {
+      "TITLE": "Payment Method",
+      "CARD": "Credit or Debit Card",
+      "PAYPAL": "PayPal",
+      "BANK": "Bank Transfer",
+      "CARD_NUMBER": "Card Number",
+      "CARD_NUMBER_PLACEHOLDER": "0000 0000 0000 0000",
+      "CARD_EXPIRY": "Expiry Date",
+      "CARD_EXPIRY_PLACEHOLDER": "MM/YY",
+      "CARD_CVV": "Security Code (CVV)",
+      "CARD_CVV_PLACEHOLDER": "123",
+      "CARD_NAME": "Name on Card",
+      "PAYPAL_BTN": "Continue with PayPal",
+      "BANK_IBAN": "IBAN Number",
+      "BANK_NAME": "Bank Name",
+      "TERMS_PREFIX": "I agree to the",
+      "TERMS_LINK": "Terms of Service and Privacy Policy",
+      "TERMS_REQUIRED": "You must accept the terms to continue",
+      "SUBMIT": "Complete Donation",
+      "LOADING": "Processing payment...",
+      "BACK": "Back",
+      "SECURE_BADGE": "Fully encrypted and secure payment",
+      "CARD_REQUIRED": "Card number is required",
+      "EXPIRY_REQUIRED": "Expiry date is required",
+      "CVV_REQUIRED": "Security code is required"
+    },
+    "SUMMARY": {
+      "TITLE": "Donation Summary",
+      "AMOUNT": "Amount",
+      "PROJECT": "Project",
+      "TYPE": "Donation Type",
+      "DONOR": "Donor",
+      "ANONYMOUS": "Anonymous",
+      "ONE_TIME": "One-time",
+      "MONTHLY": "Monthly",
+      "GENERAL_FUND": "General Fund",
+      "RECEIPT": "Email receipt included",
+      "TAX": "Tax deductible",
+      "SECURE": "SSL secured payments"
+    },
+    "SUCCESS": {
+      "TITLE": "Thank You!",
+      "SUBTITLE": "Your donation was received and will make a meaningful difference in people's lives",
+      "AMOUNT_LABEL": "Donation Amount",
+      "REF_LABEL": "Reference Number",
+      "EMAIL_NOTICE": "A donation receipt has been sent to your email",
+      "BROWSE_PROJECTS": "Browse Projects",
+      "DONATE_AGAIN": "Donate Again"
+    },
+    "ERRORS": {
+      "NAME_REQUIRED": "Name is required",
+      "EMAIL_REQUIRED": "Email address is required",
+      "EMAIL_INVALID": "Please enter a valid email address",
+      "AMOUNT_REQUIRED": "Please select a donation amount",
+      "AMOUNT_MIN": "Minimum donation is $1",
+      "GENERIC": "Something went wrong. Please try again"
+    }
+  },
+
+  "HOME": {
+    "HERO": {
+      "TAGLINE": "Together We Rebuild Syria",
+      "SUBTITLE": "Bunian Platform is your secure and transparent gateway to supporting Syria's reconstruction. Every contribution shapes a better future for Syrian families.",
+      "CTA_DONATE": "Donate Now",
+      "CTA_BROWSE": "Browse Projects",
+      "TRUST_SECURE": "100% Secure Payment",
+      "TRUST_RECEIPT": "Instant Receipt",
+      "IMPACT_TITLE": "Bunian Platform Impact",
+      "PROJECTS_COMPLETED": "Projects Completed",
+      "TOTAL_RAISED": "Total Raised",
+      "LIVE": "Live"
+    },
+    "STATS": {
+      "DONORS": "Donors",
+      "FAMILIES": "Families Supported",
+      "PROJECTS": "Projects Completed",
+      "AMOUNT": "Total Donations"
+    },
+    "CAMPAIGNS": {
+      "TITLE": "Donation Campaigns",
+      "SUBTITLE": "Join our featured campaigns and be part of meaningful change",
+      "SEE_ALL": "View All",
+      "DAYS_LEFT": "days left",
+      "DONORS_COUNT": "donors",
+      "CAT_HOUSING": "Home Rebuilding",
+      "CAT_EDUCATION": "Education Projects",
+      "CAT_HEALTH": "Healthcare",
+      "CAT_EMERGENCY": "Emergency Relief"
+    },
+    "FEATURED_PROJECTS": {
+      "TITLE": "Featured Projects",
+      "SUBTITLE": "Choose the project that speaks to your heart and help make it a success",
+      "SEE_ALL": "View All Projects"
+    },
+    "CTA": {
+      "TITLE": "Your Donation Builds a Better Future",
+      "SUBTITLE": "Choose the amount you'd like to contribute and help us reach those who need it most",
+      "BTN": "Donate Now"
+    },
+    "TESTIMONIALS": {
+      "TITLE": "What Our Donors Say",
+      "SUBTITLE": "Stories from donors who trusted Bunian Platform and made a real difference"
+    },
+    "FOOTER": {
+      "DESCRIPTION": "Bunian Platform — Syria's leading reconstruction platform. Transparent, trusted, and internationally accredited.",
+      "QUICK_LINKS": "Quick Links",
+      "HOME": "Home",
+      "PROJECTS": "Projects",
+      "DONATE": "Donate Now",
+      "REGISTER": "Create Account",
+      "CAMPAIGNS": "Campaigns",
+      "CONTACT": "Contact Us",
+      "ADDRESS": "Damascus, Syria",
+      "RIGHTS": "All Rights Reserved",
+      "PRIVACY": "Privacy Policy",
+      "TERMS": "Terms & Conditions"
+    }
+  },
+
+  "PROJECTS": {
+    "TITLE": "Reconstruction Projects",
+    "TOTAL_LABEL": "projects",
+    "BACK_HOME": "Home",
+    "SEARCH_PLACEHOLDER": "Search by project name or location...",
+    "RESULTS_COUNT": "Showing {{shown}} of {{total}} projects",
+    "FILTERS": {
+      "TITLE": "Filter Results",
+      "CATEGORY": "Category",
+      "LOCATION": "Location",
+      "STATUS": "Project Status",
+      "URGENCY": "Urgency Level",
+      "RESET": "Clear All Filters"
+    },
+    "SORT": {
+      "LABEL": "Sort by",
+      "NEWEST": "Newest First",
+      "MOST_FUNDED": "Most Funded",
+      "MOST_URGENT": "Most Urgent",
+      "NEAR_COMPLETE": "Near Completion"
+    },
+    "CARD": {
+      "DONATE": "Donate to This Project",
+      "RAISED": "Raised",
+      "GOAL": "Goal",
+      "DONORS": "donors",
+      "REMAINING": "remaining",
+      "DAYS": "days"
+    },
+    "CATEGORIES": {
+      "HOUSING": "Housing",
+      "EDUCATION": "Education",
+      "HEALTH": "Healthcare",
+      "INFRASTRUCTURE": "Infrastructure",
+      "WATER": "Water & Sanitation"
+    },
+    "URGENCY": {
+      "HIGH": "Urgent",
+      "MEDIUM": "Moderate",
+      "LOW": "Low Priority"
+    },
+    "STATUS": {
+      "ALL": "All",
+      "ACTIVE": "Active",
+      "COMPLETED": "Completed",
+      "PAUSED": "Temporarily Paused"
+    },
+    "NO_RESULTS": "No projects match your search criteria",
+    "DETAIL": {
+      "ABOUT": "About This Project",
+      "GALLERY": "Photo Gallery",
+      "TIMELINE": "Milestones & Timeline",
+      "RELATED": "Related Projects",
+      "DONATE_BTN": "Donate to This Project",
+      "SHARE": "Share",
+      "DONORS_COUNT": "donors",
+      "DAYS_LEFT": "days left",
+      "FUNDED_PCT": "funded",
+      "CATEGORY_LABEL": "Category",
+      "LOCATION_LABEL": "Location",
+      "STATUS_LABEL": "Status",
+      "STARTED": "Start Date",
+      "TARGET_DATE": "Target Completion Date",
+      "MILESTONE_COMPLETED": "Completed",
+      "MILESTONE_ONGOING": "In Progress",
+      "MILESTONE_PENDING": "Upcoming"
+    }
+  },
+
+  "CAMPAIGNS": {
+    "TITLE": "Donation Campaigns",
+    "SUBTITLE": "Join our donation campaigns and be an active part of Syria's rebuilding",
+    "CARD": {
+      "DAYS_LEFT": "days left",
+      "DONATE": "Donate to Campaign",
+      "DONORS": "donors",
+      "TARGET": "Goal",
+      "RAISED": "Raised",
+      "SHARE": "Share"
+    },
+    "DETAIL": {
+      "ABOUT": "About the Campaign",
+      "GALLERY": "Campaign Gallery",
+      "PROGRESS": "Campaign Progress",
+      "DONATE_BTN": "Donate Now",
+      "ENDS": "Ends on",
+      "URGENT": "This campaign is ending soon",
+      "SHARE": "Share Campaign",
+      "RELATED_PROJECTS": "Projects in This Campaign"
+    },
+    "TIMER": {
+      "DAYS": "days",
+      "HOURS": "hrs",
+      "MINUTES": "min",
+      "SECONDS": "sec",
+      "ENDED": "Campaign Ended"
+    },
+    "NO_RESULTS": "No campaigns are available at the moment"
+  },
+
+  "PAYMENT": {
+    "SUCCESS": {
+      "TITLE": "Donation Successful!",
+      "SUBTITLE": "Thank you from the bottom of our hearts — your generosity will change lives",
+      "AMOUNT": "Donation Amount",
+      "REF": "Reference Number",
+      "PROJECT": "Project",
+      "RECEIPT_NOTICE": "A donation receipt has been sent to your email within minutes",
+      "DOWNLOAD": "Download Receipt",
+      "DONATE_AGAIN": "Donate Again",
+      "VIEW_PROJECTS": "Browse Projects",
+      "SHARE_IMPACT": "Share Your Impact"
+    },
+    "FAILED": {
+      "TITLE": "Payment Unsuccessful",
+      "SUBTITLE": "Something went wrong during payment processing. No amount was charged to your account.",
+      "REASON": "Reason for Failure",
+      "TRY_AGAIN": "Try Again",
+      "CONTACT": "Contact Support",
+      "REASONS": {
+        "insufficient_funds": "Insufficient funds",
+        "card_declined": "Card was declined",
+        "expired_card": "Card has expired",
+        "generic": "Payment processing error"
+      }
+    },
+    "INVOICE": {
+      "TITLE": "Donation Receipt",
+      "FROM": "Bunian Platform",
+      "DATE": "Date",
+      "DONOR": "Donor",
+      "AMOUNT": "Amount",
+      "PROJECT": "Project",
+      "METHOD": "Payment Method",
+      "TRANSACTION_ID": "Transaction ID",
+      "DOWNLOAD": "Download PDF"
+    }
+  },
+
+  "GENERAL_FUND": {
+    "TITLE": "Donate to the General Fund",
+    "SUBTITLE": "Your contribution to the general fund is directed immediately to the most urgent projects",
+    "DESCRIPTION": "The general fund allows our team to allocate donations to the most critical projects based on verified field assessments. Your donation goes exactly where it's needed most.",
+    "AMOUNT_TITLE": "Choose Your Donation Amount",
+    "RECURRING_TITLE": "Donation Frequency",
+    "ONCE": "One-time",
+    "MONTHLY": "Monthly",
+    "QUARTERLY": "Quarterly",
+    "ANNUAL": "Annual",
+    "PAYMENT_TITLE": "Payment Method",
+    "SUBMIT": "Donate to General Fund",
+    "TRUST_MANAGED": "Fully transparent management with complete documentation",
+    "TRUST_AUDITED": "Subject to independent auditing"
+  },
+
+  "DASHBOARD": {
+    "TITLE": "Donor Dashboard",
+    "WELCOME": "Welcome back",
+    "STATS": {
+      "TOTAL_DONATED": "Total Donated",
+      "PROJECTS_SUPPORTED": "Projects Supported",
+      "FAMILIES_HELPED": "Families Helped",
+      "DONATIONS_COUNT": "Total Donations"
+    },
+    "RECENT": {
+      "TITLE": "Recent Donations",
+      "SEE_ALL": "View Full History",
+      "EMPTY": "You haven't made any donations yet"
+    },
+    "SAVED": {
+      "TITLE": "Saved Projects",
+      "EMPTY": "You haven't saved any projects yet",
+      "BROWSE": "Browse Projects"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notifications",
+      "MARK_ALL": "Mark all as read",
+      "EMPTY": "No new notifications"
+    }
+  },
+
+  "HISTORY": {
+    "TITLE": "Donation History",
+    "SUBTITLE": "A complete record of all your past donations",
+    "TABLE": {
+      "DATE": "Date",
+      "PROJECT": "Project",
+      "AMOUNT": "Amount",
+      "METHOD": "Payment Method",
+      "STATUS": "Status",
+      "INVOICE": "Receipt"
+    },
+    "STATUS": {
+      "COMPLETED": "Completed",
+      "PENDING": "Processing",
+      "FAILED": "Failed",
+      "REFUNDED": "Refunded"
+    },
+    "FILTERS": {
+      "ALL": "All Donations",
+      "DATE_FROM": "From Date",
+      "DATE_TO": "To Date",
+      "STATUS": "Status",
+      "PROJECT": "Project"
+    },
+    "DOWNLOAD": "Download Receipt",
+    "EMPTY": "No donations found for this period",
+    "EXPORT": "Export History"
+  },
+
+  "IMPACT": {
+    "TITLE": "Your Donation Impact",
+    "SUBTITLE": "Discover how your generosity has transformed the lives of hundreds of Syrian families",
+    "BEFORE_AFTER": {
+      "TITLE": "Before & After",
+      "BEFORE": "Before",
+      "AFTER": "After"
+    },
+    "PROGRESS": {
+      "TITLE": "Project Progress",
+      "FUNDED": "Funded",
+      "IN_PROGRESS": "In Progress",
+      "COMPLETED": "Completed"
+    },
+    "STATS": {
+      "FAMILIES": "families benefited from your donations",
+      "PROJECTS": "projects you helped complete",
+      "AMOUNT": "total amount you have contributed"
+    },
+    "REPORTS": {
+      "TITLE": "Completion Reports",
+      "DOWNLOAD": "Download Report",
+      "VIEW": "View Report"
+    }
+  },
+
+  "NOTIFICATIONS": {
+    "TITLE": "Notification Center",
+    "SUBTITLE": "All your updates in one place",
+    "EMPTY": "No notifications at the moment",
+    "MARK_ALL_READ": "Mark all as read",
+    "FILTER": { "ALL": "All", "UNREAD": "Unread", "READ": "Read" },
+    "TYPE": {
+      "DONATION": "Donation", "PROJECT_UPDATE": "Project Update",
+      "CAMPAIGN": "Campaign", "SYSTEM": "System"
+    },
+    "SETTINGS": {
+      "TITLE": "Notification Settings",
+      "EMAIL": "Email Notifications",
+      "DONATION_UPDATES": "Donation updates",
+      "PROJECT_UPDATES": "Project updates",
+      "CAMPAIGN_UPDATES": "Campaign updates",
+      "SYSTEM_ALERTS": "System alerts",
+      "SAVE": "Save Settings",
+      "SAVED": "Settings saved"
+    }
+  },
+
+  "PROFILE": {
+    "TITLE": "Profile Settings",
+    "SUBTITLE": "Manage your personal information and preferences",
+    "TABS": {
+      "EDIT": "Personal Info",
+      "PASSWORD": "Password",
+      "LANGUAGE": "Language",
+      "PAYMENT": "Payment"
+    },
+    "EDIT": {
+      "TITLE": "Personal Information",
+      "AVATAR_HINT": "JPG or PNG — Max 2MB",
+      "CHANGE_AVATAR": "Change Photo",
+      "NAME": "Full Name",
+      "EMAIL": "Email Address",
+      "PHONE": "Phone Number",
+      "SAVE": "Save Changes",
+      "SAVED": "Saved successfully"
+    },
+    "PASSWORD": {
+      "TITLE": "Change Password",
+      "CURRENT": "Current Password",
+      "NEW": "New Password",
+      "CONFIRM": "Confirm New Password",
+      "SAVE": "Update Password",
+      "SUCCESS": "Password changed successfully"
+    },
+    "LANGUAGE": {
+      "TITLE": "Language Settings",
+      "APP_LANGUAGE": "Application Language",
+      "ARABIC": "العربية",
+      "ENGLISH": "English",
+      "SAVE": "Save"
+    },
+    "PAYMENT": {
+      "TITLE": "Payment Preferences",
+      "SAVED_CARDS": "Saved Cards",
+      "NO_CARDS": "No saved cards",
+      "ADD_CARD": "Add New Card",
+      "REMOVE": "Remove",
+      "DEFAULT": "Default",
+      "SET_DEFAULT": "Set as default"
+    }
+  },
+
+  "ADMIN": {
+    "TITLE": "Admin Dashboard",
+    "BACK_SITE": "Back to Site",
+    "NAV": {
+      "OVERVIEW": "Overview",
+      "DONATIONS": "Donations",
+      "REFUNDS": "Refunds",
+      "CAMPAIGNS": "Campaigns",
+      "REPORTS": "Reports"
+    },
+    "OVERVIEW": {
+      "TITLE": "System Overview",
+      "TOTAL_DONATIONS": "Total Donations",
+      "TOTAL_DONORS": "Total Donors",
+      "ACTIVE_PROJECTS": "Active Projects",
+      "PENDING_REFUNDS": "Pending Refunds",
+      "RECENT_TITLE": "Recent Donations",
+      "CHART_TITLE": "Donations by Category"
+    },
+    "DONATIONS": {
+      "TITLE": "Donations Management",
+      "DONOR": "Donor",
+      "AMOUNT": "Amount",
+      "PROJECT": "Project",
+      "METHOD": "Method",
+      "DATE": "Date",
+      "STATUS": "Status",
+      "ACTIONS": "Actions",
+      "APPROVE": "Approve",
+      "REFUND": "Refund",
+      "VIEW": "View"
+    },
+    "REFUNDS": {
+      "TITLE": "Refund Management",
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "APPROVE": "Approve Refund",
+      "REJECT": "Reject",
+      "REASON": "Refund Reason",
+      "REQUESTED_BY": "Requested by",
+      "REQUESTED_DATE": "Request Date"
+    },
+    "CAMPAIGNS": {
+      "TITLE": "Campaign Management",
+      "NEW": "New Campaign",
+      "EDIT": "Edit",
+      "PAUSE": "Pause",
+      "ACTIVATE": "Activate",
+      "DELETE": "Delete",
+      "PROGRESS": "Progress",
+      "ENDS": "Ends"
+    },
+    "REPORTS": {
+      "TITLE": "Reports & Analytics",
+      "DOWNLOAD": "Download",
+      "PERIOD": "Period",
+      "QUARTERLY": "Quarterly",
+      "ANNUAL": "Annual",
+      "MONTHLY": "Monthly",
+      "GENERATE": "Generate Report"
+    }
+  },
+
+  "ERRORS": {
+    "NOT_FOUND": {
+      "TITLE": "Page Not Found",
+      "SUBTITLE": "Sorry, we couldn't find the page you're looking for",
+      "BTN": "Back to Home"
+    },
+    "UNAUTHORIZED": {
+      "TITLE": "Access Denied",
+      "SUBTITLE": "You don't have permission to access this page. Please sign in first.",
+      "BTN_LOGIN": "Sign In",
+      "BTN_HOME": "Home"
+    },
+    "SERVER_ERROR": {
+      "TITLE": "Server Error",
+      "SUBTITLE": "An unexpected error occurred. Please try again later.",
+      "BTN": "Try Again",
+      "BTN_HOME": "Home"
+    }
+  },
+
+  "TRANSPARENCY": {
+    "TITLE": "Financial Transparency",
+    "SUBTITLE": "We believe in full accountability — every dollar is documented and accounted for",
+    "STATS": {
+      "TOTAL_RECEIVED": "Total Donations Received",
+      "TOTAL_SPENT": "Total Amount Disbursed",
+      "ACTIVE_PROJECTS": "Active Projects",
+      "COMPLETED_PROJECTS": "Completed Projects",
+      "BENEFICIARIES": "beneficiaries"
+    },
+    "CHARTS": {
+      "BREAKDOWN": "Spending Breakdown",
+      "MONTHLY": "Monthly Donations",
+      "BY_CATEGORY": "Distribution by Category"
+    },
+    "REPORTS": {
+      "TITLE": "Financial Reports",
+      "DOWNLOAD": "Download PDF",
+      "QUARTERLY": "Quarterly",
+      "ANNUAL": "Annual"
+    },
+    "COMPLETED": {
+      "TITLE": "Completed Projects",
+      "VIEW_ALL": "View All"
+    }
+  }
+}

@@ -1,0 +1,73 @@
+<div class="auth-card verify-card">
+
+  <!-- Header -->
+  <div class="auth-card__header">
+    <div class="verify__icon-wrapper">
+      <span class="material-icons">mark_email_unread</span>
+    </div>
+    <h2>{{ 'AUTH.VERIFY_EMAIL.TITLE' | translate }}</h2>
+    <p>{{ 'AUTH.VERIFY_EMAIL.SUBTITLE' | translate }}</p>
+    @if (email) {
+      <p class="verify__email">{{ email }}</p>
+    }
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+    <!-- OTP Input -->
+    <div class="verify__otp-wrapper">
+      <app-otp-input formControlName="otp" [length]="6" />
+    </div>
+
+    @if (otpCtrl.touched && otpCtrl.invalid) {
+      <p class="verify__otp-error">{{ 'AUTH.ERRORS.OTP_LENGTH' | translate }}</p>
+    }
+
+    @if (apiError()) {
+      <div class="auth-error-banner" role="alert">
+        <span class="material-icons">error_outline</span>
+        <span>{{ apiError()! | translate }}</span>
+      </div>
+    }
+
+    <!-- Submit -->
+    <button
+      mat-flat-button
+      type="submit"
+      class="auth-submit-btn"
+      [disabled]="isLoading()"
+    >
+      <span class="btn-content">
+        @if (isLoading()) {
+          <mat-spinner diameter="22" color="accent" />
+          <span>{{ 'AUTH.VERIFY_EMAIL.LOADING' | translate }}</span>
+        } @else {
+          <span class="material-icons btn-icon">verified</span>
+          <span>{{ 'AUTH.VERIFY_EMAIL.SUBMIT' | translate }}</span>
+        }
+      </span>
+    </button>
+
+    <!-- Resend section -->
+    <div class="verify__resend">
+      @if (canResend()) {
+        <button type="button" class="resend-btn" (click)="onResend()">
+          <span class="material-icons">refresh</span>
+          {{ 'AUTH.VERIFY_EMAIL.RESEND' | translate }}
+        </button>
+      } @else {
+        <p class="resend-timer">
+          {{ 'AUTH.VERIFY_EMAIL.RESEND_TIMER' | translate : { seconds: resendCooldown() } }}
+        </p>
+      }
+    </div>
+
+    <p class="verify__hint">
+      <span class="material-icons hint-icon">info_outline</span>
+      {{ 'AUTH.VERIFY_EMAIL.HINT' | translate }}
+    </p>
+
+  </form>
+
+</div>

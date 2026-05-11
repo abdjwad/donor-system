@@ -1,0 +1,113 @@
+<section class="hero" [class.rtl]="isRtl()">
+
+  <!-- Damascus background pattern -->
+  <div class="hero__pattern" aria-hidden="true"></div>
+
+  <!-- Gold decorative line -->
+  <div class="hero__gold-line" aria-hidden="true"></div>
+
+  <div class="hero__inner">
+
+    <!-- Left: Text content -->
+    <div class="hero__content">
+
+      <!-- Platform badge -->
+      <div class="hero__badge">
+        <div class="badge-dot"></div>
+        <span>منصة بنيان — Bunian Platform</span>
+      </div>
+
+      <!-- Tagline -->
+      <h1 class="hero__tagline">
+        {{ 'HOME.HERO.TAGLINE' | translate }}
+      </h1>
+
+      <!-- Description -->
+      <p class="hero__description">
+        {{ 'HOME.HERO.SUBTITLE' | translate }}
+      </p>
+
+      <!-- Trust pills -->
+      <div class="hero__trust">
+        <span class="trust-pill">
+          <span class="material-icons">lock</span>
+          {{ 'HOME.HERO.TRUST_SECURE' | translate }}
+        </span>
+        <span class="trust-pill">
+          <span class="material-icons">email</span>
+          {{ 'HOME.HERO.TRUST_RECEIPT' | translate }}
+        </span>
+        <span class="trust-pill">
+          <span class="material-icons">people</span>
+          12,450+ {{ 'AUTH.LAYOUT.DONORS' | translate }}
+        </span>
+      </div>
+
+      <!-- CTA Buttons -->
+      <div class="hero__ctas">
+        <a routerLink="/donate/guest" mat-flat-button class="hero__cta-primary">
+          <span class="material-icons">volunteer_activism</span>
+          {{ 'HOME.HERO.CTA_DONATE' | translate }}
+        </a>
+        <a routerLink="/projects" mat-stroked-button class="hero__cta-secondary">
+          {{ 'HOME.HERO.CTA_BROWSE' | translate }}
+          <span class="material-icons">arrow_forward</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Right: Impact card -->
+    <div class="hero__card">
+      <div class="impact-card">
+        <div class="impact-card__header">
+          <span class="material-icons impact-card__icon">trending_up</span>
+          <span class="impact-card__label">{{ 'HOME.HERO.IMPACT_TITLE' | translate }}</span>
+        </div>
+
+        <div class="impact-card__stats">
+          <div class="impact-stat">
+            <span class="impact-stat__number">{{ stats.donors | number }}</span>
+            <span class="impact-stat__label">{{ 'HOME.STATS.DONORS' | translate }}</span>
+          </div>
+          <div class="impact-stat__divider"></div>
+          <div class="impact-stat">
+            <span class="impact-stat__number">{{ stats.families | number }}</span>
+            <span class="impact-stat__label">{{ 'HOME.STATS.FAMILIES' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="impact-card__projects">
+          <div class="impact-project-bar">
+            <span class="impact-project-bar__label">{{ 'HOME.HERO.PROJECTS_COMPLETED' | translate }}</span>
+            <span class="impact-project-bar__value">{{ stats.projects | number }}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-bar__fill" style="width: 84%"></div>
+          </div>
+        </div>
+
+        <div class="impact-card__amount">
+          <span class="impact-amount-label">{{ 'HOME.HERO.TOTAL_RAISED' | translate }}</span>
+          <span class="impact-amount-value">$2.4M+</span>
+        </div>
+
+        <!-- Animated pulse dot (live indicator) -->
+        <div class="impact-card__live">
+          <span class="live-dot"></span>
+          <span class="live-text">{{ 'HOME.HERO.LIVE' | translate }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom wave -->
+  <div class="hero__wave" aria-hidden="true">
+    <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,50 1440,40 L1440,80 L0,80 Z"
+            fill="#FBF7F0"/>
+    </svg>
+  </div>
+
+</section>

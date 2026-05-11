@@ -1,0 +1,197 @@
+// ============================================================
+// Home Page Shared Styles — Bunian Platform
+// ============================================================
+@use 'variables' as *;
+
+// ── Page section wrapper ─────────────────────────────────────
+.section {
+  padding: $space-3xl 0;
+  width: 100%;
+
+  @media (max-width: $bp-tablet) {
+    padding: $space-2xl 0;
+  }
+
+  @media (max-width: $bp-mobile) {
+    padding: $space-xl 0;
+  }
+}
+
+.section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 $space-2xl;
+
+  @media (max-width: $bp-tablet) {
+    padding: 0 $space-lg;
+  }
+
+  @media (max-width: $bp-mobile) {
+    padding: 0 $space-md;
+  }
+}
+
+// ── Section header block ──────────────────────────────────────
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: $space-2xl;
+  flex-wrap: wrap;
+  gap: $space-md;
+
+  &__text { flex: 1; }
+
+  &__link {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $color-primary;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    transition: $transition-fast;
+
+    &:hover {
+      color: $color-primary-dark;
+      text-decoration: underline;
+    }
+
+    .material-icons { font-size: 1.125rem; }
+  }
+}
+
+.section-title {
+  font-size: 1.625rem;
+  font-weight: 800;
+  color: $color-text-primary;
+  letter-spacing: -0.02em;
+  margin: 0 0 $space-xs;
+  position: relative;
+  display: inline-block;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    inset-inline-start: 0;
+    width: 32px;
+    height: 3px;
+    background: $color-gold;
+    border-radius: $radius-full;
+  }
+
+  @media (max-width: $bp-mobile) {
+    font-size: 1.25rem;
+  }
+}
+
+.section-subtitle {
+  font-size: 0.9rem;
+  color: $color-text-muted;
+  margin: $space-md 0 0;
+  line-height: 1.65;
+}
+
+// ── Stat number ───────────────────────────────────────────────
+.stat-number {
+  font-family: var(--font-latin);
+  font-size: 2rem;
+  font-weight: 800;
+  color: $color-gold;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: $color-text-muted;
+  font-weight: 500;
+  margin-top: $space-xs;
+}
+
+// ── Progress bar ──────────────────────────────────────────────
+.progress-bar {
+  height: 8px;
+  background: rgba($color-primary, 0.12);
+  border-radius: $radius-full;
+  overflow: hidden;
+
+  &__fill {
+    height: 100%;
+    background: linear-gradient(to right, $color-primary, $color-primary-light);
+    border-radius: $radius-full;
+    transition: width 0.6s ease;
+  }
+
+  &--gold &__fill {
+    background: linear-gradient(to right, $color-gold-dark, $color-gold-light);
+  }
+}
+
+// ── Trust pill ─────────────────────────────────────────────────
+.trust-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: $radius-full;
+  padding: 6px 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+
+  .material-icons { font-size: 1rem; }
+
+  &--light {
+    background: rgba($color-primary, 0.06);
+    border-color: rgba($color-primary, 0.15);
+    color: $color-text-secondary;
+
+    .material-icons { color: $color-primary; }
+  }
+}
+
+// ── Urgency badges ────────────────────────────────────────────
+.urgency-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: $radius-full;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+
+  &--high   { background: rgba(#C0392B, 0.1); color: #C0392B; }
+  &--medium { background: rgba(#E67E22, 0.1); color: #D35400; }
+  &--low    { background: rgba($color-primary, 0.1); color: $color-primary; }
+}
+
+.category-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: $radius-full;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: rgba($color-navy, 0.08);
+  color: $color-navy;
+}
+
+// ── Card shared ───────────────────────────────────────────────
+.bunian-card {
+  background: $color-card-bg;
+  border-radius: $radius-xl;
+  border: 1px solid $color-border;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  transition: $transition-base;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba($color-primary, 0.12);
+    border-color: rgba($color-primary, 0.2);
+  }
+}

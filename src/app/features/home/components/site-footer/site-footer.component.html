@@ -1,0 +1,83 @@
+<footer class="site-footer" [class.rtl]="isRtl()">
+  <div class="site-footer__top">
+    <div class="site-footer__inner">
+
+      <!-- Column 1: Brand -->
+      <div class="footer-col">
+        <div class="footer-logo">
+          <div class="footer-logo__dot"></div>
+          <span class="footer-logo__text">منصة بنيان</span>
+        </div>
+        <p class="footer-col__desc">{{ 'HOME.FOOTER.DESCRIPTION' | translate }}</p>
+        <div class="footer-social">
+          <a href="#" class="social-link" aria-label="Facebook">
+            <span class="material-icons">facebook</span>
+          </a>
+          <a href="#" class="social-link" aria-label="Twitter">
+            <span class="material-icons">alternate_email</span>
+          </a>
+          <a href="#" class="social-link" aria-label="Instagram">
+            <span class="material-icons">photo_camera</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="footer-col">
+        <h4 class="footer-col__title">{{ 'HOME.FOOTER.QUICK_LINKS' | translate }}</h4>
+        <ul class="footer-links">
+          <li><a routerLink="/home">{{ 'HOME.FOOTER.HOME' | translate }}</a></li>
+          <li><a routerLink="/projects">{{ 'HOME.FOOTER.PROJECTS' | translate }}</a></li>
+          <li><a routerLink="/donate/guest">{{ 'HOME.FOOTER.DONATE' | translate }}</a></li>
+          <li><a routerLink="/auth/register">{{ 'HOME.FOOTER.REGISTER' | translate }}</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Campaigns -->
+      <div class="footer-col">
+        <h4 class="footer-col__title">{{ 'HOME.FOOTER.CAMPAIGNS' | translate }}</h4>
+        <ul class="footer-links">
+          <li><a href="#">{{ 'HOME.CAMPAIGNS.CAT_HOUSING' | translate }}</a></li>
+          <li><a href="#">{{ 'HOME.CAMPAIGNS.CAT_EDUCATION' | translate }}</a></li>
+          <li><a href="#">{{ 'HOME.CAMPAIGNS.CAT_HEALTH' | translate }}</a></li>
+          <li><a href="#">{{ 'HOME.CAMPAIGNS.CAT_EMERGENCY' | translate }}</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Contact -->
+      <div class="footer-col">
+        <h4 class="footer-col__title">{{ 'HOME.FOOTER.CONTACT' | translate }}</h4>
+        <ul class="footer-contact">
+          <li>
+            <span class="material-icons contact-icon">email</span>
+            <a href="mailto:info@bunian.org">info&#64;bunian.org</a>
+          </li>
+          <li>
+            <span class="material-icons contact-icon">phone</span>
+            <span dir="ltr">+963 11 XXX XXXX</span>
+          </li>
+          <li>
+            <span class="material-icons contact-icon">location_on</span>
+            <span>{{ 'HOME.FOOTER.ADDRESS' | translate }}</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="site-footer__bottom">
+    <div class="site-footer__bottom-inner">
+      <p class="footer-rights">
+        &copy; {{ year }} منصة بنيان. {{ 'HOME.FOOTER.RIGHTS' | translate }}
+      </p>
+      <div class="footer-bottom-links">
+        <a href="#">{{ 'HOME.FOOTER.PRIVACY' | translate }}</a>
+        <span>·</span>
+        <a href="#">{{ 'HOME.FOOTER.TERMS' | translate }}</a>
+      </div>
+    </div>
+  </div>
+
+</footer>

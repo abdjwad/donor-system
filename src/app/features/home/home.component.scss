@@ -1,0 +1,8 @@
+// HomeComponent is a transparent shell — all styling lives in section components
+:host {
+  display: block;
+}
+
+.rtl {
+  direction: rtl;
+}

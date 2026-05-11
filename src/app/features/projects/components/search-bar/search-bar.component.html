@@ -1,0 +1,16 @@
+<div class="search-bar">
+  <span class="search-bar__icon material-icons">search</span>
+  <input
+    class="search-bar__input"
+    type="text"
+    [value]="searchValue"
+    (input)="onInput($any($event.target).value)"
+    [placeholder]="'PROJECTS.SEARCH_PLACEHOLDER' | translate"
+    autocomplete="off"
+  />
+  @if (searchValue) {
+    <button type="button" class="search-bar__clear" (click)="clear()" aria-label="Clear search">
+      <span class="material-icons">close</span>
+    </button>
+  }
+</div>

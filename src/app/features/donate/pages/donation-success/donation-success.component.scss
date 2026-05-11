@@ -1,0 +1,191 @@
+@use '../../../../styles/variables' as *;
+
+.success-page {
+  min-height: 100vh;
+  background: $color-background;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &.rtl { direction: rtl; }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: $space-xl $space-2xl;
+    align-self: flex-start;
+  }
+}
+
+.header-logo-dot {
+  width: 9px;
+  height: 9px;
+  background: $color-primary;
+  border-radius: $radius-full;
+  box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+}
+
+.header-logo-text {
+  font-size: 1rem;
+  font-weight: 800;
+  color: $color-primary;
+  letter-spacing: 0.01em;
+}
+
+// ── Success Card ──────────────────────────────────────────────
+.success-card {
+  background: $color-card-bg;
+  border-radius: $radius-xl;
+  border: 1px solid $color-border;
+  box-shadow: $shadow-card;
+  padding: $space-3xl $space-2xl;
+  max-width: 480px;
+  width: calc(100% - $space-xl * 2);
+  text-align: center;
+  margin: auto;
+
+  &__icon-ring {
+    width: 96px;
+    height: 96px;
+    border-radius: $radius-full;
+    background: rgba($color-primary, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto $space-xl;
+    box-shadow: 0 0 0 12px rgba($color-primary, 0.04);
+  }
+
+  &__icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, $color-primary, $color-primary-light);
+    border-radius: $radius-full;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba($color-primary, 0.4);
+
+    .material-icons {
+      font-size: 2rem;
+      color: #fff;
+    }
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: $color-text-primary;
+    letter-spacing: -0.02em;
+    margin-bottom: $space-sm;
+  }
+
+  &__subtitle {
+    font-size: 1rem;
+    color: $color-text-muted;
+    line-height: 1.7;
+    max-width: 340px;
+    margin: 0 auto $space-xl;
+  }
+
+  &__details {
+    background: $color-background;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    padding: $space-lg;
+    margin-bottom: $space-xl;
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+  }
+
+  &__notice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-xs;
+    font-size: 0.875rem;
+    color: $color-text-muted;
+    margin-bottom: $space-xl;
+
+    .notice-icon {
+      font-size: 1rem;
+      color: $color-primary;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+  }
+}
+
+// ── Detail rows ───────────────────────────────────────────────
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &__label {
+    font-size: 0.875rem;
+    color: $color-text-muted;
+    font-weight: 500;
+  }
+
+  &__value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $color-text-primary;
+    font-family: var(--font-latin);
+
+    &--ref {
+      font-size: 0.875rem;
+      color: $color-primary;
+      letter-spacing: 0.03em;
+    }
+  }
+}
+
+// ── CTAs ──────────────────────────────────────────────────────
+.cta-donate-again {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: $space-sm;
+  height: 52px !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  border-radius: $radius-md !important;
+  background: $color-primary !important;
+  color: #fff !important;
+  text-decoration: none;
+  box-shadow: $shadow-button;
+  transition: $transition-base;
+
+  &:hover {
+    background: $color-primary-dark !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba($color-primary, 0.4);
+  }
+}
+
+.cta-browse {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  height: 52px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  border-radius: $radius-md !important;
+  border-color: $color-border !important;
+  color: $color-text-secondary !important;
+  text-decoration: none;
+  transition: $transition-base;
+
+  &:hover {
+    border-color: $color-primary !important;
+    color: $color-primary !important;
+  }
+}

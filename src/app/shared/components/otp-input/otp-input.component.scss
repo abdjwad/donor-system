@@ -1,0 +1,54 @@
+@use '../../../../app/styles/variables' as *;
+
+.otp-input {
+  display: flex;
+  gap: $space-sm;
+  justify-content: center;
+  direction: ltr;
+
+  &--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &__box {
+    width: 52px;
+    height: 60px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $color-text-primary;
+    border: 2px solid $color-border;
+    border-radius: $radius-md;
+    background: $color-card-bg;
+    outline: none;
+    transition: $transition-base;
+    caret-color: $color-primary;
+    font-family: var(--font-latin);
+
+    &:focus {
+      border-color: $color-primary;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.12);
+      background: #fff;
+    }
+
+    &--filled {
+      border-color: $color-primary;
+      background: rgba($color-primary, 0.04);
+      color: $color-primary;
+    }
+
+    // Remove number arrows
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    @media (max-width: $bp-mobile) {
+      width: 44px;
+      height: 52px;
+      font-size: 1.25rem;
+    }
+  }
+}

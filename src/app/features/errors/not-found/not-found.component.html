@@ -1,0 +1,29 @@
+<div class="error-page" [class.rtl]="isRtl()">
+  <div class="error-page__inner">
+
+    <div class="error-code">
+      <span class="error-code__num">4</span>
+      <svg class="error-code__icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="40" r="38" stroke="currentColor" stroke-width="3" stroke-dasharray="8 4"/>
+        <circle cx="40" cy="40" r="22" fill="currentColor" opacity="0.08"/>
+        <path d="M30 30 L50 50 M50 30 L30 50" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <span class="error-code__num">4</span>
+    </div>
+
+    <h1 class="error-page__title">{{ 'ERRORS.NOT_FOUND.TITLE' | translate }}</h1>
+    <p class="error-page__subtitle">{{ 'ERRORS.NOT_FOUND.SUBTITLE' | translate }}</p>
+
+    <div class="error-page__actions">
+      <a routerLink="/home" mat-flat-button class="error-page__btn-primary">
+        <span class="material-icons">home</span>
+        {{ 'ERRORS.NOT_FOUND.BTN' | translate }}
+      </a>
+      <a routerLink="/projects" mat-stroked-button class="error-page__btn-secondary">
+        <span class="material-icons">explore</span>
+        {{ isRtl() ? 'تصفح المشاريع' : 'Browse Projects' }}
+      </a>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<section class="cta-section">
+  <div class="cta-section__pattern" aria-hidden="true"></div>
+
+  <div class="cta-section__inner">
+
+    <div class="cta-section__text">
+      <h2 class="cta-section__title">{{ 'HOME.CTA.TITLE' | translate }}</h2>
+      <p class="cta-section__subtitle">{{ 'HOME.CTA.SUBTITLE' | translate }}</p>
+    </div>
+
+    <div class="cta-section__form">
+      <!-- Amount chips -->
+      <div class="cta-chips">
+        @for (a of amounts; track a) {
+          <button type="button" class="cta-chip"
+                  [class.cta-chip--active]="selected() === a"
+                  (click)="select(a)">
+            ${{ a }}
+          </button>
+        }
+      </div>
+
+      <!-- Donate button -->
+      <button mat-flat-button class="cta-donate-btn" (click)="donate()">
+        <span class="material-icons">favorite</span>
+        {{ 'HOME.CTA.BTN' | translate }} — ${{ selected() }}
+      </button>
+
+      <!-- Trust row -->
+      <div class="cta-trust">
+        <span class="trust-pill trust-pill--light">
+          <span class="material-icons">lock</span>
+          {{ 'HOME.HERO.TRUST_SECURE' | translate }}
+        </span>
+        <span class="trust-pill trust-pill--light">
+          <span class="material-icons">email</span>
+          {{ 'HOME.HERO.TRUST_RECEIPT' | translate }}
+        </span>
+      </div>
+    </div>
+
+  </div>
+</section>

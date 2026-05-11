@@ -1,0 +1,68 @@
+<section class="section campaigns-section">
+  <div class="section-inner">
+
+    <div class="section-header">
+      <div class="section-header__text">
+        <h2 class="section-title">{{ 'HOME.CAMPAIGNS.TITLE' | translate }}</h2>
+        <p class="section-subtitle">{{ 'HOME.CAMPAIGNS.SUBTITLE' | translate }}</p>
+      </div>
+      <a routerLink="/projects" class="section-header__link">
+        {{ 'HOME.CAMPAIGNS.SEE_ALL' | translate }}
+        <span class="material-icons">arrow_forward</span>
+      </a>
+    </div>
+
+    <div class="campaigns-grid">
+      @for (c of campaigns; track c.id) {
+        <article class="campaign-card bunian-card">
+
+          <!-- Image -->
+          <div class="campaign-card__image-wrap">
+            <img [src]="c.imageUrl" [alt]="getTitle(c)" class="campaign-card__image" loading="lazy"/>
+            <div class="campaign-card__days-badge">
+              <span class="material-icons">schedule</span>
+              {{ c.daysLeft }} {{ 'HOME.CAMPAIGNS.DAYS_LEFT' | translate }}
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="campaign-card__body">
+            <h3 class="campaign-card__title">{{ getTitle(c) }}</h3>
+            <p class="campaign-card__desc">{{ getDescription(c) }}</p>
+
+            <!-- Progress -->
+            <div class="campaign-card__progress">
+              <div class="progress-bar progress-bar--gold">
+                <div class="progress-bar__fill" [style.width.%]="progressPct(c)"></div>
+              </div>
+              <div class="campaign-card__progress-row">
+                <span class="campaign-pct">{{ progressPct(c) }}%</span>
+                <span class="campaign-amounts">
+                  {{ formatAmount(c.raisedAmount) }} / {{ formatAmount(c.targetAmount) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Meta -->
+            <div class="campaign-card__meta">
+              <span class="meta-item">
+                <span class="material-icons meta-icon">group</span>
+                {{ c.donorCount | number }}
+                {{ 'HOME.CAMPAIGNS.DONORS_COUNT' | translate }}
+              </span>
+            </div>
+
+            <!-- CTA -->
+            <a [routerLink]="['/donate/guest']" [queryParams]="{ campaign: c.id }"
+               mat-flat-button class="campaign-card__btn">
+              <span class="material-icons">volunteer_activism</span>
+              {{ 'HOME.HERO.CTA_DONATE' | translate }}
+            </a>
+          </div>
+
+        </article>
+      }
+    </div>
+
+  </div>
+</section>

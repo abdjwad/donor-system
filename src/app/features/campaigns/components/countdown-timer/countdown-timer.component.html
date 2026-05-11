@@ -1,0 +1,25 @@
+@if (ended()) {
+  <div class="timer timer--ended">{{ 'CAMPAIGNS.TIMER.ENDED' | translate }}</div>
+} @else {
+  <div class="timer">
+    <div class="timer__unit">
+      <span class="timer__value">{{ pad(days()) }}</span>
+      <span class="timer__label">{{ 'CAMPAIGNS.TIMER.DAYS' | translate }}</span>
+    </div>
+    <span class="timer__sep">:</span>
+    <div class="timer__unit">
+      <span class="timer__value">{{ pad(hours()) }}</span>
+      <span class="timer__label">{{ 'CAMPAIGNS.TIMER.HOURS' | translate }}</span>
+    </div>
+    <span class="timer__sep">:</span>
+    <div class="timer__unit">
+      <span class="timer__value">{{ pad(minutes()) }}</span>
+      <span class="timer__label">{{ 'CAMPAIGNS.TIMER.MINUTES' | translate }}</span>
+    </div>
+    <span class="timer__sep">:</span>
+    <div class="timer__unit">
+      <span class="timer__value">{{ pad(seconds()) }}</span>
+      <span class="timer__label">{{ 'CAMPAIGNS.TIMER.SECONDS' | translate }}</span>
+    </div>
+  </div>
+}

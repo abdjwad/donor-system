@@ -1,0 +1,139 @@
+@use '../../../styles/variables' as *;
+
+.dash-sidebar-comp {
+  background: $color-card-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
+  padding: $space-md;
+  position: sticky;
+  top: calc(64px + $space-xl);
+  height: fit-content;
+  min-width: 0;
+}
+
+// ── Section ───────────────────────────────────────────────────────
+.sidebar-section {
+  margin-bottom: $space-md;
+
+  &:last-child { margin-bottom: 0; }
+
+  &__label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: $color-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0 $space-sm;
+    margin-bottom: $space-xs;
+  }
+
+  // Separator between sections
+  & + & { border-top: 1px solid $color-background; padding-top: $space-md; }
+
+  &--admin .sidebar-section__label { color: rgba($color-gold-dark, 0.8); }
+}
+
+// ── Link ──────────────────────────────────────────────────────────
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: 9px $space-sm;
+  border-radius: $radius-md;
+  color: $color-text-secondary;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: $transition-fast;
+  position: relative;
+
+  &__icon {
+    font-size: 1.125rem !important;
+    color: $color-text-muted;
+    flex-shrink: 0;
+    transition: $transition-fast;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    background: rgba($color-primary, 0.06);
+    color: $color-primary;
+    .sidebar-link__icon { color: $color-primary; }
+  }
+
+  &.active {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    font-weight: 700;
+    .sidebar-link__icon { color: $color-primary; }
+
+    // Left border indicator
+    &::before {
+      content: '';
+      position: absolute;
+      inset-inline-start: 0;
+      top: 25%;
+      bottom: 25%;
+      width: 3px;
+      background: $color-primary;
+      border-radius: $radius-full;
+    }
+  }
+
+  // Admin link special style
+  &--admin {
+    color: $color-gold-dark;
+    .sidebar-link__icon { color: $color-gold-dark; }
+
+    &:hover {
+      background: rgba($color-gold, 0.1);
+      color: darken(#C5952A, 10%);
+      .sidebar-link__icon { color: darken(#C5952A, 10%); }
+    }
+
+    &.active {
+      background: rgba($color-gold, 0.12);
+      color: $color-gold-dark;
+      .sidebar-link__icon { color: $color-gold-dark; }
+      &::before { background: $color-gold; }
+    }
+  }
+}
+
+// ── Notification badge ────────────────────────────────────────────
+.sidebar-badge {
+  min-width: 18px;
+  height: 18px;
+  background: $color-error;
+  color: #fff;
+  border-radius: $radius-full;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  font-family: var(--font-latin);
+  flex-shrink: 0;
+}
+
+// ── Admin chip ────────────────────────────────────────────────────
+.sidebar-admin-chip {
+  font-size: 0.625rem;
+  font-weight: 700;
+  background: rgba($color-gold, 0.15);
+  color: $color-gold-dark;
+  border: 1px solid rgba($color-gold, 0.3);
+  border-radius: $radius-full;
+  padding: 1px 7px;
+  flex-shrink: 0;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}

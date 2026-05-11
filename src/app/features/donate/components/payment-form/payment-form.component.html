@@ -1,0 +1,175 @@
+<div class="step-content">
+
+  <div class="step-header">
+    <h3>{{ 'DONATE.PAYMENT.TITLE' | translate }}</h3>
+  </div>
+
+  <!-- ── Payment Method Tabs ── -->
+  <mat-tab-group (selectedIndexChange)="selectMethod(selectedMethod(), $event)" animationDuration="200ms">
+
+    <!-- ─── Card Tab ─── -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span class="tab-label">
+          <span class="material-icons tab-icon">credit_card</span>
+          {{ 'DONATE.PAYMENT.CARD' | translate }}
+        </span>
+      </ng-template>
+
+      <form [formGroup]="cardForm" class="payment-tab-content" novalidate>
+
+        <!-- Card Number -->
+        <mat-form-field appearance="outline" class="full-width form-field-gap">
+          <mat-label>{{ 'DONATE.PAYMENT.CARD_NUMBER' | translate }}</mat-label>
+          <mat-icon matPrefix class="field-prefix-icon">credit_card</mat-icon>
+          <input matInput type="text" formControlName="cardNumber"
+                 [placeholder]="'DONATE.PAYMENT.CARD_NUMBER_PLACEHOLDER' | translate"
+                 maxlength="19" dir="ltr"/>
+          @if (cardForm.get('cardNumber')!.touched && cardForm.get('cardNumber')!.invalid) {
+            <mat-error>{{ 'DONATE.PAYMENT.CARD_REQUIRED' | translate }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Expiry + CVV row -->
+        <div class="card-row">
+          <mat-form-field appearance="outline" class="form-field-gap">
+            <mat-label>{{ 'DONATE.PAYMENT.CARD_EXPIRY' | translate }}</mat-label>
+            <input matInput type="text" formControlName="cardExpiry"
+                   [placeholder]="'DONATE.PAYMENT.CARD_EXPIRY_PLACEHOLDER' | translate"
+                   maxlength="5" dir="ltr"/>
+            @if (cardForm.get('cardExpiry')!.touched && cardForm.get('cardExpiry')!.invalid) {
+              <mat-error>{{ 'DONATE.PAYMENT.EXPIRY_REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field-gap">
+            <mat-label>{{ 'DONATE.PAYMENT.CARD_CVV' | translate }}</mat-label>
+            <input matInput type="text" formControlName="cardCvv"
+                   [placeholder]="'DONATE.PAYMENT.CARD_CVV_PLACEHOLDER' | translate"
+                   maxlength="4" dir="ltr"/>
+            @if (cardForm.get('cardCvv')!.touched && cardForm.get('cardCvv')!.invalid) {
+              <mat-error>{{ 'DONATE.PAYMENT.CVV_REQUIRED' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Card name -->
+        <mat-form-field appearance="outline" class="full-width form-field-gap">
+          <mat-label>{{ 'DONATE.PAYMENT.CARD_NAME' | translate }}</mat-label>
+          <mat-icon matPrefix class="field-prefix-icon">person_outline</mat-icon>
+          <input matInput type="text" formControlName="cardName" autocomplete="cc-name"/>
+        </mat-form-field>
+
+        <!-- Terms -->
+        <div class="payment-terms">
+          <mat-checkbox formControlName="terms" color="primary">
+            <span class="terms-text">
+              {{ 'DONATE.PAYMENT.TERMS_PREFIX' | translate }}&nbsp;
+              <a href="#" class="terms-link" (click)="$event.preventDefault()">{{ 'DONATE.PAYMENT.TERMS_LINK' | translate }}</a>
+            </span>
+          </mat-checkbox>
+          @if (cardForm.get('terms')!.touched && cardForm.get('terms')!.invalid) {
+            <p class="terms-error">{{ 'DONATE.PAYMENT.TERMS_REQUIRED' | translate }}</p>
+          }
+        </div>
+
+        <!-- Secure badge -->
+        <div class="secure-badge">
+          <span class="material-icons">lock</span>
+          <span>{{ 'DONATE.PAYMENT.SECURE_BADGE' | translate }}</span>
+        </div>
+
+      </form>
+    </mat-tab>
+
+    <!-- ─── PayPal Tab ─── -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span class="tab-label">
+          <span class="paypal-icon">P</span>
+          {{ 'DONATE.PAYMENT.PAYPAL' | translate }}
+        </span>
+      </ng-template>
+
+      <form [formGroup]="paypalForm" class="payment-tab-content paypal-content" novalidate>
+        <div class="paypal-logo">
+          <span class="paypal-p">Pay</span><span class="paypal-b">Pal</span>
+        </div>
+        <p class="paypal-desc">سيتم توجيهك لإتمام الدفع عبر PayPal بأمان تام</p>
+
+        <mat-checkbox formControlName="terms" color="primary">
+          <span class="terms-text">
+            {{ 'DONATE.PAYMENT.TERMS_PREFIX' | translate }}&nbsp;
+            <a href="#" class="terms-link" (click)="$event.preventDefault()">{{ 'DONATE.PAYMENT.TERMS_LINK' | translate }}</a>
+          </span>
+        </mat-checkbox>
+
+        <div class="secure-badge mt-md">
+          <span class="material-icons">lock</span>
+          <span>{{ 'DONATE.PAYMENT.SECURE_BADGE' | translate }}</span>
+        </div>
+      </form>
+    </mat-tab>
+
+    <!-- ─── Bank Tab ─── -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span class="tab-label">
+          <span class="material-icons tab-icon">account_balance</span>
+          {{ 'DONATE.PAYMENT.BANK' | translate }}
+        </span>
+      </ng-template>
+
+      <form [formGroup]="bankForm" class="payment-tab-content" novalidate>
+
+        <mat-form-field appearance="outline" class="full-width form-field-gap">
+          <mat-label>{{ 'DONATE.PAYMENT.BANK_IBAN' | translate }}</mat-label>
+          <input matInput type="text" formControlName="iban" dir="ltr"/>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width form-field-gap">
+          <mat-label>{{ 'DONATE.PAYMENT.BANK_NAME' | translate }}</mat-label>
+          <input matInput type="text" formControlName="bankName"/>
+        </mat-form-field>
+
+        <mat-checkbox formControlName="terms" color="primary">
+          <span class="terms-text">
+            {{ 'DONATE.PAYMENT.TERMS_PREFIX' | translate }}&nbsp;
+            <a href="#" class="terms-link" (click)="$event.preventDefault()">{{ 'DONATE.PAYMENT.TERMS_LINK' | translate }}</a>
+          </span>
+        </mat-checkbox>
+      </form>
+    </mat-tab>
+
+  </mat-tab-group>
+
+  <!-- ── API Error ── -->
+  @if (apiError()) {
+    <div class="auth-error-banner mt-md" role="alert">
+      <span class="material-icons">error_outline</span>
+      <span>{{ apiError()! | translate }}</span>
+    </div>
+  }
+
+  <!-- ── Action Buttons ── -->
+  <div class="step-actions">
+    <button mat-stroked-button type="button" class="step-back-btn" (click)="onBack()"
+            [disabled]="isLoading()">
+      <span class="material-icons btn-arrow">arrow_back</span>
+      {{ 'DONATE.PAYMENT.BACK' | translate }}
+    </button>
+    <button mat-flat-button type="button" class="step-submit-btn"
+            [disabled]="isLoading() || !activeTermsCtrl.value"
+            (click)="onSubmit()">
+      <span class="btn-content">
+        @if (isLoading()) {
+          <mat-spinner diameter="20" color="accent" />
+          <span>{{ 'DONATE.PAYMENT.LOADING' | translate }}</span>
+        } @else {
+          <span class="material-icons btn-icon">favorite</span>
+          <span>{{ 'DONATE.PAYMENT.SUBMIT' | translate }}</span>
+        }
+      </span>
+    </button>
+  </div>
+
+</div>

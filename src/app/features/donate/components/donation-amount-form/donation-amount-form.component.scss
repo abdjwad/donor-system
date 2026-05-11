@@ -1,0 +1,92 @@
+@use '../../../../styles/variables' as *;
+
+.amount-section {
+  margin-bottom: $space-xl;
+}
+
+.amount-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+  margin-bottom: $space-md;
+}
+
+.amount-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  min-width: 72px;
+  padding: 0 $space-lg;
+  border: 2px solid $color-border;
+  border-radius: $radius-md;
+  background: $color-card-bg;
+  color: $color-text-primary;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: $transition-base;
+  font-family: var(--font-latin);
+  letter-spacing: 0.02em;
+
+  &:hover {
+    border-color: $color-gold;
+    color: $color-gold-dark;
+    background: rgba($color-gold, 0.05);
+  }
+
+  &--selected {
+    border-color: $color-gold;
+    background: rgba($color-gold, 0.1);
+    color: $color-gold-dark;
+    box-shadow: 0 2px 8px rgba($color-gold, 0.25);
+  }
+
+  &--custom {
+    color: $color-text-secondary;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    font-family: inherit;
+  }
+}
+
+.custom-amount-field {
+  margin-top: $space-sm;
+}
+
+.currency-prefix {
+  font-weight: 700;
+  color: $color-text-secondary;
+  font-family: var(--font-latin);
+  font-size: 1rem;
+}
+
+.section-group {
+  margin-bottom: $space-lg;
+}
+
+.type-toggle {
+  width: 100%;
+  height: 52px;
+
+  &__btn {
+    flex: 1;
+    font-size: 0.9375rem !important;
+    font-weight: 600 !important;
+    height: 52px;
+
+    .toggle-icon {
+      font-size: 1.125rem;
+      margin-inline-end: 6px;
+    }
+  }
+}
+
+.field-prefix-icon {
+  color: $color-text-muted;
+  font-size: 1.125rem !important;
+  width: 1.125rem !important;
+  height: 1.125rem !important;
+  line-height: 1 !important;
+  margin-inline-end: $space-xs;
+}

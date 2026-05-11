@@ -1,0 +1,58 @@
+<div class="checkout-page" [class.rtl]="isRtl()">
+
+  <!-- ── Page header ── -->
+  <header class="checkout-header">
+    <div class="checkout-header__logo">
+      <div class="header-logo-dot"></div>
+      <span class="header-logo-text">منصة بنيان</span>
+    </div>
+
+    <div class="checkout-header__title">
+      <h1>{{ 'DONATE.GUEST.TITLE' | translate }}</h1>
+      <p>{{ 'DONATE.GUEST.SUBTITLE' | translate }}</p>
+    </div>
+
+    <div class="checkout-header__auth">
+      <span>{{ 'DONATE.GUEST.HAVE_ACCOUNT' | translate }}</span>
+      <a routerLink="/auth/login">{{ 'DONATE.GUEST.LOGIN' | translate }}</a>
+    </div>
+  </header>
+
+  <!-- ── Main content ── -->
+  <div class="checkout-layout">
+
+    <!-- Left: Stepper -->
+    <div class="checkout-layout__stepper">
+
+      <mat-stepper #stepper [linear]="false" [animationDuration]="'250'" orientation="horizontal">
+
+        <!-- Step 1: Info -->
+        <mat-step [label]="'DONATE.STEPS.INFO' | translate">
+          <app-guest-info-form (next)="onStep1Next()" />
+        </mat-step>
+
+        <!-- Step 2: Amount -->
+        <mat-step [label]="'DONATE.STEPS.AMOUNT' | translate">
+          <app-donation-amount-form
+            (next)="onStep2Next()"
+            (back)="onStep2Back()"
+          />
+        </mat-step>
+
+        <!-- Step 3: Payment -->
+        <mat-step [label]="'DONATE.STEPS.PAYMENT' | translate">
+          <app-payment-form (back)="onStep3Back()" />
+        </mat-step>
+
+      </mat-stepper>
+
+    </div>
+
+    <!-- Right: Summary -->
+    <aside class="checkout-layout__summary">
+      <app-donation-summary />
+    </aside>
+
+  </div>
+
+</div>

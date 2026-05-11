@@ -1,0 +1,83 @@
+<article class="project-card bunian-card">
+
+  <!-- Image -->
+  <div class="project-card__image-wrap">
+    <img [src]="project.imageUrl" [alt]="title" class="project-card__image" loading="lazy"/>
+
+    <!-- Badges on image -->
+    <div class="project-card__badges">
+      <span class="category-badge">
+        {{ ('PROJECTS.CATEGORIES.' + project.category.toUpperCase()) | translate }}
+      </span>
+      <span class="urgency-badge urgency-badge--{{ project.urgency }}">
+        {{ ('PROJECTS.URGENCY.' + project.urgency.toUpperCase()) | translate }}
+      </span>
+    </div>
+
+    @if (project.status === 'completed') {
+      <div class="project-card__completed-overlay">
+        <span class="material-icons">check_circle</span>
+        <span>{{ 'PROJECTS.STATUS.COMPLETED' | translate }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Content -->
+  <div class="project-card__body">
+
+    <!-- Location -->
+    <div class="project-card__location">
+      <span class="material-icons location-icon">location_on</span>
+      <span>{{ location }}</span>
+    </div>
+
+    <!-- Title -->
+    <h3 class="project-card__title">{{ title }}</h3>
+
+    <!-- Progress -->
+    <div class="project-card__progress">
+      <div class="progress-bar">
+        <div class="progress-bar__fill" [style.width.%]="progressPct"></div>
+      </div>
+      <div class="project-card__progress-labels">
+        <span class="progress-pct">{{ progressPct | number:'1.0-0' }}%</span>
+        <span class="progress-remaining">{{ 'PROJECTS.CARD.REMAINING' | translate }}: {{ formatAmount(remaining) }}</span>
+      </div>
+    </div>
+
+    <!-- Amounts row -->
+    <div class="project-card__amounts">
+      <div class="amount-block">
+        <span class="amount-block__value raised">{{ formatAmount(project.amountRaised) }}</span>
+        <span class="amount-block__label">{{ 'PROJECTS.CARD.RAISED' | translate }}</span>
+      </div>
+      <div class="amount-block amount-block--right">
+        <span class="amount-block__value goal">{{ formatAmount(project.fundingGoal) }}</span>
+        <span class="amount-block__label">{{ 'PROJECTS.CARD.GOAL' | translate }}</span>
+      </div>
+    </div>
+
+    <!-- Donors row -->
+    <div class="project-card__meta">
+      <span class="meta-item">
+        <span class="material-icons meta-icon">group</span>
+        {{ project.donors | number }} {{ 'PROJECTS.CARD.DONORS' | translate }}
+      </span>
+      <span class="meta-item">
+        <span class="material-icons meta-icon">schedule</span>
+        {{ project.daysActive }} {{ 'PROJECTS.CARD.DAYS' | translate }}
+      </span>
+    </div>
+
+    <!-- CTA Button -->
+    @if (project.status === 'active') {
+      <a [routerLink]="['/donate/guest']" [queryParams]="{ project: project.id }"
+         mat-flat-button class="project-card__donate-btn">
+        <span class="material-icons">volunteer_activism</span>
+        {{ 'PROJECTS.CARD.DONATE' | translate }}
+      </a>
+    }
+
+  </div>
+
+</article>

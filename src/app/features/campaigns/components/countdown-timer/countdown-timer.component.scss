@@ -1,0 +1,60 @@
+@use '../../../../styles/variables' as *;
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+
+  &__unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba($color-primary, 0.08);
+    border-radius: $radius-md;
+    padding: $space-xs $space-sm;
+    min-width: 52px;
+  }
+
+  &__value {
+    font-family: var(--font-latin);
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: $color-primary;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  &__label {
+    font-size: 0.6875rem;
+    color: $color-text-muted;
+    font-weight: 500;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__sep {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $color-primary;
+    padding-bottom: 12px;
+    align-self: center;
+  }
+
+  &--ended {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $color-error;
+    background: $color-error-bg;
+    border-radius: $radius-md;
+    padding: $space-xs $space-md;
+  }
+
+  // Compact variant for cards
+  &.compact {
+    .timer__unit { min-width: 40px; padding: 3px $space-xs; }
+    .timer__value { font-size: 1rem; }
+    .timer__label { font-size: 0.625rem; }
+    .timer__sep { font-size: 1rem; }
+  }
+}

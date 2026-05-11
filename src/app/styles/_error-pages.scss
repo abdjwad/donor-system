@@ -1,0 +1,102 @@
+@use 'variables' as *;
+
+.error-page {
+  min-height: 100vh;
+  background: $color-background;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-xl;
+  &.rtl { direction: rtl; }
+}
+
+.error-page__inner { text-align: center; max-width: 480px; }
+
+.error-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-md;
+  margin-bottom: $space-2xl;
+
+  &__num {
+    font-size: 6rem;
+    font-weight: 900;
+    font-family: var(--font-latin);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: $color-primary;
+    &--red { color: $color-error; }
+  }
+
+  &__icon {
+    width: 72px;
+    height: 72px;
+    color: $color-gold;
+    &--red { color: $color-error; }
+  }
+}
+
+.error-icon {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto $space-2xl;
+  background: rgba($color-navy, 0.08);
+  .material-icons { font-size: 3rem; color: $color-navy; }
+}
+
+.error-page__title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: $color-text-primary;
+  margin: 0 0 $space-md;
+  letter-spacing: -0.02em;
+}
+
+.error-page__subtitle {
+  font-size: 1rem;
+  color: $color-text-muted;
+  line-height: 1.7;
+  margin: 0 0 $space-2xl;
+}
+
+.error-page__actions {
+  display: flex;
+  gap: $space-md;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.error-page__btn-primary {
+  height: 48px !important;
+  padding: 0 $space-xl !important;
+  font-size: 0.9375rem !important;
+  font-weight: 700 !important;
+  border-radius: $radius-md !important;
+  background: $color-primary !important;
+  color: #fff !important;
+  display: flex !important;
+  align-items: center;
+  gap: $space-xs;
+  text-decoration: none;
+  .material-icons { font-size: 1.125rem; }
+}
+
+.error-page__btn-secondary {
+  height: 48px !important;
+  padding: 0 $space-xl !important;
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+  border-radius: $radius-md !important;
+  border-color: $color-border !important;
+  color: $color-text-secondary !important;
+  display: flex !important;
+  align-items: center;
+  gap: $space-xs;
+  text-decoration: none;
+  .material-icons { font-size: 1.125rem; }
+}

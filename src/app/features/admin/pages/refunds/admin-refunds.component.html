@@ -1,0 +1,47 @@
+<div class="admin-page">
+  <h1 class="admin-page__title">{{ 'ADMIN.REFUNDS.TITLE' | translate }}</h1>
+
+  <div class="admin-card">
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>{{ 'ADMIN.DONATIONS.DONOR' | translate }}</th>
+            <th>{{ 'ADMIN.DONATIONS.AMOUNT' | translate }}</th>
+            <th>{{ 'ADMIN.REFUNDS.REASON' | translate }}</th>
+            <th>{{ 'ADMIN.REFUNDS.REQUESTED_DATE' | translate }}</th>
+            <th>{{ 'ADMIN.DONATIONS.STATUS' | translate }}</th>
+            <th>{{ 'ADMIN.DONATIONS.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of refunds(); track r.id) {
+            <tr>
+              <td>{{ donorName(r) }}</td>
+              <td class="amount-cell">${{ r.amount }}</td>
+              <td>{{ reasonText(r) }}</td>
+              <td class="date-cell">{{ r.date }}</td>
+              <td>
+                <span class="status-badge status-badge--{{ r.status }}">
+                  {{ ('ADMIN.REFUNDS.' + r.status.toUpperCase()) | translate }}
+                </span>
+              </td>
+              <td>
+                @if (r.status === 'pending') {
+                  <div class="action-btns">
+                    <button class="action-btn action-btn--approve" (click)="approve(r.id)">
+                      <span class="material-icons">check</span>
+                    </button>
+                    <button class="action-btn action-btn--refund" (click)="reject(r.id)">
+                      <span class="material-icons">close</span>
+                    </button>
+                  </div>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

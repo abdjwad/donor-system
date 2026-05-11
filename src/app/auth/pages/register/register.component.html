@@ -1,0 +1,160 @@
+<div class="auth-card register-card">
+
+  <div class="auth-card__logo">
+    <div class="logo-pill">
+      <div class="logo-dot"></div>
+      <span class="logo-text">منصة بنيان</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="auth-card__header">
+    <h2>{{ 'AUTH.REGISTER.TITLE' | translate }}</h2>
+    <p>{{ 'AUTH.REGISTER.SUBTITLE' | translate }}</p>
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+
+    <!-- Full Name -->
+    <mat-form-field appearance="outline" class="full-width form-field-gap">
+      <mat-label>{{ 'AUTH.FIELDS.FULL_NAME' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-prefix-icon">person_outline</mat-icon>
+      <input
+        matInput
+        type="text"
+        formControlName="name"
+        [placeholder]="'AUTH.FIELDS.FULL_NAME_PLACEHOLDER' | translate"
+        autocomplete="name"
+      />
+      @if (nameCtrl.touched && nameCtrl.invalid) {
+        <mat-error>{{ getNameError() | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Email -->
+    <mat-form-field appearance="outline" class="full-width form-field-gap">
+      <mat-label>{{ 'AUTH.FIELDS.EMAIL' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-prefix-icon">mail_outline</mat-icon>
+      <input
+        matInput
+        type="email"
+        formControlName="email"
+        [placeholder]="'AUTH.FIELDS.EMAIL_PLACEHOLDER' | translate"
+        autocomplete="email"
+        dir="ltr"
+      />
+      @if (emailCtrl.touched && emailCtrl.invalid) {
+        <mat-error>{{ getEmailError() | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Phone -->
+    <mat-form-field appearance="outline" class="full-width form-field-gap">
+      <mat-label>{{ 'AUTH.FIELDS.PHONE' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-prefix-icon">phone_outlined</mat-icon>
+      <input
+        matInput
+        type="tel"
+        formControlName="phone"
+        [placeholder]="'AUTH.FIELDS.PHONE_PLACEHOLDER' | translate"
+        autocomplete="tel"
+        dir="ltr"
+      />
+      @if (phoneCtrl.touched && phoneCtrl.invalid) {
+        <mat-error>{{ getPhoneError() | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Password -->
+    <mat-form-field appearance="outline" class="full-width form-field-gap">
+      <mat-label>{{ 'AUTH.FIELDS.PASSWORD' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-prefix-icon">lock_outline</mat-icon>
+      <input
+        matInput
+        [type]="showPassword() ? 'text' : 'password'"
+        formControlName="password"
+        [placeholder]="'AUTH.FIELDS.PASSWORD_PLACEHOLDER' | translate"
+        autocomplete="new-password"
+      />
+      <button mat-icon-button matSuffix type="button"
+              class="visibility-toggle" (click)="showPassword.update(v => !v)">
+        <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      @if (passwordCtrl.touched && passwordCtrl.invalid) {
+        <mat-error>{{ getPasswordError() | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Confirm Password -->
+    <mat-form-field appearance="outline" class="full-width form-field-gap">
+      <mat-label>{{ 'AUTH.FIELDS.CONFIRM_PASSWORD' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-prefix-icon">lock_outline</mat-icon>
+      <input
+        matInput
+        [type]="showConfirmPassword() ? 'text' : 'password'"
+        formControlName="confirmPassword"
+        [placeholder]="'AUTH.FIELDS.CONFIRM_PASSWORD_PLACEHOLDER' | translate"
+        autocomplete="new-password"
+      />
+      <button mat-icon-button matSuffix type="button"
+              class="visibility-toggle" (click)="showConfirmPassword.update(v => !v)">
+        <mat-icon>{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      @if (confirmCtrl.touched && (confirmCtrl.invalid || registerForm.hasError('passwordMismatch'))) {
+        <mat-error>{{ getConfirmError() | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Terms -->
+    <div class="register__terms">
+      <mat-checkbox formControlName="terms" color="primary">
+        <span class="terms-text">
+          {{ 'AUTH.REGISTER.TERMS_PREFIX' | translate }}&nbsp;
+          <a href="#" class="terms-link" (click)="$event.preventDefault()">
+            {{ 'AUTH.REGISTER.TERMS_LINK' | translate }}
+          </a>
+        </span>
+      </mat-checkbox>
+      @if (termsCtrl.touched && termsCtrl.invalid) {
+        <p class="terms-error">{{ 'AUTH.ERRORS.TERMS_REQUIRED' | translate }}</p>
+      }
+    </div>
+
+    <!-- API Error -->
+    @if (apiError()) {
+      <div class="auth-error-banner" role="alert">
+        <span class="material-icons">error_outline</span>
+        <span>{{ apiError()! | translate }}</span>
+      </div>
+    }
+
+    <!-- Submit -->
+    <button
+      mat-flat-button
+      type="submit"
+      class="auth-submit-btn"
+      [disabled]="isLoading()"
+    >
+      <span class="btn-content">
+        @if (isLoading()) {
+          <mat-spinner diameter="22" color="accent" />
+          <span>{{ 'AUTH.REGISTER.LOADING' | translate }}</span>
+        } @else {
+          <span class="material-icons btn-icon">person_add</span>
+          <span>{{ 'AUTH.REGISTER.SUBMIT' | translate }}</span>
+        }
+      </span>
+    </button>
+
+    <!-- Social login -->
+    <app-social-login-buttons (socialLogin)="onSocialLogin($event)" />
+
+    <!-- Login link -->
+    <p class="auth-footer-text">
+      {{ 'AUTH.REGISTER.HAVE_ACCOUNT' | translate }}&nbsp;
+      <a routerLink="/auth/login">{{ 'AUTH.REGISTER.LOGIN' | translate }}</a>
+    </p>
+
+  </form>
+</div>

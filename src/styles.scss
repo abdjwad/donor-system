@@ -1,1 +1,150 @@
-/* You can add global styles to this file, and also import other style files */
+// ============================================================
+// Global Styles — Syrian Donor Platform
+// ============================================================
+@use 'app/styles/variables' as *;
+@use 'app/styles/material-theme';
+@use 'app/styles/typography';
+@use 'app/styles/auth';
+@use 'app/styles/donate';
+@use 'app/styles/home';
+
+// ── CSS Custom Properties ────────────────────────────────────
+:root {
+  --color-primary:        #{$color-primary};
+  --color-primary-light:  #{$color-primary-light};
+  --color-primary-dark:   #{$color-primary-dark};
+  --color-gold:           #{$color-gold};
+  --color-gold-light:     #{$color-gold-light};
+  --color-navy:           #{$color-navy};
+  --color-background:     #{$color-background};
+  --color-card-bg:        #{$color-card-bg};
+  --color-text-primary:   #{$color-text-primary};
+  --color-text-secondary: #{$color-text-secondary};
+  --color-text-muted:     #{$color-text-muted};
+  --color-border:         #{$color-border};
+  --color-error:          #{$color-error};
+  --color-error-bg:       #{$color-error-bg};
+  --color-success:        #{$color-success};
+  --color-success-bg:     #{$color-success-bg};
+
+  --font-arabic: 'Cairo', 'Segoe UI', system-ui, sans-serif;
+  --font-latin:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --space-xs:  #{$space-xs};
+  --space-sm:  #{$space-sm};
+  --space-md:  #{$space-md};
+  --space-lg:  #{$space-lg};
+  --space-xl:  #{$space-xl};
+  --space-2xl: #{$space-2xl};
+
+  --radius-sm:   #{$radius-sm};
+  --radius-md:   #{$radius-md};
+  --radius-lg:   #{$radius-lg};
+  --radius-xl:   #{$radius-xl};
+  --radius-full: #{$radius-full};
+
+  --shadow-card:   #{$shadow-card};
+  --shadow-button: #{$shadow-button};
+}
+
+// ── Reset & Base ─────────────────────────────────────────────
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  background: $color-background;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: $color-background;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a {
+  color: $color-primary;
+  text-decoration: none;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: $color-primary-dark;
+  }
+}
+
+img, svg {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+}
+
+// ── Utility classes ──────────────────────────────────────────
+.full-width  { width: 100%; }
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+.text-left   { text-align: left; }
+
+.mt-sm  { margin-top: $space-sm; }
+.mt-md  { margin-top: $space-md; }
+.mt-lg  { margin-top: $space-lg; }
+.mt-xl  { margin-top: $space-xl; }
+.mb-md  { margin-bottom: $space-md; }
+.mb-lg  { margin-bottom: $space-lg; }
+
+// ── Material Icons font ──────────────────────────────────────
+.material-icons {
+  font-family: 'Material Icons', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+// ── Scrollbar styling ────────────────────────────────────────
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba($color-primary, 0.3);
+  border-radius: $radius-full;
+
+  &:hover {
+    background: rgba($color-primary, 0.5);
+  }
+}
+
+// ── Selection color ──────────────────────────────────────────
+::selection {
+  background: rgba($color-primary, 0.15);
+  color: $color-primary-dark;
+}
+
+// ── Focus visible (accessibility) ───────────────────────────
+:focus-visible {
+  outline: 2px solid $color-primary;
+  outline-offset: 2px;
+  border-radius: $radius-sm;
+}

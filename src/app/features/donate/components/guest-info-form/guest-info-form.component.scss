@@ -1,0 +1,21 @@
+@use '../../../../styles/variables' as *;
+
+.anon-toggle {
+  margin-bottom: $space-xl;
+
+  &__hint {
+    font-size: 0.8125rem;
+    color: $color-text-muted;
+    margin: 4px 0 0 $space-xl;
+    font-weight: 400;
+  }
+}
+
+.field-prefix-icon {
+  color: $color-text-muted;
+  font-size: 1.125rem !important;
+  width: 1.125rem !important;
+  height: 1.125rem !important;
+  line-height: 1 !important;
+  margin-inline-end: $space-xs;
+}

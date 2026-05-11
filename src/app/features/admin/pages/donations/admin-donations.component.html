@@ -1,0 +1,57 @@
+<div class="admin-page">
+  <div class="admin-page__header">
+    <h1 class="admin-page__title">{{ 'ADMIN.DONATIONS.TITLE' | translate }}</h1>
+    <div class="admin-filters">
+      <select class="admin-select" [value]="filterStatus()" (change)="filterStatus.set($any($event.target).value)">
+        <option value="all">{{ isRtl() ? 'الكل' : 'All' }}</option>
+        <option value="completed">{{ isRtl() ? 'مكتمل' : 'Completed' }}</option>
+        <option value="pending">{{ isRtl() ? 'معلق' : 'Pending' }}</option>
+        <option value="refunded">{{ isRtl() ? 'مسترد' : 'Refunded' }}</option>
+        <option value="failed">{{ isRtl() ? 'فشل' : 'Failed' }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{{ 'ADMIN.DONATIONS.DONOR' | translate }}</th>
+            <th>{{ 'ADMIN.DONATIONS.AMOUNT' | translate }}</th>
+            <th>{{ 'ADMIN.DONATIONS.PROJECT' | translate }}</th>
+            <th>{{ 'ADMIN.DONATIONS.METHOD' | translate }}</th>
+            <th>{{ 'ADMIN.DONATIONS.DATE' | translate }}</th>
+            <th>{{ 'ADMIN.DONATIONS.STATUS' | translate }}</th>
+            <th>{{ 'ADMIN.DONATIONS.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (d of donations(); track d.id) {
+            <tr>
+              <td class="id-cell">{{ d.id }}</td>
+              <td><div class="donor-cell">{{ donorName(d) }}</div></td>
+              <td class="amount-cell">${{ d.amount }}</td>
+              <td>{{ projectName(d) }}</td>
+              <td>{{ d.method }}</td>
+              <td class="date-cell">{{ d.date }}</td>
+              <td><span class="status-badge status-badge--{{ d.status }}">{{ d.status }}</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="action-btn action-btn--view"><span class="material-icons">visibility</span></button>
+                  @if (d.status === 'pending') {
+                    <button class="action-btn action-btn--approve"><span class="material-icons">check</span></button>
+                  }
+                  @if (d.status === 'completed') {
+                    <button class="action-btn action-btn--refund"><span class="material-icons">undo</span></button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+<div class="admin-page">
+
+  <h1 class="admin-page__title">{{ 'ADMIN.OVERVIEW.TITLE' | translate }}</h1>
+
+  <!-- Stats cards -->
+  <div class="stats-grid">
+    @for (s of stats; track s.key) {
+      <div class="stat-card">
+        <div class="stat-card__icon"><span class="material-icons">{{ s.icon }}</span></div>
+        <div class="stat-card__body">
+          <div class="stat-card__label">{{ ('ADMIN.OVERVIEW.' + s.key) | translate }}</div>
+          <div class="stat-card__value">{{ s.value }}</div>
+          <div class="stat-card__change">{{ s.change }}</div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="overview-grid">
+
+    <!-- Recent donations table -->
+    <div class="admin-card">
+      <h2 class="admin-card__title">{{ 'ADMIN.OVERVIEW.RECENT_TITLE' | translate }}</h2>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{{ 'ADMIN.DONATIONS.DONOR' | translate }}</th>
+              <th>{{ 'ADMIN.DONATIONS.AMOUNT' | translate }}</th>
+              <th>{{ 'ADMIN.DONATIONS.PROJECT' | translate }}</th>
+              <th>{{ 'ADMIN.DONATIONS.STATUS' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of recent; track r.donor) {
+              <tr>
+                <td>{{ donorName(r) }}</td>
+                <td class="amount-cell">${{ r.amount }}</td>
+                <td>{{ projectName(r) }}</td>
+                <td><span class="status-badge status-badge--{{ r.status }}">{{ r.status }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Category chart -->
+    <div class="admin-card">
+      <h2 class="admin-card__title">{{ 'ADMIN.OVERVIEW.CHART_TITLE' | translate }}</h2>
+      <div class="chart-list">
+        @for (c of categories; track c.labelEn) {
+          <div class="chart-row">
+            <div class="chart-row__label">{{ catLabel(c) }}</div>
+            <div class="chart-row__bar-wrap">
+              <div class="chart-row__bar" [style.width.%]="c.pct" [style.background]="c.color"></div>
+            </div>
+            <div class="chart-row__pct">{{ c.pct }}%</div>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

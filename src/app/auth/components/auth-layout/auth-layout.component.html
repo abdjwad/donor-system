@@ -1,0 +1,107 @@
+<div class="auth-layout" [class.rtl]="isRtl()">
+
+  <!-- ══════════════════════════════════════════
+       LEFT PANEL — Syrian Branding
+  ══════════════════════════════════════════ -->
+  <aside class="auth-layout__brand" aria-hidden="true">
+    <!-- Damascus geometric pattern background -->
+    <div class="auth-layout__pattern"></div>
+
+    <!-- Gold accent strip on inner edge -->
+    <div class="auth-layout__gold-strip"></div>
+
+    <div class="auth-layout__brand-content">
+      <!-- Logo -->
+      <div class="auth-layout__logo">
+        <div class="auth-layout__logo-icon">
+          <!-- Olive branch / heart icon -->
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="24" fill="rgba(255,255,255,0.12)"/>
+            <path d="M24 36s-12-7.5-12-15a12 12 0 0 1 24 0c0 7.5-12 15-12 15z"
+                  fill="none" stroke="#E5B84A" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M24 12 C20 16 16 20 18 25 C20 28 24 28 24 28 C24 28 28 28 30 25 C32 20 28 16 24 12Z"
+                  fill="#E5B84A" opacity="0.7"/>
+            <!-- Stem -->
+            <line x1="24" y1="28" x2="24" y2="36" stroke="#E5B84A" stroke-width="1.5"/>
+            <!-- Leaves -->
+            <path d="M24 22 Q20 20 19 24" stroke="#E5B84A" stroke-width="1" fill="none"/>
+            <path d="M24 24 Q28 22 29 26" stroke="#E5B84A" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <div class="auth-layout__logo-text">
+          <span class="auth-layout__logo-ar">منصة بنيان</span>
+          <span class="auth-layout__logo-en">Bunian Platform</span>
+        </div>
+      </div>
+
+      <!-- Tagline -->
+      <h1 class="auth-layout__tagline">
+        {{ 'AUTH.LAYOUT.TAGLINE' | translate }}
+      </h1>
+
+      <p class="auth-layout__description">
+        {{ 'AUTH.LAYOUT.DESCRIPTION' | translate }}
+      </p>
+
+      <!-- Decorative divider -->
+      <div class="auth-layout__divider">
+        <div class="auth-layout__divider-line"></div>
+        <div class="auth-layout__divider-diamond"></div>
+        <div class="auth-layout__divider-line"></div>
+      </div>
+
+      <!-- Trust Stats -->
+      <div class="auth-layout__stats">
+        <div class="auth-layout__stat">
+          <span class="auth-layout__stat-number">12,450+</span>
+          <span class="auth-layout__stat-label">{{ 'AUTH.LAYOUT.DONORS' | translate }}</span>
+        </div>
+        <div class="auth-layout__stat-separator"></div>
+        <div class="auth-layout__stat">
+          <span class="auth-layout__stat-number">3,200+</span>
+          <span class="auth-layout__stat-label">{{ 'AUTH.LAYOUT.FAMILIES' | translate }}</span>
+        </div>
+        <div class="auth-layout__stat-separator"></div>
+        <div class="auth-layout__stat">
+          <span class="auth-layout__stat-number">840+</span>
+          <span class="auth-layout__stat-label">{{ 'AUTH.LAYOUT.PROJECTS' | translate }}</span>
+        </div>
+      </div>
+
+      <!-- Trust badge -->
+      <div class="auth-layout__trust-badge">
+        <span class="material-icons">verified</span>
+        <span>{{ 'AUTH.LAYOUT.TRUST_BADGE' | translate }}</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════
+       RIGHT PANEL — Form Area
+  ══════════════════════════════════════════ -->
+  <main class="auth-layout__form-area">
+    <!-- Language switcher -->
+    <div class="auth-layout__top-bar">
+      <button
+        class="auth-layout__lang-btn"
+        type="button"
+        (click)="toggleLanguage()"
+        [attr.aria-label]="isRtl() ? 'Switch to English' : 'التبديل إلى العربية'"
+      >
+        <span class="material-icons">language</span>
+        <span>{{ isRtl() ? 'English' : 'العربية' }}</span>
+      </button>
+    </div>
+
+    <!-- Form container -->
+    <div class="auth-layout__form-container">
+      <router-outlet />
+    </div>
+
+    <!-- Footer -->
+    <footer class="auth-layout__footer">
+      <p>&copy; 2025 منصة بنيان — Syria Reconstruction</p>
+    </footer>
+  </main>
+
+</div>

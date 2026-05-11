@@ -1,0 +1,128 @@
+@use '../../../../styles/variables' as *;
+
+.checkout-page {
+  min-height: 100vh;
+  background: $color-background;
+  padding: 0 0 $space-3xl;
+
+  &.rtl { direction: rtl; }
+}
+
+// ── Header ───────────────────────────────────────────────────
+.checkout-header {
+  background: $color-card-bg;
+  border-bottom: 1px solid $color-border;
+  padding: $space-lg $space-2xl;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-md;
+
+  @media (max-width: $bp-tablet) {
+    padding: $space-md $space-lg;
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  &__title {
+    text-align: center;
+    flex: 1;
+
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: $color-text-primary;
+      margin: 0 0 2px;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      font-size: 0.8125rem;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+
+  &__auth {
+    font-size: 0.875rem;
+    color: $color-text-muted;
+    white-space: nowrap;
+
+    a {
+      color: $color-primary;
+      font-weight: 700;
+      margin-inline-start: $space-xs;
+      text-decoration: none;
+
+      &:hover { text-decoration: underline; }
+    }
+  }
+}
+
+.header-logo-dot {
+  width: 9px;
+  height: 9px;
+  background: $color-primary;
+  border-radius: $radius-full;
+  box-shadow: 0 0 0 3px rgba($color-primary, 0.15);
+}
+
+.header-logo-text {
+  font-size: 1rem;
+  font-weight: 800;
+  color: $color-primary;
+  letter-spacing: 0.01em;
+}
+
+// ── Layout ───────────────────────────────────────────────────
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: $space-2xl;
+  max-width: 1100px;
+  margin: $space-2xl auto;
+  padding: 0 $space-2xl;
+  align-items: start;
+
+  @media (max-width: $bp-desktop) {
+    grid-template-columns: 1fr 320px;
+    gap: $space-xl;
+    padding: 0 $space-xl;
+  }
+
+  @media (max-width: $bp-tablet) {
+    grid-template-columns: 1fr;
+    padding: 0 $space-lg;
+    margin: $space-lg auto;
+
+    // On mobile: summary goes below the stepper
+    .checkout-layout__summary {
+      order: 2;
+    }
+    .checkout-layout__stepper {
+      order: 1;
+    }
+  }
+}
+
+.checkout-layout__stepper {
+  background: $color-card-bg;
+  border-radius: $radius-xl;
+  border: 1px solid $color-border;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+
+  // Stepper inner padding
+  ::ng-deep .mat-stepper-horizontal {
+    padding: $space-xl $space-xl 0;
+  }
+
+  ::ng-deep .mat-horizontal-content-container {
+    padding: 0 $space-xl $space-xl;
+  }
+}

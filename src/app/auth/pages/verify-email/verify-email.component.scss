@@ -1,0 +1,103 @@
+@use '../../../../app/styles/variables' as *;
+
+.verify-card {
+  max-width: 440px;
+  width: 100%;
+}
+
+.verify__icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  background: rgba($color-primary, 0.08);
+  border-radius: $radius-full;
+  margin: 0 auto $space-lg;
+
+  .material-icons {
+    font-size: 2.25rem;
+    color: $color-primary;
+  }
+}
+
+.verify__email {
+  font-weight: 600;
+  color: $color-primary;
+  font-size: 0.9375rem;
+  margin-top: $space-xs;
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+.verify__otp-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $space-md;
+  margin-top: $space-lg;
+}
+
+.verify__otp-error {
+  text-align: center;
+  font-size: 0.8125rem;
+  color: $color-error;
+  margin-top: 0;
+  margin-bottom: $space-md;
+}
+
+.verify__resend {
+  display: flex;
+  justify-content: center;
+  margin-top: $space-lg;
+  margin-bottom: $space-md;
+}
+
+.resend-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  background: none;
+  border: none;
+  color: $color-primary;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+  transition: $transition-fast;
+
+  .material-icons {
+    font-size: 1.125rem;
+  }
+
+  &:hover {
+    color: $color-primary-dark;
+    text-decoration: underline;
+  }
+}
+
+.resend-timer {
+  font-size: 0.875rem;
+  color: $color-text-muted;
+  margin: 0;
+}
+
+.verify__hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-xs;
+  font-size: 0.8125rem;
+  color: $color-text-muted;
+  margin-top: $space-sm;
+  text-align: center;
+}
+
+.hint-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  font-size: 1.25rem;
+}

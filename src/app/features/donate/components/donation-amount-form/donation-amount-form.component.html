@@ -1,0 +1,95 @@
+<div class="step-content">
+
+  <div class="step-header">
+    <h3>{{ 'DONATE.AMOUNT.TITLE' | translate }}</h3>
+    <p>{{ 'DONATE.AMOUNT.SUBTITLE' | translate }}</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onNext()" novalidate>
+
+    <!-- ── Quick Amount Chips ── -->
+    <div class="amount-section">
+      <div class="amount-chips">
+        @for (amt of quickAmounts; track amt) {
+          <button type="button" class="amount-chip"
+                  [class.amount-chip--selected]="selectedAmount() === amt && !isCustom()"
+                  (click)="selectQuick(amt)">
+            ${{ amt }}
+          </button>
+        }
+        <button type="button" class="amount-chip amount-chip--custom"
+                [class.amount-chip--selected]="isCustom()"
+                (click)="selectCustom()">
+          {{ 'DONATE.AMOUNT.CUSTOM' | translate }}
+        </button>
+      </div>
+
+      @if (isCustom()) {
+        <mat-form-field appearance="outline" class="full-width custom-amount-field">
+          <mat-label>{{ 'DONATE.AMOUNT.CUSTOM_LABEL' | translate }}</mat-label>
+          <span matPrefix class="currency-prefix">$&nbsp;</span>
+          <input matInput type="number" formControlName="customAmount"
+                 min="1" placeholder="0.00" dir="ltr"/>
+        </mat-form-field>
+      }
+    </div>
+
+    <!-- ── Donation Type Toggle ── -->
+    <div class="section-group">
+      <mat-button-toggle-group formControlName="donation_type" class="type-toggle full-width">
+        <mat-button-toggle value="one_time" class="type-toggle__btn">
+          <span class="material-icons toggle-icon">payments</span>
+          {{ 'DONATE.AMOUNT.TYPE_ONE_TIME' | translate }}
+        </mat-button-toggle>
+        <mat-button-toggle value="recurring" class="type-toggle__btn">
+          <span class="material-icons toggle-icon">autorenew</span>
+          {{ 'DONATE.AMOUNT.TYPE_MONTHLY' | translate }}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <!-- ── Project Selector ── -->
+    <div class="section-group">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'DONATE.AMOUNT.PROJECT_LABEL' | translate }}</mat-label>
+        <mat-icon matPrefix class="field-prefix-icon">handshake</mat-icon>
+        <mat-select formControlName="project_id">
+          <mat-option [value]="null">{{ 'DONATE.AMOUNT.GENERAL_FUND' | translate }}</mat-option>
+          @for (project of projects(); track project.id) {
+            <mat-option [value]="project.id">{{ project.titleAr }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- ── Dedication Message ── -->
+    <div class="section-group">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'DONATE.AMOUNT.DEDICATION_LABEL' | translate }}</mat-label>
+        <textarea matInput formControlName="dedication_message" rows="3"
+                  [placeholder]="'DONATE.AMOUNT.DEDICATION_PLACEHOLDER' | translate"
+                  [maxlength]="maxChars"></textarea>
+        <mat-hint align="end">
+          {{ 'DONATE.AMOUNT.DEDICATION_HINT' | translate : { remaining: remainingChars() } }}
+        </mat-hint>
+      </mat-form-field>
+    </div>
+
+    <!-- ── Buttons ── -->
+    <div class="step-actions">
+      <button mat-stroked-button type="button" class="step-back-btn" (click)="onBack()">
+        <span class="material-icons btn-arrow">arrow_back</span>
+        {{ 'DONATE.AMOUNT.BACK' | translate }}
+      </button>
+      <button mat-flat-button type="submit" class="step-next-btn"
+              [disabled]="!hasValidAmount">
+        <span class="btn-content">
+          <span>{{ 'DONATE.AMOUNT.NEXT' | translate }}</span>
+          <span class="material-icons btn-arrow">arrow_forward</span>
+        </span>
+      </button>
+    </div>
+
+  </form>
+
+</div>

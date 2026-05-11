@@ -1,0 +1,121 @@
+// ============================================================
+// Donate Module Shared Styles — Bunian Platform
+// ============================================================
+@use 'variables' as *;
+
+// ── Step content wrapper ──────────────────────────────────────
+.step-content {
+  padding: $space-xl 0 $space-sm;
+}
+
+// ── Step header ───────────────────────────────────────────────
+.step-header {
+  margin-bottom: $space-xl;
+
+  h3 {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: $color-text-primary;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+
+  p {
+    font-size: 0.9375rem;
+    color: $color-text-muted;
+    margin: 0;
+    line-height: 1.6;
+  }
+}
+
+// ── Step navigation buttons ───────────────────────────────────
+.step-actions {
+  display: flex;
+  gap: $space-md;
+  margin-top: $space-xl;
+  padding-top: $space-lg;
+  border-top: 1px solid $color-border;
+}
+
+.step-next-btn {
+  flex: 1;
+  height: 52px !important;
+  font-size: 1.0625rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
+  border-radius: $radius-md !important;
+  background: $color-primary !important;
+  color: #fff !important;
+  font-family: inherit !important;
+  transition: $transition-base;
+  box-shadow: $shadow-button;
+
+  &:hover:not(:disabled) {
+    background: $color-primary-dark !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba($color-primary, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.55 !important;
+    transform: none !important;
+    box-shadow: none;
+  }
+
+  .btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-sm;
+    line-height: 1;
+  }
+
+  .btn-arrow {
+    font-size: 1.25rem;
+    line-height: 1;
+
+    [dir="rtl"] & {
+      transform: scaleX(-1);
+    }
+  }
+}
+
+.step-back-btn {
+  height: 52px !important;
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+  border-radius: $radius-md !important;
+  border-color: $color-border !important;
+  color: $color-text-secondary !important;
+  font-family: inherit !important;
+  transition: $transition-base;
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+
+  &:hover {
+    border-color: $color-primary !important;
+    color: $color-primary !important;
+  }
+
+  .btn-arrow {
+    font-size: 1.125rem;
+
+    [dir="rtl"] & {
+      transform: scaleX(-1);
+    }
+  }
+}
+
+// When step-next-btn is used solo (no back button)
+.step-next-btn:only-child {
+  margin-top: $space-xl;
+  padding-top: 0;
+  border-top: none;
+}
+
+// For solo next button without .step-actions wrapper
+form > .step-next-btn {
+  width: 100%;
+  margin-top: $space-xl;
+}

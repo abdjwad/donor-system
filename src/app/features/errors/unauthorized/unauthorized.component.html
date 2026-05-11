@@ -1,0 +1,23 @@
+<div class="error-page" [class.rtl]="isRtl()">
+  <div class="error-page__inner">
+
+    <div class="error-icon error-icon--lock">
+      <span class="material-icons">lock</span>
+    </div>
+
+    <h1 class="error-page__title">{{ 'ERRORS.UNAUTHORIZED.TITLE' | translate }}</h1>
+    <p class="error-page__subtitle">{{ 'ERRORS.UNAUTHORIZED.SUBTITLE' | translate }}</p>
+
+    <div class="error-page__actions">
+      <a routerLink="/auth/login" mat-flat-button class="error-page__btn-primary">
+        <span class="material-icons">login</span>
+        {{ 'ERRORS.UNAUTHORIZED.BTN_LOGIN' | translate }}
+      </a>
+      <a routerLink="/home" mat-stroked-button class="error-page__btn-secondary">
+        <span class="material-icons">home</span>
+        {{ 'ERRORS.UNAUTHORIZED.BTN_HOME' | translate }}
+      </a>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,61 @@
+// ============================================================
+// Syrian Visual Identity — Design Tokens
+// ============================================================
+
+// Brand Colors
+$color-primary:        #1B6B3A;
+$color-primary-light:  #2E8B57;
+$color-primary-dark:   #0D4A25;
+$color-gold:           #C5952A;
+$color-gold-light:     #E5B84A;
+$color-gold-dark:      #A07820;
+$color-navy:           #1A2D5A;
+
+// Neutrals
+$color-background:     #FBF7F0;
+$color-card-bg:        #FFFFFF;
+$color-text-primary:   #1C2833;
+$color-text-secondary: #34495E;
+$color-text-muted:     #7F8C8D;
+$color-border:         #E8DDD0;
+$color-border-focus:   $color-primary;
+
+// Semantic
+$color-error:          #C0392B;
+$color-error-bg:       #FDEDEC;
+$color-success:        #27AE60;
+$color-success-bg:     #EAFAF1;
+$color-warning:        #E67E22;
+
+// Spacing
+$space-xs:   4px;
+$space-sm:   8px;
+$space-md:   16px;
+$space-lg:   24px;
+$space-xl:   32px;
+$space-2xl:  48px;
+$space-3xl:  64px;
+
+// Border Radius
+$radius-sm:   5px;
+$radius-md:   10px;
+$radius-lg:   16px;
+$radius-xl:   22px;
+$radius-full: 9999px;
+
+// Shadows
+$shadow-card:   0 2px 16px rgba($color-primary, 0.07), 0 1px 3px rgba(0,0,0,0.04);
+$shadow-input:  0 1px 4px rgba(0, 0, 0, 0.04);
+$shadow-button: 0 3px 12px rgba($color-primary, 0.28);
+$shadow-gold:   0 3px 12px rgba($color-gold, 0.28);
+
+// Transitions
+$transition-fast:   all 0.15s ease;
+$transition-base:   all 0.25s ease;
+$transition-slow:   all 0.4s ease;
+
+// Breakpoints
+$bp-mobile:  576px;
+$bp-tablet:  768px;
+$bp-desktop: 1024px;
+$bp-wide:    1280px;

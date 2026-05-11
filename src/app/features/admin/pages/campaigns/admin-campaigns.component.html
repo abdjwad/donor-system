@@ -1,0 +1,47 @@
+<div class="admin-page">
+  <div class="admin-page__header">
+    <h1 class="admin-page__title">{{ 'ADMIN.CAMPAIGNS.TITLE' | translate }}</h1>
+    <button mat-flat-button class="admin-primary-btn">
+      <span class="material-icons">add</span>
+      {{ 'ADMIN.CAMPAIGNS.NEW' | translate }}
+    </button>
+  </div>
+
+  <div class="campaigns-grid">
+    @for (c of campaigns(); track c.id) {
+      <div class="camp-card">
+        <div class="camp-card__header">
+          <h3 class="camp-card__title">{{ title(c) }}</h3>
+          <span class="status-badge status-badge--{{ c.status }}">{{ c.status }}</span>
+        </div>
+
+        <div class="camp-card__progress">
+          <div class="camp-progress-bar">
+            <div class="camp-progress-bar__fill" [style.width.%]="pct(c)"></div>
+          </div>
+          <div class="camp-progress-labels">
+            <span class="camp-raised">{{ fmt(c.raised) }}</span>
+            <span class="camp-pct">{{ pct(c) }}%</span>
+            <span class="camp-goal">{{ fmt(c.goal) }}</span>
+          </div>
+        </div>
+
+        <div class="camp-card__meta">
+          <span><span class="material-icons">group</span>{{ c.donors }}</span>
+          <span><span class="material-icons">event</span>{{ c.endsAt }}</span>
+        </div>
+
+        <div class="camp-card__actions">
+          <button mat-stroked-button class="camp-btn" (click)="toggle(c.id)">
+            <span class="material-icons">{{ c.status === 'active' ? 'pause' : 'play_arrow' }}</span>
+            {{ (c.status === 'active' ? 'ADMIN.CAMPAIGNS.PAUSE' : 'ADMIN.CAMPAIGNS.ACTIVATE') | translate }}
+          </button>
+          <button mat-stroked-button class="camp-btn camp-btn--edit">
+            <span class="material-icons">edit</span>
+            {{ 'ADMIN.CAMPAIGNS.EDIT' | translate }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

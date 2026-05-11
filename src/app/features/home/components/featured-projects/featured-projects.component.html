@@ -1,0 +1,22 @@
+<section class="section featured-projects-section">
+  <div class="section-inner">
+
+    <div class="section-header">
+      <div class="section-header__text">
+        <h2 class="section-title">{{ 'HOME.FEATURED_PROJECTS.TITLE' | translate }}</h2>
+        <p class="section-subtitle">{{ 'HOME.FEATURED_PROJECTS.SUBTITLE' | translate }}</p>
+      </div>
+      <a routerLink="/projects" class="section-header__link">
+        {{ 'HOME.FEATURED_PROJECTS.SEE_ALL' | translate }}
+        <span class="material-icons">arrow_forward</span>
+      </a>
+    </div>
+
+    <div class="featured-projects-grid">
+      @for (p of projects; track p.id) {
+        <app-project-card [project]="p" />
+      }
+    </div>
+
+  </div>
+</section>

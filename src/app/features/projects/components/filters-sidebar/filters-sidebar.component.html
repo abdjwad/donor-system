@@ -1,0 +1,82 @@
+<aside class="filters-sidebar">
+
+  <div class="filters-sidebar__header">
+    <h3 class="filters-sidebar__title">
+      <span class="material-icons">tune</span>
+      {{ 'PROJECTS.FILTERS.TITLE' | translate }}
+    </h3>
+    <button mat-button class="filters-reset-btn" (click)="filterService.reset()">
+      {{ 'PROJECTS.FILTERS.RESET' | translate }}
+    </button>
+  </div>
+
+  <!-- ── Status ── -->
+  <div class="filter-group">
+    <h4 class="filter-group__label">{{ 'PROJECTS.FILTERS.STATUS' | translate }}</h4>
+    <div class="filter-group__options">
+      @for (s of statuses; track s) {
+        <label class="radio-option">
+          <input type="radio" name="status"
+                 [value]="s"
+                 [checked]="filterService.filters().status === s"
+                 (change)="filterService.setStatus(s)"/>
+          <span class="radio-option__dot"></span>
+          <span class="radio-option__label">
+            {{ ('PROJECTS.STATUS.' + s.toUpperCase()) | translate }}
+          </span>
+        </label>
+      }
+    </div>
+  </div>
+
+  <!-- ── Category ── -->
+  <div class="filter-group">
+    <h4 class="filter-group__label">{{ 'PROJECTS.FILTERS.CATEGORY' | translate }}</h4>
+    <div class="filter-group__options">
+      @for (cat of categories; track cat) {
+        <label class="check-option" [class.checked]="isCategory(cat)"
+               (click)="filterService.toggleCategory(cat)">
+          <span class="check-box">
+            @if (isCategory(cat)) { <span class="material-icons check-icon">check</span> }
+          </span>
+          <span>{{ ('PROJECTS.CATEGORIES.' + cat.toUpperCase()) | translate }}</span>
+        </label>
+      }
+    </div>
+  </div>
+
+  <!-- ── Location ── -->
+  <div class="filter-group">
+    <h4 class="filter-group__label">{{ 'PROJECTS.FILTERS.LOCATION' | translate }}</h4>
+    <div class="filter-group__options">
+      @for (loc of filterService.uniqueLocations(); track loc) {
+        <label class="check-option" [class.checked]="isLocation(loc)"
+               (click)="filterService.toggleLocation(loc)">
+          <span class="check-box">
+            @if (isLocation(loc)) { <span class="material-icons check-icon">check</span> }
+          </span>
+          <span>{{ loc }}</span>
+        </label>
+      }
+    </div>
+  </div>
+
+  <!-- ── Urgency ── -->
+  <div class="filter-group">
+    <h4 class="filter-group__label">{{ 'PROJECTS.FILTERS.URGENCY' | translate }}</h4>
+    <div class="filter-group__options">
+      @for (urg of urgencies; track urg) {
+        <label class="check-option" [class.checked]="isUrgency(urg)"
+               (click)="filterService.toggleUrgency(urg)">
+          <span class="check-box">
+            @if (isUrgency(urg)) { <span class="material-icons check-icon">check</span> }
+          </span>
+          <span class="urgency-badge urgency-badge--{{ urg }}">
+            {{ ('PROJECTS.URGENCY.' + urg.toUpperCase()) | translate }}
+          </span>
+        </label>
+      }
+    </div>
+  </div>
+
+</aside>

@@ -1,0 +1,137 @@
+@use '../../../../styles/variables' as *;
+
+.notif-page { min-height: 100vh; background: $color-background; &.rtl { direction: rtl; } }
+
+// ── Header ──────────────────────────────────────────────────────
+.notif-header {
+  background: linear-gradient(135deg, $color-primary-dark, $color-primary);
+  padding: $space-2xl 0 $space-xl;
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url('/assets/images/auth-pattern.svg');
+    background-size: 120px; opacity: 0.05;
+  }
+  &__inner { max-width: 1100px; margin: 0 auto; padding: 0 $space-2xl; position: relative;
+    @media (max-width: $bp-tablet) { padding: 0 $space-lg; }
+  }
+  &__title {
+    display: flex; align-items: center; gap: $space-sm;
+    font-size: 1.75rem; font-weight: 800; color: #fff; margin: 0 0 $space-xs;
+    .material-icons { font-size: 2rem; color: $color-gold-light; }
+  }
+  &__sub { font-size: 0.9375rem; color: rgba(255,255,255,0.75); margin: 0; }
+}
+
+.notif-badge {
+  background: $color-error; color: #fff;
+  border-radius: $radius-full; padding: 2px 8px;
+  font-size: 0.8125rem; font-weight: 700; font-family: var(--font-latin);
+}
+
+// ── Layout ───────────────────────────────────────────────────────
+.notif-layout { max-width: 1100px; margin: $space-2xl auto; padding: 0 $space-2xl;
+  @media (max-width: $bp-tablet) { padding: 0 $space-lg; margin: $space-xl auto; }
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────
+.notif-tabs { display: flex; gap: $space-xs; margin-bottom: $space-xl; border-bottom: 2px solid $color-border; }
+.notif-tab {
+  display: flex; align-items: center; gap: $space-xs;
+  padding: $space-sm $space-lg; background: none; border: none; cursor: pointer;
+  font-size: 0.9375rem; font-weight: 600; color: $color-text-muted;
+  font-family: inherit; transition: $transition-fast;
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  .material-icons { font-size: 1.125rem; }
+  &:hover { color: $color-primary; }
+  &.active { color: $color-primary; border-bottom-color: $color-primary; }
+}
+
+.notif-content { max-width: 700px; }
+
+// ── Toolbar ───────────────────────────────────────────────────────
+.notif-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: $space-lg; flex-wrap: wrap; gap: $space-sm; }
+.notif-filters { display: flex; gap: $space-xs; }
+.filter-chip {
+  height: 34px; padding: 0 $space-md; border: 1.5px solid $color-border;
+  border-radius: $radius-full; background: $color-card-bg;
+  font-size: 0.8125rem; font-weight: 600; cursor: pointer;
+  font-family: inherit; color: $color-text-secondary; transition: $transition-fast;
+  &.active { border-color: $color-primary; background: rgba($color-primary,0.08); color: $color-primary; }
+  &:hover:not(.active) { border-color: $color-primary; }
+}
+.mark-all-btn { font-size: 0.875rem !important; color: $color-primary !important; font-weight: 600 !important;
+  .material-icons { font-size: 1rem; }
+}
+
+// ── Notification List ─────────────────────────────────────────────
+.notif-empty { display: flex; flex-direction: column; align-items: center; gap: $space-md; padding: $space-3xl 0; color: $color-text-muted;
+  .material-icons { font-size: 3rem; }
+  p { font-size: 1rem; font-weight: 500; margin: 0; }
+}
+
+.notif-list { display: flex; flex-direction: column; gap: 2px; }
+
+.notif-item {
+  display: flex; align-items: flex-start; gap: $space-md;
+  padding: $space-md $space-lg; background: $color-card-bg;
+  border: 1px solid $color-border; border-radius: $radius-xl;
+  cursor: pointer; transition: $transition-fast; position: relative;
+  &:hover { border-color: $color-primary; background: rgba($color-primary,0.02); }
+  &--unread { background: rgba($color-primary,0.03); border-color: rgba($color-primary,0.2); }
+  &--unread &__title { font-weight: 700; }
+
+  &__icon {
+    width: 42px; height: 42px; border-radius: $radius-md;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    background: rgba($color-primary,0.1); color: $color-primary;
+    .material-icons { font-size: 1.25rem; }
+    &--donation { background: rgba($color-success,0.1); color: $color-success; }
+    &--project_update { background: rgba($color-primary,0.1); color: $color-primary; }
+    &--campaign { background: rgba($color-gold,0.12); color: $color-gold-dark; }
+    &--system { background: rgba($color-navy,0.08); color: $color-navy; }
+  }
+
+  &__body { flex: 1; min-width: 0; }
+  &__title { font-size: 0.9375rem; font-weight: 600; color: $color-text-primary; margin-bottom: 4px; }
+  &__text { font-size: 0.875rem; color: $color-text-secondary; line-height: 1.5; margin-bottom: $space-xs; }
+  &__meta { display: flex; align-items: center; gap: $space-sm; flex-wrap: wrap; }
+  &__time { font-size: 0.75rem; color: $color-text-muted; font-family: var(--font-latin); }
+
+  &__type-badge {
+    font-size: 0.6875rem; font-weight: 700; padding: 2px 8px; border-radius: $radius-full;
+    background: rgba($color-primary,0.08); color: $color-primary;
+    &--donation { background: rgba($color-success,0.1); color: $color-success; }
+    &--campaign { background: rgba($color-gold,0.12); color: $color-gold-dark; }
+    &--system { background: rgba($color-navy,0.08); color: $color-navy; }
+  }
+
+  &__dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: $color-primary; flex-shrink: 0; margin-top: 4px;
+  }
+}
+
+// ── Settings ───────────────────────────────────────────────────────
+.settings-card {
+  background: $color-card-bg; border: 1px solid $color-border;
+  border-radius: $radius-xl; padding: $space-xl; box-shadow: $shadow-card;
+  &__title { font-size: 1.125rem; font-weight: 800; color: $color-text-primary; margin: 0 0 $space-xl; letter-spacing: -0.01em; }
+}
+
+.setting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: $space-md 0; border-bottom: 1px solid $color-background;
+  &:last-of-type { border-bottom: none; }
+  &__label { display: flex; align-items: center; gap: $space-sm; font-size: 0.9375rem; font-weight: 500; color: $color-text-primary;
+    .material-icons { font-size: 1.25rem; color: $color-text-muted; }
+  }
+}
+
+.settings-save-btn {
+  margin-top: $space-xl; height: 44px !important; padding: 0 $space-xl !important;
+  font-weight: 700 !important; border-radius: $radius-md !important;
+  background: $color-primary !important; color: #fff !important;
+}

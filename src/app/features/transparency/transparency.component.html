@@ -1,0 +1,112 @@
+<div class="transparency-page" [class.rtl]="isRtl()">
+  <app-navbar />
+
+  <!-- Hero header -->
+  <header class="transparency-header">
+    <div class="transparency-header__inner">
+      <div class="transparency-header__badge">
+        <span class="material-icons">verified</span>
+        {{ isRtl() ? 'شفافية مالية كاملة' : '100% Financial Transparency' }}
+      </div>
+      <h1 class="transparency-header__title">{{ 'TRANSPARENCY.TITLE' | translate }}</h1>
+      <p class="transparency-header__subtitle">{{ 'TRANSPARENCY.SUBTITLE' | translate }}</p>
+    </div>
+  </header>
+
+  <div class="transparency-content">
+
+    <!-- Stats overview -->
+    <section class="transparency-section">
+      <div class="overview-stats">
+        <div class="overview-stat">
+          <span class="overview-stat__icon material-icons" style="color:#1B6B3A">savings</span>
+          <span class="overview-stat__value">{{ formatM(stats.totalReceived) }}</span>
+          <span class="overview-stat__label">{{ 'TRANSPARENCY.STATS.TOTAL_RECEIVED' | translate }}</span>
+        </div>
+        <div class="overview-stat">
+          <span class="overview-stat__icon material-icons" style="color:#C5952A">construction</span>
+          <span class="overview-stat__value">{{ formatM(stats.totalSpent) }}</span>
+          <span class="overview-stat__label">{{ 'TRANSPARENCY.STATS.TOTAL_SPENT' | translate }}</span>
+        </div>
+        <div class="overview-stat">
+          <span class="overview-stat__icon material-icons" style="color:#1A2D5A">bar_chart</span>
+          <span class="overview-stat__value">{{ stats.activeProjects }}</span>
+          <span class="overview-stat__label">{{ 'TRANSPARENCY.STATS.ACTIVE_PROJECTS' | translate }}</span>
+        </div>
+        <div class="overview-stat">
+          <span class="overview-stat__icon material-icons" style="color:#27AE60">check_circle</span>
+          <span class="overview-stat__value">{{ stats.completedProjects }}</span>
+          <span class="overview-stat__label">{{ 'TRANSPARENCY.STATS.COMPLETED_PROJECTS' | translate }}</span>
+        </div>
+        <div class="overview-stat">
+          <span class="overview-stat__icon material-icons" style="color:#1B6B3A">people</span>
+          <span class="overview-stat__value">{{ stats.beneficiaries | number }}</span>
+          <span class="overview-stat__label">{{ 'TRANSPARENCY.STATS.BENEFICIARIES' | translate }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Two-column content -->
+    <div class="transparency-grid">
+
+      <!-- Spending breakdown chart -->
+      <section class="trans-card">
+        <h2 class="trans-card__title">{{ 'TRANSPARENCY.CHARTS.BREAKDOWN' | translate }}</h2>
+        <div class="breakdown-chart">
+          @for (item of breakdown; track $index) {
+            <div class="breakdown-row">
+              <span class="breakdown-label">{{ getLabel(item) }}</span>
+              <div class="breakdown-bar-wrap">
+                <div class="breakdown-bar" [style.width.%]="item.pct" [style.background]="item.color"></div>
+              </div>
+              <span class="breakdown-pct">{{ item.pct }}%</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Reports download -->
+      <section class="trans-card">
+        <h2 class="trans-card__title">{{ 'TRANSPARENCY.REPORTS.TITLE' | translate }}</h2>
+        <div class="reports-list">
+          @for (r of reports; track $index) {
+            <div class="report-row">
+              <div class="report-row__icon"><span class="material-icons">description</span></div>
+              <div class="report-row__info">
+                <span class="report-row__title">{{ getTitle(r) }}</span>
+                <span class="report-row__meta">{{ r.date }} · PDF · {{ r.size }}</span>
+              </div>
+              <button mat-stroked-button class="dl-btn">
+                <span class="material-icons">download</span>
+                {{ 'TRANSPARENCY.REPORTS.DOWNLOAD' | translate }}
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Completed projects -->
+    <section class="transparency-section">
+      <div class="section-hdr">
+        <h2 class="section-hdr__title">{{ 'TRANSPARENCY.COMPLETED.TITLE' | translate }}</h2>
+        <a routerLink="/projects" class="section-hdr__link">
+          {{ 'TRANSPARENCY.COMPLETED.VIEW_ALL' | translate }}
+          <span class="material-icons">arrow_forward</span>
+        </a>
+      </div>
+      <div class="completed-grid">
+        @for (p of completedProjects; track p.id) {
+          <app-project-card [project]="p" />
+        }
+        @if (completedProjects.length === 0) {
+          <p class="no-data">{{ isRtl() ? 'لا توجد مشاريع مكتملة بعد' : 'No completed projects yet' }}</p>
+        }
+      </div>
+    </section>
+
+  </div>
+
+  <app-site-footer />
+</div>

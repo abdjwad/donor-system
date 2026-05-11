@@ -1,0 +1,107 @@
+@if (campaign(); as c) {
+<div class="campaign-detail" [class.rtl]="isRtl()">
+
+  <app-navbar />
+
+  <!-- Hero -->
+  <div class="campaign-detail__hero" [style.background-image]="'url(' + c.imageUrl + ')'">
+    <div class="campaign-detail__hero-overlay">
+      <div class="campaign-detail__hero-inner">
+        <a routerLink="/campaigns" class="back-btn">
+          <span class="material-icons">arrow_back</span>
+          {{ 'CAMPAIGNS.TITLE' | translate }}
+        </a>
+        @if (c.daysLeft <= 7) {
+          <div class="urgent-pill">
+            <span class="material-icons">schedule</span>
+            {{ 'CAMPAIGNS.DETAIL.URGENT' | translate }}
+          </div>
+        }
+        <h1 class="campaign-detail__hero-title">{{ getTitle(c) }}</h1>
+        <div class="campaign-detail__hero-meta">
+          <span><span class="material-icons">group</span> {{ c.donorCount | number }} {{ 'CAMPAIGNS.CARD.DONORS' | translate }}</span>
+          <span><span class="material-icons">schedule</span> {{ 'CAMPAIGNS.DETAIL.ENDS' | translate }}: {{ c.daysLeft }} {{ 'CAMPAIGNS.TIMER.DAYS' | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="campaign-detail__body">
+
+    <!-- Main content -->
+    <div class="campaign-detail__main">
+
+      <!-- Media gallery -->
+      <section class="detail-section">
+        <h2 class="detail-section__title">{{ 'CAMPAIGNS.DETAIL.GALLERY' | translate }}</h2>
+        <div class="media-gallery">
+          @for (img of GALLERY; track $index) {
+            <div class="media-gallery__item">
+              <img [src]="img" [alt]="'Image ' + ($index + 1)" loading="lazy"/>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- About -->
+      <section class="detail-section">
+        <h2 class="detail-section__title">{{ 'CAMPAIGNS.DETAIL.ABOUT' | translate }}</h2>
+        <p class="detail-section__text">{{ getDesc(c) }}</p>
+        <p class="detail-section__text">
+          {{ isRtl() ? 'هذه الحملة تجمع تبرعات عاجلة لتلبية احتياجات المتضررين من النزاع في سوريا. كل دولار يتبرع به يصنع فرقاً مباشراً في حياة عائلة محتاجة.' : 'This campaign collects urgent donations to meet the needs of those affected by the conflict in Syria. Every dollar donated makes a direct difference in the life of a family in need.' }}
+        </p>
+      </section>
+
+      <!-- Related projects -->
+      <section class="detail-section">
+        <h2 class="detail-section__title">{{ 'CAMPAIGNS.DETAIL.RELATED_PROJECTS' | translate }}</h2>
+        <div class="related-grid">
+          @for (p of relatedProjects; track p.id) {
+            <app-project-card [project]="p" />
+          }
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="campaign-detail__sidebar">
+
+      <!-- Progress card -->
+      <div class="progress-card">
+        <h3 class="progress-card__title">{{ 'CAMPAIGNS.DETAIL.PROGRESS' | translate }}</h3>
+        <div class="progress-card__amount">
+          <span class="amount-raised">{{ formatAmount(c.raisedAmount) }}</span>
+          <span class="amount-label">{{ 'CAMPAIGNS.CARD.RAISED' | translate }}</span>
+        </div>
+        <div class="progress-bar progress-bar--gold" style="height:10px;">
+          <div class="progress-bar__fill" [style.width.%]="progressPct(c)"></div>
+        </div>
+        <div class="progress-stats">
+          <span>{{ progressPct(c) }}%</span>
+          <span>{{ formatAmount(c.targetAmount) }} {{ 'CAMPAIGNS.CARD.TARGET' | translate }}</span>
+        </div>
+
+        <!-- Countdown -->
+        <div class="progress-card__timer">
+          <app-countdown-timer [daysLeft]="c.daysLeft" />
+        </div>
+
+        <a [routerLink]="['/donate/guest']" [queryParams]="{ campaign: c.id }"
+           mat-flat-button class="donate-btn">
+          <span class="material-icons">volunteer_activism</span>
+          {{ 'CAMPAIGNS.DETAIL.DONATE_BTN' | translate }}
+        </a>
+
+        <button class="share-btn" type="button">
+          <span class="material-icons">share</span>
+          {{ 'CAMPAIGNS.DETAIL.SHARE' | translate }}
+        </button>
+      </div>
+
+    </aside>
+  </div>
+
+  <app-site-footer />
+</div>
+}

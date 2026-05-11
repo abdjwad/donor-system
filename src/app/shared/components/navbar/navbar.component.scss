@@ -1,0 +1,297 @@
+@use '../../../styles/variables' as *;
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba($color-primary-dark, 0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba($color-gold, 0.2);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+
+  &.rtl { direction: rtl; }
+
+  &__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 $space-xl;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-xl;
+  }
+
+  // ── Logo ──────────────────────────────────────────────────
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  &__logo-dot {
+    width: 10px;
+    height: 10px;
+    background: $color-gold;
+    border-radius: $radius-full;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px rgba($color-gold, 0.6);
+  }
+
+  &__logo-ar {
+    font-size: 1.0625rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.01em;
+  }
+
+  &__logo-sep {
+    color: rgba($color-gold, 0.5);
+    font-size: 0.875rem;
+  }
+
+  &__logo-en {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $color-gold-light;
+    font-family: var(--font-latin);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  // ── Desktop links ──────────────────────────────────────────
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+    flex: 1;
+    justify-content: center;
+
+    @media (max-width: $bp-tablet) { display: none; }
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: $space-xs $space-md;
+    border-radius: $radius-md;
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition: $transition-fast;
+
+    .material-icons { font-size: 1.125rem; }
+
+    &:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    &.active {
+      color: $color-gold-light;
+      background: rgba($color-gold, 0.12);
+      font-weight: 700;
+    }
+  }
+
+  // ── Actions ───────────────────────────────────────────────
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    flex-shrink: 0;
+  }
+
+  // ── Generic icon button (dash, profile, notifications) ──────
+  &__icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: $radius-md;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    transition: $transition-fast;
+    position: relative;
+    flex-shrink: 0;
+    .material-icons { font-size: 1.125rem; }
+    &:hover { background: rgba($color-gold, 0.18); color: $color-gold-light; }
+  }
+
+  // ── Notification bell dot ─────────────────────────────────────
+  &__notif-dot {
+    position: absolute;
+    top: 5px;
+    inset-inline-end: 5px;
+    width: 8px;
+    height: 8px;
+    background: $color-error;
+    border-radius: 50%;
+    border: 1.5px solid $color-primary-dark;
+  }
+
+  // keep old class name as alias so nothing breaks
+  &__dash-btn {
+    @extend .navbar__icon-btn;
+  }
+
+  &__lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: $radius-full;
+    padding: 4px 12px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: $transition-fast;
+    height: 34px;
+
+    .material-icons { font-size: 1rem; }
+
+    &:hover {
+      border-color: $color-gold;
+      color: $color-gold-light;
+      background: rgba($color-gold, 0.1);
+    }
+  }
+
+  &__login-btn {
+    height: 36px !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    border-radius: $radius-md !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-decoration: none;
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+    transition: $transition-fast;
+
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.6) !important;
+      color: #fff !important;
+    }
+
+    .material-icons { font-size: 1.0625rem; }
+
+    @media (max-width: $bp-tablet) { display: none !important; }
+  }
+
+  &__donate-btn {
+    height: 36px !important;
+    font-size: 0.875rem !important;
+    font-weight: 700 !important;
+    border-radius: $radius-md !important;
+    background: $color-gold !important;
+    color: $color-primary-dark !important;
+    text-decoration: none;
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+    transition: $transition-base;
+    box-shadow: 0 2px 8px rgba($color-gold, 0.4);
+
+    &:hover {
+      background: $color-gold-light !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba($color-gold, 0.5);
+    }
+
+    .material-icons { font-size: 1.0625rem; }
+
+    @media (max-width: $bp-mobile) { display: none !important; }
+  }
+
+  // ── Hamburger ──────────────────────────────────────────────
+  &__hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.85);
+    padding: $space-xs;
+    border-radius: $radius-sm;
+    transition: $transition-fast;
+
+    .material-icons { font-size: 1.5rem; }
+
+    &:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+
+    @media (max-width: $bp-tablet) { display: flex; align-items: center; }
+  }
+
+  // ── Mobile menu ───────────────────────────────────────────
+  &__mobile-menu {
+    padding: $space-sm $space-xl $space-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+// ── Mobile link ────────────────────────────────────────────────
+.mobile-link {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-sm $space-md;
+  border-radius: $radius-md;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: $transition-fast;
+
+  .material-icons { font-size: 1.25rem; }
+
+  &:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &--donate {
+    color: $color-gold-light;
+    font-weight: 700;
+  }
+
+  &--admin {
+    color: rgba($color-gold, 0.9);
+    font-weight: 600;
+    .material-icons { color: rgba($color-gold, 0.8); }
+    &:hover { background: rgba($color-gold, 0.08); }
+  }
+}
+
+.mobile-divider-line {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: $space-xs $space-md;
+}
+
+.mobile-badge {
+  min-width: 18px;
+  height: 18px;
+  background: $color-error;
+  color: #fff;
+  border-radius: $radius-full;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  margin-inline-start: auto;
+}

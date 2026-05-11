@@ -1,0 +1,181 @@
+<div class="profile-page" [class.rtl]="isRtl()">
+  <app-navbar />
+
+  <!-- Header -->
+  <div class="profile-header">
+    <div class="profile-header__inner">
+      <div class="profile-header__avatar">
+        <span class="material-icons">person</span>
+      </div>
+      <div>
+        <h1 class="profile-header__name">{{ profileForm.get('name')?.value }}</h1>
+        <p class="profile-header__email">{{ profileForm.get('email')?.value }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="profile-layout">
+    <mat-tab-group class="profile-tabs" animationDuration="200ms">
+
+      <!-- ── Tab 1: Personal Info ── -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="material-icons tab-icon">person</span>
+          {{ 'PROFILE.TABS.EDIT' | translate }}
+        </ng-template>
+        <div class="tab-content" [formGroup]="profileForm">
+          <h2 class="section-heading">{{ 'PROFILE.EDIT.TITLE' | translate }}</h2>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'PROFILE.EDIT.NAME' | translate }}</mat-label>
+            <input matInput formControlName="name"/>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'PROFILE.EDIT.EMAIL' | translate }}</mat-label>
+            <input matInput type="email" formControlName="email" dir="ltr"/>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'PROFILE.EDIT.PHONE' | translate }}</mat-label>
+            <input matInput formControlName="phone" dir="ltr"/>
+          </mat-form-field>
+
+          @if (savedProfile()) {
+            <div class="success-msg">
+              <span class="material-icons">check_circle</span>
+              {{ 'PROFILE.EDIT.SAVED' | translate }}
+            </div>
+          }
+
+          <button mat-flat-button class="save-btn" (click)="saveProfile()">
+            <span class="material-icons">save</span>
+            {{ 'PROFILE.EDIT.SAVE' | translate }}
+          </button>
+        </div>
+      </mat-tab>
+
+      <!-- ── Tab 2: Password ── -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="material-icons tab-icon">lock</span>
+          {{ 'PROFILE.TABS.PASSWORD' | translate }}
+        </ng-template>
+        <div class="tab-content" [formGroup]="passwordForm">
+          <h2 class="section-heading">{{ 'PROFILE.PASSWORD.TITLE' | translate }}</h2>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'PROFILE.PASSWORD.CURRENT' | translate }}</mat-label>
+            <input matInput type="password" formControlName="current" dir="ltr"/>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'PROFILE.PASSWORD.NEW' | translate }}</mat-label>
+            <input matInput type="password" formControlName="newPass" dir="ltr"/>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'PROFILE.PASSWORD.CONFIRM' | translate }}</mat-label>
+            <input matInput type="password" formControlName="confirm" dir="ltr"/>
+          </mat-form-field>
+
+          @if (savedPassword()) {
+            <div class="success-msg">
+              <span class="material-icons">check_circle</span>
+              {{ 'PROFILE.PASSWORD.SUCCESS' | translate }}
+            </div>
+          }
+
+          <button mat-flat-button class="save-btn" (click)="savePassword()">
+            <span class="material-icons">lock_reset</span>
+            {{ 'PROFILE.PASSWORD.SAVE' | translate }}
+          </button>
+        </div>
+      </mat-tab>
+
+      <!-- ── Tab 3: Language ── -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="material-icons tab-icon">language</span>
+          {{ 'PROFILE.TABS.LANGUAGE' | translate }}
+        </ng-template>
+        <div class="tab-content">
+          <h2 class="section-heading">{{ 'PROFILE.LANGUAGE.TITLE' | translate }}</h2>
+          <p class="section-desc">{{ 'PROFILE.LANGUAGE.APP_LANGUAGE' | translate }}</p>
+
+          <div class="lang-options">
+            <button class="lang-option" [class.active]="isRtl()" (click)="setLang('ar')">
+              <span class="lang-option__flag">🇸🇾</span>
+              <div>
+                <div class="lang-option__name">{{ 'PROFILE.LANGUAGE.ARABIC' | translate }}</div>
+                <div class="lang-option__sub">اللغة العربية</div>
+              </div>
+              @if (isRtl()) { <span class="material-icons lang-option__check">check_circle</span> }
+            </button>
+            <button class="lang-option" [class.active]="!isRtl()" (click)="setLang('en')">
+              <span class="lang-option__flag">🇺🇸</span>
+              <div>
+                <div class="lang-option__name">{{ 'PROFILE.LANGUAGE.ENGLISH' | translate }}</div>
+                <div class="lang-option__sub">English Language</div>
+              </div>
+              @if (!isRtl()) { <span class="material-icons lang-option__check">check_circle</span> }
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- ── Tab 4: Payment ── -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="material-icons tab-icon">credit_card</span>
+          {{ 'PROFILE.TABS.PAYMENT' | translate }}
+        </ng-template>
+        <div class="tab-content">
+          <h2 class="section-heading">{{ 'PROFILE.PAYMENT.TITLE' | translate }}</h2>
+
+          @if (mockCards.length === 0) {
+            <div class="empty-cards">
+              <span class="material-icons">credit_card_off</span>
+              <p>{{ 'PROFILE.PAYMENT.NO_CARDS' | translate }}</p>
+            </div>
+          } @else {
+            <div class="cards-list">
+              @for (card of mockCards; track card.last4; let i = $index) {
+                <div class="payment-card" [class.payment-card--default]="card.isDefault">
+                  <div class="payment-card__info">
+                    <span class="payment-card__brand">{{ card.brand }}</span>
+                    <span class="payment-card__num">•••• {{ card.last4 }}</span>
+                    <span class="payment-card__expiry">{{ card.expiry }}</span>
+                    @if (card.isDefault) {
+                      <span class="payment-card__badge">{{ 'PROFILE.PAYMENT.DEFAULT' | translate }}</span>
+                    }
+                  </div>
+                  <div class="payment-card__actions">
+                    @if (!card.isDefault) {
+                      <button mat-button class="card-action-btn" (click)="setDefault(i)">
+                        {{ 'PROFILE.PAYMENT.SET_DEFAULT' | translate }}
+                      </button>
+                    }
+                    <button mat-button class="card-action-btn card-action-btn--remove" (click)="removeCard(i)">
+                      <span class="material-icons">delete</span>
+                      {{ 'PROFILE.PAYMENT.REMOVE' | translate }}
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          <button mat-stroked-button class="add-card-btn">
+            <span class="material-icons">add</span>
+            {{ 'PROFILE.PAYMENT.ADD_CARD' | translate }}
+          </button>
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+  </div>
+
+  <app-site-footer />
+</div>

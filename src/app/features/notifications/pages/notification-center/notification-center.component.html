@@ -1,0 +1,145 @@
+<div class="notif-page" [class.rtl]="isRtl()">
+  <app-navbar />
+
+  <!-- Page header -->
+  <div class="notif-header">
+    <div class="notif-header__inner">
+      <div>
+        <h1 class="notif-header__title">
+          <span class="material-icons">notifications</span>
+          {{ 'NOTIFICATIONS.TITLE' | translate }}
+          @if (unreadCount() > 0) {
+            <span class="notif-badge">{{ unreadCount() }}</span>
+          }
+        </h1>
+        <p class="notif-header__sub">{{ 'NOTIFICATIONS.SUBTITLE' | translate }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notif-layout">
+
+    <!-- Tabs -->
+    <div class="notif-tabs">
+      <button class="notif-tab" [class.active]="activeTab() === 'list'"
+              (click)="activeTab.set('list')">
+        <span class="material-icons">list</span>
+        {{ isRtl() ? 'الإشعارات' : 'Notifications' }}
+      </button>
+      <button class="notif-tab" [class.active]="activeTab() === 'settings'"
+              (click)="activeTab.set('settings')">
+        <span class="material-icons">tune</span>
+        {{ 'NOTIFICATIONS.SETTINGS.TITLE' | translate }}
+      </button>
+    </div>
+
+    <!-- Notifications list -->
+    @if (activeTab() === 'list') {
+      <div class="notif-content">
+
+        <!-- Filter + actions row -->
+        <div class="notif-toolbar">
+          <div class="notif-filters">
+            @for (f of ['all','unread','read']; track f) {
+              <button class="filter-chip" [class.active]="filter() === f"
+                      (click)="setFilter(f)">
+                {{ ('NOTIFICATIONS.FILTER.' + f.toUpperCase()) | translate }}
+              </button>
+            }
+          </div>
+          @if (unreadCount() > 0) {
+            <button mat-button class="mark-all-btn" (click)="markAllRead()">
+              <span class="material-icons">done_all</span>
+              {{ 'NOTIFICATIONS.MARK_ALL_READ' | translate }}
+            </button>
+          }
+        </div>
+
+        <!-- List -->
+        @if (filtered().length === 0) {
+          <div class="notif-empty">
+            <span class="material-icons">notifications_off</span>
+            <p>{{ 'NOTIFICATIONS.EMPTY' | translate }}</p>
+          </div>
+        } @else {
+          <div class="notif-list">
+            @for (n of filtered(); track n.id) {
+              <div class="notif-item" [class.notif-item--unread]="!n.read"
+                   (click)="markRead(n.id)">
+                <div class="notif-item__icon notif-item__icon--{{ n.type }}">
+                  <span class="material-icons">{{ n.icon }}</span>
+                </div>
+                <div class="notif-item__body">
+                  <div class="notif-item__title">{{ getTitle(n) }}</div>
+                  <div class="notif-item__text">{{ getBody(n) }}</div>
+                  <div class="notif-item__meta">
+                    <span class="notif-item__time">{{ formatTime(n.time) }}</span>
+                    <span class="notif-item__type-badge notif-item__type-badge--{{ n.type }}">
+                      {{ ('NOTIFICATIONS.TYPE.' + n.type.toUpperCase()) | translate }}
+                    </span>
+                  </div>
+                </div>
+                @if (!n.read) {
+                  <div class="notif-item__dot"></div>
+                }
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    }
+
+    <!-- Settings panel -->
+    @if (activeTab() === 'settings') {
+      <div class="notif-content">
+        <div class="settings-card">
+          <h2 class="settings-card__title">{{ 'NOTIFICATIONS.SETTINGS.TITLE' | translate }}</h2>
+
+          <div class="setting-row">
+            <div class="setting-row__label">
+              <span class="material-icons">email</span>
+              {{ 'NOTIFICATIONS.SETTINGS.EMAIL' | translate }}
+            </div>
+            <mat-slide-toggle [(ngModel)]="settings.email" color="primary"/>
+          </div>
+          <div class="setting-row">
+            <div class="setting-row__label">
+              <span class="material-icons">volunteer_activism</span>
+              {{ 'NOTIFICATIONS.SETTINGS.DONATION_UPDATES' | translate }}
+            </div>
+            <mat-slide-toggle [(ngModel)]="settings.donations" color="primary"/>
+          </div>
+          <div class="setting-row">
+            <div class="setting-row__label">
+              <span class="material-icons">construction</span>
+              {{ 'NOTIFICATIONS.SETTINGS.PROJECT_UPDATES' | translate }}
+            </div>
+            <mat-slide-toggle [(ngModel)]="settings.projects" color="primary"/>
+          </div>
+          <div class="setting-row">
+            <div class="setting-row__label">
+              <span class="material-icons">campaign</span>
+              {{ 'NOTIFICATIONS.SETTINGS.CAMPAIGN_UPDATES' | translate }}
+            </div>
+            <mat-slide-toggle [(ngModel)]="settings.campaigns" color="primary"/>
+          </div>
+          <div class="setting-row">
+            <div class="setting-row__label">
+              <span class="material-icons">info</span>
+              {{ 'NOTIFICATIONS.SETTINGS.SYSTEM_ALERTS' | translate }}
+            </div>
+            <mat-slide-toggle [(ngModel)]="settings.system" color="primary"/>
+          </div>
+
+          <button mat-flat-button class="settings-save-btn" (click)="saveSettings()">
+            {{ 'NOTIFICATIONS.SETTINGS.SAVE' | translate }}
+          </button>
+        </div>
+      </div>
+    }
+
+  </div>
+
+  <app-site-footer />
+</div>

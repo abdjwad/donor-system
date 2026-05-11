@@ -1,0 +1,290 @@
+// ============================================================
+// Angular Material M3 Theme — Bunian Platform
+// ============================================================
+@use '@angular/material' as mat;
+@use 'variables' as *;
+
+// Define M3 theme
+$donor-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$green-palette,
+    tertiary: mat.$orange-palette,
+  ),
+  typography: (
+    plain-family: "'Cairo', 'Inter', sans-serif",
+    brand-family: "'Cairo', sans-serif",
+  ),
+  density: (
+    scale: 0
+  )
+));
+
+// Apply theme globally
+:root {
+  @include mat.all-component-themes($donor-theme);
+}
+
+// ── Outlined Text Fields — Full Typography Override ──────────
+
+.mat-mdc-form-field {
+  width: 100%;
+
+  // ── Geometry ───────────────────────────────────────────────
+  --mdc-outlined-text-field-container-shape: #{$radius-md};
+  --mat-form-field-container-height: 52px;
+  --mat-form-field-container-vertical-padding: 14px;
+
+  // ── Outline colors ────────────────────────────────────────
+  --mdc-outlined-text-field-outline-color:           #{$color-border};
+  --mdc-outlined-text-field-hover-outline-color:     #{$color-primary-light};
+  --mdc-outlined-text-field-focus-outline-color:     #{$color-primary};
+  --mdc-outlined-text-field-error-outline-color:     #{$color-error};
+
+  // ── Input text ────────────────────────────────────────────
+  --mdc-outlined-text-field-input-text-color:        #{$color-text-primary};
+  --mdc-outlined-text-field-input-text-size:         0.875rem;
+  --mdc-outlined-text-field-input-text-weight:       500;
+  --mdc-outlined-text-field-input-text-line-height:  1.5;
+  --mdc-outlined-text-field-input-text-tracking:     0.01em;
+
+  // ── Label ─────────────────────────────────────────────────
+  --mdc-outlined-text-field-label-text-color:        #{$color-text-muted};
+  --mdc-outlined-text-field-hover-label-text-color:  #{$color-text-secondary};
+  --mdc-outlined-text-field-focus-label-text-color:  #{$color-primary};
+  --mdc-outlined-text-field-label-text-size:         0.875rem;
+  --mdc-outlined-text-field-label-text-weight:       500;
+  --mdc-outlined-text-field-label-text-tracking:     0.01em;
+
+  // ── Error label ───────────────────────────────────────────
+  --mdc-outlined-text-field-error-label-text-color:  #{$color-error};
+  --mdc-outlined-text-field-error-focus-label-text-color: #{$color-error};
+
+  // ── Container bg ──────────────────────────────────────────
+  --mdc-outlined-text-field-container-color: transparent;
+
+  // ── Floating label fix ────────────────────────────────────
+  .mdc-text-field {
+    border-radius: $radius-md;
+  }
+
+  // Smooth focus transition on the outline
+  .mdc-notched-outline {
+    transition: $transition-base;
+  }
+
+  // ── Focused field subtle bg ───────────────────────────────
+  .mdc-text-field--focused .mdc-notched-outline {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-width: 2px;
+    }
+  }
+}
+
+// ── Error / hint text ────────────────────────────────────────
+.mat-mdc-form-field-error,
+.mat-mdc-form-field-hint {
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1.4 !important;
+  margin-top: 2px;
+}
+
+.mat-mdc-form-field-error {
+  color: $color-error !important;
+}
+
+// ── Prefix / Suffix icons ────────────────────────────────────
+.mat-mdc-form-field-icon-prefix,
+.mat-mdc-form-field-icon-suffix {
+  display: flex;
+  align-items: center;
+
+  .material-icons,
+  mat-icon {
+    font-size: 1.125rem !important;
+    width: 1.125rem !important;
+    height: 1.125rem !important;
+    line-height: 1 !important;
+    color: $color-text-muted;
+    transition: color $transition-fast;
+  }
+}
+
+// Icon color follows focus
+.mdc-text-field--focused {
+  .mat-mdc-form-field-icon-prefix .material-icons,
+  .mat-mdc-form-field-icon-prefix mat-icon {
+    color: $color-primary;
+  }
+}
+
+// ── Buttons (flat / raised) ──────────────────────────────────
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-unelevated-button.mat-primary {
+  --mdc-filled-button-container-color: #{$color-primary};
+  --mdc-filled-button-label-text-color: #fff;
+  --mdc-filled-button-label-text-size: 1.0625rem;
+  --mdc-filled-button-label-text-weight: 700;
+  --mdc-filled-button-label-text-tracking: 0.03em;
+
+  &:hover {
+    --mdc-filled-button-container-color: #{$color-primary-dark};
+  }
+}
+
+// ── Checkboxes ───────────────────────────────────────────────
+.mat-mdc-checkbox.mat-primary {
+  --mdc-checkbox-selected-checkmark-color:    #fff;
+  --mdc-checkbox-selected-icon-color:         #{$color-primary};
+  --mdc-checkbox-selected-focus-icon-color:   #{$color-primary-dark};
+  --mdc-checkbox-selected-hover-icon-color:   #{$color-primary-dark};
+  --mdc-checkbox-unselected-outline-color:    #{$color-border};
+  --mdc-checkbox-unselected-hover-outline-color: #{$color-primary-light};
+
+  .mdc-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: $color-text-secondary;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+}
+
+// ── Progress spinner ─────────────────────────────────────────
+.mat-mdc-progress-spinner circle {
+  stroke: #fff;
+}
+
+// ── Stepper ──────────────────────────────────────────────────
+.mat-stepper-horizontal {
+  background: transparent;
+
+  .mat-step-header {
+    &.cdk-focused,
+    &:hover {
+      background-color: rgba($color-primary, 0.04) !important;
+      border-radius: $radius-md;
+    }
+
+    .mat-step-label {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: $color-text-muted;
+
+      &.mat-step-label-active {
+        color: $color-text-primary;
+      }
+
+      &.mat-step-label-selected {
+        color: $color-primary;
+        font-weight: 700;
+      }
+    }
+
+    .mat-step-icon {
+      background-color: $color-border;
+      color: $color-text-muted;
+
+      &.mat-step-icon-selected,
+      &.mat-step-icon-state-done,
+      &.mat-step-icon-state-edit {
+        background-color: $color-primary;
+        color: #fff;
+      }
+    }
+  }
+
+  .mat-stepper-horizontal-line {
+    border-top-color: $color-border;
+  }
+}
+
+// ── Tab groups ───────────────────────────────────────────────
+.mat-mdc-tab-group {
+  .mat-mdc-tab-header {
+    border-bottom: 1px solid $color-border;
+  }
+
+  .mat-mdc-tab {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    min-width: 120px;
+  }
+
+  .mdc-tab-indicator__content--underline {
+    border-color: $color-primary !important;
+  }
+
+  .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+    color: $color-primary;
+  }
+}
+
+// ── Button Toggle ─────────────────────────────────────────────
+.mat-button-toggle-group {
+  border: 1.5px solid $color-border;
+  border-radius: $radius-md !important;
+  overflow: hidden;
+
+  .mat-button-toggle {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: $color-text-secondary;
+    background: $color-card-bg;
+    transition: $transition-base;
+
+    &.mat-button-toggle-checked {
+      background: $color-primary;
+      color: #fff;
+    }
+  }
+
+  .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+    padding: 0 $space-lg;
+    line-height: 44px;
+  }
+}
+
+// ── Select ───────────────────────────────────────────────────
+.mat-mdc-select {
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+// ── RTL Material overrides ───────────────────────────────────
+[dir="rtl"] {
+  .mat-mdc-form-field-infix {
+    text-align: right;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    text-align: right;
+  }
+
+  .mat-mdc-form-field-icon-suffix {
+    padding-right: 0;
+    padding-left: 12px;
+    order: -1;
+  }
+
+  .mat-mdc-form-field-icon-prefix {
+    padding-left: 0;
+    padding-right: 12px;
+    order: 1;
+  }
+
+  .mdc-notched-outline__notch {
+    border-right: none;
+    border-left: 1px solid;
+  }
+
+  .mat-stepper-horizontal {
+    .mat-step-header {
+      flex-direction: row-reverse;
+    }
+  }
+}

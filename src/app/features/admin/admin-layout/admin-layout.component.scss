@@ -1,0 +1,91 @@
+@use '../../../styles/variables' as *;
+
+.admin-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+  background: #F0F4F8;
+  &.rtl { direction: rtl; }
+
+  @media (max-width: $bp-tablet) {
+    grid-template-columns: 1fr;
+    .admin-sidebar { display: none; }
+  }
+}
+
+// ── Sidebar ──────────────────────────────────────────────────────
+.admin-sidebar {
+  background: $color-primary-dark;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+
+  &__logo {
+    padding: $space-xl $space-lg;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  &__footer {
+    margin-top: auto;
+    padding: $space-lg;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+  }
+}
+
+.admin-logo {
+  display: flex; align-items: center; gap: $space-sm; text-decoration: none;
+  &__dot { width: 8px; height: 8px; border-radius: 50%; background: $color-gold; flex-shrink: 0; box-shadow: 0 0 6px rgba($color-gold,0.6); }
+  &__name { font-size: 0.9375rem; font-weight: 800; color: #fff; }
+  &__sub  { font-size: 0.625rem; font-weight: 600; color: rgba($color-gold,0.8); text-transform: uppercase; letter-spacing: 0.12em; margin-top: 1px; }
+}
+
+.admin-nav {
+  padding: $space-md $space-sm;
+  display: flex; flex-direction: column; gap: 2px;
+}
+
+.admin-nav__link {
+  display: flex; align-items: center; gap: $space-sm;
+  padding: 10px $space-md; border-radius: $radius-md;
+  color: rgba(255,255,255,0.65); text-decoration: none;
+  font-size: 0.875rem; font-weight: 500; transition: $transition-fast;
+  .material-icons { font-size: 1.125rem; }
+  &:hover { color: #fff; background: rgba(255,255,255,0.08); }
+  &.active { color: $color-gold-light; background: rgba($color-gold,0.12); font-weight: 700;
+    .material-icons { color: $color-gold-light; }
+  }
+}
+
+.admin-lang-btn {
+  display: flex; align-items: center; gap: $space-xs;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: $radius-full; padding: 6px $space-md;
+  color: rgba(255,255,255,0.75); font-size: 0.8125rem; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: $transition-fast;
+  .material-icons { font-size: 0.9375rem; }
+  &:hover { border-color: $color-gold; color: $color-gold-light; }
+}
+
+.admin-back-btn {
+  display: flex; align-items: center; gap: $space-xs;
+  padding: 8px $space-md; border-radius: $radius-md;
+  color: rgba(255,255,255,0.5); text-decoration: none;
+  font-size: 0.8125rem; font-weight: 500; transition: $transition-fast;
+  .material-icons { font-size: 1rem; }
+  &:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.06); }
+}
+
+// ── Main ─────────────────────────────────────────────────────────
+.admin-main {
+  overflow-y: auto;
+  padding: $space-2xl;
+
+  @media (max-width: $bp-desktop) { padding: $space-xl; }
+  @media (max-width: $bp-mobile)  { padding: $space-md; }
+}

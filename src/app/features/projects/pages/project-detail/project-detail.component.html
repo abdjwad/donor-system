@@ -1,0 +1,147 @@
+@if (project(); as p) {
+<div class="project-detail" [class.rtl]="isRtl()">
+
+  <app-navbar />
+
+  <!-- ── Hero banner ── -->
+  <div class="project-detail__hero" [style.background-image]="'url(' + images[activeImage()] + ')'">
+    <div class="project-detail__hero-overlay">
+      <div class="project-detail__hero-inner">
+        <a routerLink="/projects" class="back-btn">
+          <span class="material-icons">arrow_back</span>
+          {{ 'PROJECTS.TITLE' | translate }}
+        </a>
+        <div class="project-detail__hero-badges">
+          <span class="category-badge">{{ ('PROJECTS.CATEGORIES.' + p.category.toUpperCase()) | translate }}</span>
+          <span class="urgency-badge urgency-badge--{{ p.urgency }}">{{ ('PROJECTS.URGENCY.' + p.urgency.toUpperCase()) | translate }}</span>
+        </div>
+        <h1 class="project-detail__hero-title">{{ getTitle(p) }}</h1>
+        <div class="project-detail__hero-meta">
+          <span><span class="material-icons">location_on</span> {{ getLocation(p) }}</span>
+          <span><span class="material-icons">group</span> {{ p.donors | number }} {{ 'PROJECTS.DETAIL.DONORS_COUNT' | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main content ── -->
+  <div class="project-detail__body">
+    <div class="project-detail__main">
+
+      <!-- Gallery thumbnails -->
+      <div class="gallery-thumbs">
+        @for (img of images; track $index) {
+          <button class="gallery-thumb" [class.active]="activeImage() === $index" (click)="setImage($index)">
+            <img [src]="img" alt="" loading="lazy"/>
+          </button>
+        }
+      </div>
+
+      <!-- About section -->
+      <section class="detail-section">
+        <h2 class="detail-section__title">{{ 'PROJECTS.DETAIL.ABOUT' | translate }}</h2>
+        <p class="detail-section__text">
+          {{ isRtl() ? (p.descriptionAr ?? 'هذا المشروع يهدف إلى إعادة بناء البنية التحتية وتوفير بيئة آمنة للعائلات المتضررة من النزاع. سيستفيد من هذا المشروع مئات العائلات التي فقدت منازلها.') : (p.description ?? 'This project aims to rebuild infrastructure and provide a safe environment for families affected by the conflict. Hundreds of families who lost their homes will benefit from this project.') }}
+        </p>
+      </section>
+
+      <!-- Timeline -->
+      <section class="detail-section">
+        <h2 class="detail-section__title">{{ 'PROJECTS.DETAIL.TIMELINE' | translate }}</h2>
+        <div class="timeline">
+          @for (m of MILESTONES; track $index) {
+            <div class="timeline__item timeline__item--{{ m.status }}">
+              <div class="timeline__dot">
+                @if (m.status === 'completed') { <span class="material-icons">check</span> }
+                @else if (m.status === 'ongoing') { <span class="material-icons">radio_button_checked</span> }
+                @else { <span class="material-icons">radio_button_unchecked</span> }
+              </div>
+              <div class="timeline__content">
+                <div class="timeline__header">
+                  <span class="timeline__title">{{ getMilestoneTitle(m) }}</span>
+                  <span class="timeline__date">{{ getMilestoneDate(m) }}</span>
+                  <span class="timeline__badge timeline__badge--{{ m.status }}">
+                    {{ ('PROJECTS.DETAIL.MILESTONE_' + m.status.toUpperCase()) | translate }}
+                  </span>
+                </div>
+                <p class="timeline__desc">{{ getMilestoneDesc(m) }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Related projects -->
+      <section class="detail-section">
+        <h2 class="detail-section__title">{{ 'PROJECTS.DETAIL.RELATED' | translate }}</h2>
+        <div class="related-grid">
+          @for (rel of related(); track rel.id) {
+            <app-project-card [project]="rel" />
+          }
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ── Sidebar ── -->
+    <aside class="project-detail__sidebar">
+
+      <!-- Funding progress card -->
+      <div class="funding-card">
+        <div class="funding-card__amount">
+          <span class="funding-card__raised">{{ formatAmount(p.amountRaised) }}</span>
+          <span class="funding-card__label">{{ 'PROJECTS.CARD.RAISED' | translate }}</span>
+        </div>
+        <div class="progress-bar progress-bar--large">
+          <div class="progress-bar__fill" [style.width.%]="progressPct"></div>
+        </div>
+        <div class="funding-card__stats">
+          <div class="funding-stat">
+            <span class="funding-stat__value">{{ progressPct }}%</span>
+            <span class="funding-stat__label">{{ 'PROJECTS.DETAIL.FUNDED_PCT' | translate }}</span>
+          </div>
+          <div class="funding-stat">
+            <span class="funding-stat__value">{{ p.donors | number }}</span>
+            <span class="funding-stat__label">{{ 'PROJECTS.DETAIL.DONORS_COUNT' | translate }}</span>
+          </div>
+          <div class="funding-stat">
+            <span class="funding-stat__value">{{ formatAmount(p.fundingGoal) }}</span>
+            <span class="funding-stat__label">{{ 'PROJECTS.CARD.GOAL' | translate }}</span>
+          </div>
+        </div>
+
+        <a [routerLink]="['/donate/guest']" [queryParams]="{ project: p.id }"
+           mat-flat-button class="funding-card__btn">
+          <span class="material-icons">volunteer_activism</span>
+          {{ 'PROJECTS.DETAIL.DONATE_BTN' | translate }}
+        </a>
+      </div>
+
+      <!-- Project info card -->
+      <div class="info-card">
+        <div class="info-row">
+          <span class="info-row__label">{{ 'PROJECTS.DETAIL.CATEGORY_LABEL' | translate }}</span>
+          <span class="info-row__value">{{ ('PROJECTS.CATEGORIES.' + p.category.toUpperCase()) | translate }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">{{ 'PROJECTS.DETAIL.LOCATION_LABEL' | translate }}</span>
+          <span class="info-row__value">{{ getLocation(p) }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">{{ 'PROJECTS.DETAIL.STATUS_LABEL' | translate }}</span>
+          <span class="info-row__value status-badge status-badge--{{ p.status }}">
+            {{ ('PROJECTS.STATUS.' + p.status.toUpperCase()) | translate }}
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="info-row__label">{{ 'PROJECTS.DETAIL.STARTED' | translate }}</span>
+          <span class="info-row__value">{{ p.daysActive }} {{ 'PROJECTS.CARD.DAYS' | translate }}</span>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <app-site-footer />
+</div>
+}

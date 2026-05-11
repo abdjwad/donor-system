@@ -1,0 +1,107 @@
+<nav class="navbar" [class.rtl]="isRtl()">
+  <div class="navbar__inner">
+
+    <!-- Logo -->
+    <a routerLink="/home" class="navbar__logo" (click)="closeMenu()">
+      <div class="navbar__logo-dot"></div>
+      <span class="navbar__logo-ar">منصة بنيان</span>
+      <span class="navbar__logo-sep">|</span>
+      <span class="navbar__logo-en">Bunian</span>
+    </a>
+
+    <!-- Desktop nav links -->
+    <div class="navbar__links">
+      <a routerLink="/home"         routerLinkActive="active" class="navbar__link">
+        <span class="material-icons">home</span>
+        {{ isRtl() ? 'الرئيسية' : 'Home' }}
+      </a>
+      <a routerLink="/projects"     routerLinkActive="active" class="navbar__link">
+        <span class="material-icons">handshake</span>
+        {{ isRtl() ? 'المشاريع' : 'Projects' }}
+      </a>
+      <a routerLink="/campaigns"    routerLinkActive="active" class="navbar__link">
+        <span class="material-icons">campaign</span>
+        {{ isRtl() ? 'الحملات' : 'Campaigns' }}
+      </a>
+      <a routerLink="/transparency" routerLinkActive="active" class="navbar__link">
+        <span class="material-icons">balance</span>
+        {{ isRtl() ? 'الشفافية' : 'Transparency' }}
+      </a>
+      <a routerLink="/donate/general-fund" routerLinkActive="active" class="navbar__link">
+        <span class="material-icons">account_balance</span>
+        {{ isRtl() ? 'الصندوق العام' : 'General Fund' }}
+      </a>
+    </div>
+
+    <!-- Right actions -->
+    <div class="navbar__actions">
+      <!-- Language toggle -->
+      <button class="navbar__lang-btn" type="button" (click)="toggleLang()">
+        <span class="material-icons">language</span>
+        {{ isRtl() ? 'EN' : 'ع' }}
+      </button>
+
+      <!-- Notifications bell -->
+      <a routerLink="/notifications" class="navbar__icon-btn navbar__notif-btn"
+         [title]="isRtl() ? 'الإشعارات' : 'Notifications'">
+        <span class="material-icons">notifications</span>
+        <span class="navbar__notif-dot"></span>
+      </a>
+
+      <!-- Profile -->
+      <a routerLink="/profile" class="navbar__icon-btn"
+         [title]="isRtl() ? 'الملف الشخصي' : 'Profile'">
+        <span class="material-icons">account_circle</span>
+      </a>
+
+      <!-- Dashboard -->
+      <a routerLink="/dashboard" class="navbar__icon-btn"
+         [title]="isRtl() ? 'لوحة التحكم' : 'Dashboard'">
+        <span class="material-icons">dashboard</span>
+      </a>
+
+      <!-- Login button -->
+      <a routerLink="/auth/login" mat-stroked-button class="navbar__login-btn">
+        <span class="material-icons">login</span>
+        {{ isRtl() ? 'دخول' : 'Sign In' }}
+      </a>
+
+      <!-- Donate CTA -->
+      <a routerLink="/donate/guest" mat-flat-button class="navbar__donate-btn">
+        <span class="material-icons">favorite</span>
+        {{ isRtl() ? 'تبرع' : 'Donate' }}
+      </a>
+
+      <!-- Mobile hamburger -->
+      <button class="navbar__hamburger" type="button"
+              (click)="toggleMenu()" [attr.aria-expanded]="menuOpen">
+        <span class="material-icons">{{ menuOpen ? 'close' : 'menu' }}</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Mobile menu -->
+  @if (menuOpen) {
+    <div class="navbar__mobile-menu" (click)="closeMenu()">
+      <a routerLink="/home"                class="mobile-link"><span class="material-icons">home</span>{{ isRtl() ? 'الرئيسية' : 'Home' }}</a>
+      <a routerLink="/projects"            class="mobile-link"><span class="material-icons">handshake</span>{{ isRtl() ? 'المشاريع' : 'Projects' }}</a>
+      <a routerLink="/campaigns"           class="mobile-link"><span class="material-icons">campaign</span>{{ isRtl() ? 'الحملات' : 'Campaigns' }}</a>
+      <a routerLink="/transparency"        class="mobile-link"><span class="material-icons">balance</span>{{ isRtl() ? 'الشفافية' : 'Transparency' }}</a>
+      <a routerLink="/donate/general-fund" class="mobile-link"><span class="material-icons">account_balance</span>{{ isRtl() ? 'الصندوق العام' : 'General Fund' }}</a>
+      <a routerLink="/donate/guest"        class="mobile-link mobile-link--donate"><span class="material-icons">volunteer_activism</span>{{ isRtl() ? 'تبرع الآن' : 'Donate Now' }}</a>
+
+      <div class="mobile-divider-line"></div>
+
+      <a routerLink="/dashboard"           class="mobile-link"><span class="material-icons">dashboard</span>{{ isRtl() ? 'لوحة التحكم' : 'Dashboard' }}</a>
+      <a routerLink="/notifications"       class="mobile-link">
+        <span class="material-icons">notifications</span>{{ isRtl() ? 'الإشعارات' : 'Notifications' }}
+        <span class="mobile-badge">2</span>
+      </a>
+      <a routerLink="/profile"             class="mobile-link"><span class="material-icons">manage_accounts</span>{{ isRtl() ? 'الملف الشخصي' : 'Profile' }}</a>
+      <a routerLink="/admin"               class="mobile-link mobile-link--admin"><span class="material-icons">admin_panel_settings</span>{{ isRtl() ? 'لوحة الإدارة' : 'Admin Panel' }}</a>
+      <a routerLink="/auth/login"          class="mobile-link"><span class="material-icons">login</span>{{ isRtl() ? 'تسجيل الدخول' : 'Sign In' }}</a>
+    </div>
+  }
+
+</nav>

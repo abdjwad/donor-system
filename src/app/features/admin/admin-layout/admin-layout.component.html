@@ -1,0 +1,55 @@
+<div class="admin-shell" [class.rtl]="isRtl()">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar__logo">
+      <a routerLink="/home" class="admin-logo">
+        <span class="admin-logo__dot"></span>
+        <div>
+          <div class="admin-logo__name">{{ isRtl() ? 'بنيان' : 'Bunian' }}</div>
+          <div class="admin-logo__sub">{{ 'ADMIN.TITLE' | translate }}</div>
+        </div>
+      </a>
+    </div>
+
+    <nav class="admin-nav">
+      <a routerLink="overview"   routerLinkActive="active" class="admin-nav__link">
+        <span class="material-icons">dashboard</span>
+        {{ 'ADMIN.NAV.OVERVIEW' | translate }}
+      </a>
+      <a routerLink="donations"  routerLinkActive="active" class="admin-nav__link">
+        <span class="material-icons">volunteer_activism</span>
+        {{ 'ADMIN.NAV.DONATIONS' | translate }}
+      </a>
+      <a routerLink="refunds"    routerLinkActive="active" class="admin-nav__link">
+        <span class="material-icons">undo</span>
+        {{ 'ADMIN.NAV.REFUNDS' | translate }}
+      </a>
+      <a routerLink="campaigns"  routerLinkActive="active" class="admin-nav__link">
+        <span class="material-icons">campaign</span>
+        {{ 'ADMIN.NAV.CAMPAIGNS' | translate }}
+      </a>
+      <a routerLink="reports"    routerLinkActive="active" class="admin-nav__link">
+        <span class="material-icons">assessment</span>
+        {{ 'ADMIN.NAV.REPORTS' | translate }}
+      </a>
+    </nav>
+
+    <div class="admin-sidebar__footer">
+      <button class="admin-lang-btn" (click)="toggleLang()">
+        <span class="material-icons">language</span>
+        {{ isRtl() ? 'EN' : 'ع' }}
+      </button>
+      <a routerLink="/home" class="admin-back-btn">
+        <span class="material-icons">arrow_back</span>
+        {{ 'ADMIN.BACK_SITE' | translate }}
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="admin-main">
+    <router-outlet/>
+  </main>
+
+</div>

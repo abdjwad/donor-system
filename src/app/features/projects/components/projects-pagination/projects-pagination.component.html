@@ -1,0 +1,27 @@
+@if (filterService.totalPages() > 1) {
+  <nav class="pagination" aria-label="Projects pagination">
+    <button class="pagination__btn pagination__btn--nav"
+            [disabled]="filterService.page() === 1"
+            (click)="prev()">
+      <span class="material-icons">arrow_back</span>
+    </button>
+
+    @for (p of pages(); track $index) {
+      @if (p === '...') {
+        <span class="pagination__ellipsis">...</span>
+      } @else {
+        <button class="pagination__btn"
+                [class.active]="filterService.page() === p"
+                (click)="goTo(p)">
+          {{ p }}
+        </button>
+      }
+    }
+
+    <button class="pagination__btn pagination__btn--nav"
+            [disabled]="filterService.page() === filterService.totalPages()"
+            (click)="next()">
+      <span class="material-icons">arrow_forward</span>
+    </button>
+  </nav>
+}

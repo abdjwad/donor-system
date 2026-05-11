@@ -1,0 +1,107 @@
+<div class="gf-page" [class.rtl]="isRtl()">
+  <app-navbar />
+
+  <div class="gf-layout">
+
+    <!-- Left: Form -->
+    <div class="gf-form-area">
+      <div class="gf-card">
+
+        <div class="gf-card__header">
+          <div class="gf-icon"><span class="material-icons">account_balance</span></div>
+          <h1>{{ 'GENERAL_FUND.TITLE' | translate }}</h1>
+          <p>{{ 'GENERAL_FUND.SUBTITLE' | translate }}</p>
+        </div>
+
+        <p class="gf-description">{{ 'GENERAL_FUND.DESCRIPTION' | translate }}</p>
+
+        <!-- Step 1: Amount -->
+        <section class="gf-section">
+          <h3 class="gf-section__title">{{ 'GENERAL_FUND.AMOUNT_TITLE' | translate }}</h3>
+          <div class="amount-chips">
+            @for (a of QUICK_AMOUNTS; track a) {
+              <button type="button" class="amount-chip"
+                      [class.amount-chip--active]="selectedAmount() === a && !isCustom()"
+                      (click)="select(a)">${{ a }}</button>
+            }
+            <button type="button" class="amount-chip"
+                    [class.amount-chip--active]="isCustom()"
+                    (click)="selectCustom()">{{ 'DONATE.AMOUNT.CUSTOM' | translate }}</button>
+          </div>
+
+          @if (isCustom()) {
+            <mat-form-field appearance="outline" class="full-width" style="margin-top:12px;">
+              <mat-label>{{ 'DONATE.AMOUNT.CUSTOM_LABEL' | translate }}</mat-label>
+              <span matPrefix>$&nbsp;</span>
+              <input matInput type="number" [formControl]="$any(form.get('customAmount'))" min="1" dir="ltr"/>
+            </mat-form-field>
+          }
+        </section>
+
+        <!-- Step 2: Recurring -->
+        <section class="gf-section">
+          <h3 class="gf-section__title">{{ 'GENERAL_FUND.RECURRING_TITLE' | translate }}</h3>
+          <div class="recurring-group">
+            @for (t of RECURRING_TYPES; track t) {
+              <button type="button" class="recurring-btn"
+                      [class.recurring-btn--active]="recurringType() === t"
+                      (click)="setRecurring(t)">
+                {{ ('GENERAL_FUND.' + t.toUpperCase()) | translate }}
+              </button>
+            }
+          </div>
+        </section>
+
+        <!-- Terms -->
+        <div class="gf-terms">
+          <mat-checkbox [formControl]="$any(form.get('terms'))" color="primary">
+            <span>{{ 'DONATE.PAYMENT.TERMS_PREFIX' | translate }}
+              <a href="#" (click)="$event.preventDefault()" class="terms-link">{{ 'DONATE.PAYMENT.TERMS_LINK' | translate }}</a>
+            </span>
+          </mat-checkbox>
+        </div>
+
+        <button mat-flat-button type="button" class="gf-submit-btn"
+                [disabled]="!canSubmit" (click)="submit()">
+          <span class="material-icons">favorite</span>
+          {{ 'GENERAL_FUND.SUBMIT' | translate }}
+          @if (getAmount() > 0) { — ${{ getAmount() }} }
+        </button>
+
+        <!-- Trust -->
+        <div class="gf-trust">
+          <span class="trust-pill trust-pill--light">
+            <span class="material-icons">verified</span>
+            {{ 'GENERAL_FUND.TRUST_MANAGED' | translate }}
+          </span>
+          <span class="trust-pill trust-pill--light">
+            <span class="material-icons">lock</span>
+            {{ 'GENERAL_FUND.TRUST_AUDITED' | translate }}
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right: Info -->
+    <aside class="gf-sidebar">
+      <div class="gf-info-card">
+        <h3 class="gf-info-card__title">{{ isRtl() ? 'كيف يُستخدم الصندوق العام؟' : 'How is the General Fund Used?' }}</h3>
+        <ul class="gf-info-list">
+          <li><span class="material-icons">home</span> {{ isRtl() ? 'إعادة بناء المنازل' : 'Home Rebuilding' }}</li>
+          <li><span class="material-icons">school</span> {{ isRtl() ? 'بناء المدارس' : 'School Construction' }}</li>
+          <li><span class="material-icons">local_hospital</span> {{ isRtl() ? 'المرافق الصحية' : 'Medical Facilities' }}</li>
+          <li><span class="material-icons">water_drop</span> {{ isRtl() ? 'مشاريع المياه' : 'Water Projects' }}</li>
+          <li><span class="material-icons">emergency</span> {{ isRtl() ? 'الاستجابة الطارئة' : 'Emergency Response' }}</li>
+        </ul>
+        <div class="gf-info-card__note">
+          <span class="material-icons">info_outline</span>
+          {{ isRtl() ? 'يتم توزيع الصندوق العام بشكل شهري بعد مراجعة مستقلة وفق الاحتياجات الأشد إلحاحاً.' : 'The general fund is distributed monthly after independent review based on most urgent needs.' }}
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <app-site-footer />
+</div>

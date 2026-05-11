@@ -1,0 +1,60 @@
+<div class="success-page" [class.rtl]="isRtl()">
+
+  <!-- Header -->
+  <header class="success-page__header">
+    <div class="header-logo-dot"></div>
+    <span class="header-logo-text">منصة بنيان</span>
+  </header>
+
+  <!-- Success Card -->
+  <div class="success-card">
+
+    <!-- Icon -->
+    <div class="success-card__icon-ring">
+      <div class="success-card__icon">
+        <span class="material-icons">favorite</span>
+      </div>
+    </div>
+
+    <!-- Message -->
+    <h1 class="success-card__title">{{ 'DONATE.SUCCESS.TITLE' | translate }}</h1>
+    <p class="success-card__subtitle">{{ 'DONATE.SUCCESS.SUBTITLE' | translate }}</p>
+
+    <!-- Details -->
+    @if (amount || ref) {
+      <div class="success-card__details">
+        @if (amount) {
+          <div class="detail-row">
+            <span class="detail-row__label">{{ 'DONATE.SUCCESS.AMOUNT_LABEL' | translate }}</span>
+            <span class="detail-row__value">${{ amount }}</span>
+          </div>
+        }
+        @if (ref) {
+          <div class="detail-row">
+            <span class="detail-row__label">{{ 'DONATE.SUCCESS.REF_LABEL' | translate }}</span>
+            <span class="detail-row__value detail-row__value--ref">{{ ref }}</span>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Email notice -->
+    <div class="success-card__notice">
+      <span class="material-icons notice-icon">email</span>
+      <span>{{ 'DONATE.SUCCESS.EMAIL_NOTICE' | translate }}</span>
+    </div>
+
+    <!-- CTAs -->
+    <div class="success-card__actions">
+      <a routerLink="/donate/guest" mat-flat-button class="cta-donate-again">
+        <span class="material-icons">volunteer_activism</span>
+        {{ 'DONATE.SUCCESS.DONATE_AGAIN' | translate }}
+      </a>
+      <a routerLink="/" mat-stroked-button class="cta-browse">
+        {{ 'DONATE.SUCCESS.BROWSE_PROJECTS' | translate }}
+      </a>
+    </div>
+
+  </div>
+
+</div>

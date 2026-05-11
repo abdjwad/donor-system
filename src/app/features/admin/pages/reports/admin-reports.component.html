@@ -1,0 +1,31 @@
+<div class="admin-page">
+  <div class="admin-page__header">
+    <h1 class="admin-page__title">{{ 'ADMIN.REPORTS.TITLE' | translate }}</h1>
+    <button mat-flat-button class="admin-primary-btn">
+      <span class="material-icons">add_chart</span>
+      {{ 'ADMIN.REPORTS.GENERATE' | translate }}
+    </button>
+  </div>
+
+  <div class="admin-card">
+    @for (r of reports; track r.id) {
+      <div class="report-row">
+        <div class="report-row__icon">
+          <span class="material-icons">description</span>
+        </div>
+        <div class="report-row__info">
+          <div class="report-row__title">{{ title(r) }}</div>
+          <div class="report-row__meta">
+            <span class="report-badge report-badge--{{ r.type }}">{{ typeKey(r) | translate }}</span>
+            <span class="report-period">{{ r.period }}</span>
+            <span class="report-size">{{ r.size }}</span>
+          </div>
+        </div>
+        <button mat-stroked-button class="download-btn">
+          <span class="material-icons">download</span>
+          {{ 'ADMIN.REPORTS.DOWNLOAD' | translate }}
+        </button>
+      </div>
+    }
+  </div>
+</div>

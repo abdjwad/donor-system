@@ -1,0 +1,142 @@
+@use '../../../../styles/variables' as *;
+
+.payment-tab-content {
+  padding: $space-xl 0 $space-md;
+}
+
+.tab-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.tab-icon {
+  font-size: 1.125rem;
+}
+
+.paypal-icon {
+  font-weight: 800;
+  color: #003087;
+  font-size: 1.125rem;
+  font-family: var(--font-latin);
+}
+
+.card-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-md;
+
+  @media (max-width: $bp-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field-prefix-icon {
+  color: $color-text-muted;
+  font-size: 1.125rem !important;
+  width: 1.125rem !important;
+  height: 1.125rem !important;
+  line-height: 1 !important;
+  margin-inline-end: $space-xs;
+}
+
+// ── PayPal section ────────────────────────────────────────────
+.paypal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-lg;
+  text-align: center;
+}
+
+.paypal-logo {
+  font-size: 2rem;
+  font-family: var(--font-latin);
+  font-weight: 800;
+  margin: $space-md 0;
+
+  .paypal-p { color: #003087; }
+  .paypal-b { color: #009cde; }
+}
+
+.paypal-desc {
+  font-size: 0.9375rem;
+  color: $color-text-muted;
+  max-width: 300px;
+  margin: 0;
+}
+
+// ── Terms ────────────────────────────────────────────────────
+.payment-terms {
+  margin-bottom: $space-md;
+}
+
+.terms-text {
+  font-size: 0.875rem;
+  color: $color-text-secondary;
+}
+
+.terms-link {
+  color: $color-primary;
+  font-weight: 700;
+  text-decoration: none;
+
+  &:hover { text-decoration: underline; }
+}
+
+.terms-error {
+  font-size: 0.8125rem;
+  color: $color-error;
+  font-weight: 500;
+  margin: 4px 0 0 $space-xl;
+}
+
+// ── Secure badge ──────────────────────────────────────────────
+.secure-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: $color-success;
+  font-weight: 600;
+
+  .material-icons { font-size: 1rem; }
+}
+
+// ── Submit button override ─────────────────────────────────────
+.step-submit-btn {
+  flex: 1;
+  height: 54px !important;
+  font-size: 1.0625rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
+  border-radius: $radius-md !important;
+  background: $color-primary !important;
+  color: #fff !important;
+  box-shadow: $shadow-button;
+  font-family: inherit !important;
+  transition: $transition-base;
+
+  &:hover:not(:disabled) {
+    background: $color-primary-dark !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba($color-primary, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.6 !important;
+    transform: none !important;
+    box-shadow: none;
+  }
+
+  .btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-sm;
+  }
+}
+
+.btn-icon { font-size: 1.25rem; }

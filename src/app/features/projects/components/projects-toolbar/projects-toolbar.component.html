@@ -1,0 +1,16 @@
+<div class="toolbar">
+  <p class="toolbar__count">
+    {{ 'PROJECTS.RESULTS_COUNT' | translate : { shown: shownCount, total: totalCount } }}
+  </p>
+
+  <div class="toolbar__sort">
+    <label class="toolbar__sort-label">{{ 'PROJECTS.SORT.LABEL' | translate }}</label>
+    <select class="toolbar__sort-select"
+            [value]="sortValue"
+            (change)="onSortChange($any($event.target).value)">
+      @for (opt of sortOptions; track opt.value) {
+        <option [value]="opt.value">{{ opt.labelKey | translate }}</option>
+      }
+    </select>
+  </div>
+</div>

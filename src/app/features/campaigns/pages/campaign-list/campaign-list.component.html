@@ -1,0 +1,69 @@
+<div class="campaigns-page" [class.rtl]="isRtl()">
+  <app-navbar />
+
+  <header class="page-header">
+    <div class="page-header__inner">
+      <h1 class="page-header__title">{{ 'CAMPAIGNS.TITLE' | translate }}</h1>
+      <p class="page-header__subtitle">{{ 'CAMPAIGNS.SUBTITLE' | translate }}</p>
+    </div>
+  </header>
+
+  <div class="campaigns-content">
+    <div class="campaigns-grid">
+      @for (c of campaigns; track c.id) {
+        <article class="campaign-card bunian-card">
+
+          <div class="campaign-card__image-wrap">
+            <img [src]="c.imageUrl" [alt]="getTitle(c)" loading="lazy"/>
+            @if (c.daysLeft <= 7) {
+              <div class="urgent-badge">
+                <span class="material-icons">warning</span>
+                {{ 'CAMPAIGNS.DETAIL.URGENT' | translate }}
+              </div>
+            }
+          </div>
+
+          <div class="campaign-card__body">
+            <h3 class="campaign-card__title">{{ getTitle(c) }}</h3>
+            <p class="campaign-card__desc">{{ getDesc(c) }}</p>
+
+            <!-- Countdown -->
+            <div class="campaign-card__timer">
+              <app-countdown-timer [daysLeft]="c.daysLeft" />
+            </div>
+
+            <!-- Progress -->
+            <div class="campaign-card__progress">
+              <div class="progress-bar progress-bar--gold">
+                <div class="progress-bar__fill" [style.width.%]="progressPct(c)"></div>
+              </div>
+              <div class="campaign-progress-row">
+                <span class="camp-raised">{{ formatAmount(c.raisedAmount) }}</span>
+                <span class="camp-pct">{{ progressPct(c) }}%</span>
+                <span class="camp-goal">{{ formatAmount(c.targetAmount) }}</span>
+              </div>
+            </div>
+
+            <div class="campaign-card__meta">
+              <span><span class="material-icons">group</span> {{ c.donorCount | number }} {{ 'CAMPAIGNS.CARD.DONORS' | translate }}</span>
+            </div>
+
+            <div class="campaign-card__actions">
+              <a [routerLink]="['/campaigns', c.id]" mat-stroked-button class="view-btn">
+                {{ isRtl() ? 'عرض التفاصيل' : 'View Details' }}
+              </a>
+              <a [routerLink]="['/donate/guest']" [queryParams]="{ campaign: c.id }"
+                 mat-flat-button class="donate-btn">
+                <span class="material-icons">volunteer_activism</span>
+                {{ 'CAMPAIGNS.CARD.DONATE' | translate }}
+              </a>
+            </div>
+          </div>
+
+        </article>
+      }
+    </div>
+  </div>
+
+  <app-site-footer />
+</div>

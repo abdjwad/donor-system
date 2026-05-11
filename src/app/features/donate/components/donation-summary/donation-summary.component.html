@@ -1,0 +1,83 @@
+<div class="summary-card">
+
+  <!-- Header -->
+  <div class="summary-card__header">
+    <div class="summary-card__logo">
+      <div class="summary-logo-dot"></div>
+      <span class="summary-logo-text">منصة بنيان</span>
+    </div>
+    <div class="summary-card__secure">
+      <span class="material-icons">verified_user</span>
+      <span>{{ 'DONATE.PAYMENT.SECURE_BADGE' | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Amount Display -->
+  <div class="summary-card__amount-block">
+    @if (displayAmount()) {
+      <span class="summary-card__amount">
+        {{ displayAmount()! | currency:'USD':'symbol':'1.0-0' }}
+      </span>
+      <span class="summary-card__period">
+        @if (isMonthly()) {
+          / {{ 'DONATE.SUMMARY.MONTHLY' | translate }}
+        } @else {
+          — {{ 'DONATE.SUMMARY.ONE_TIME' | translate }}
+        }
+      </span>
+    } @else {
+      <span class="summary-card__amount summary-card__amount--placeholder">—</span>
+    }
+  </div>
+
+  <div class="summary-card__divider"></div>
+
+  <!-- Details -->
+  <div class="summary-card__details">
+
+    <div class="summary-row">
+      <span class="summary-row__label">{{ 'DONATE.SUMMARY.TYPE' | translate }}</span>
+      <span class="summary-row__value">
+        @if (isMonthly()) {
+          <span class="badge badge--monthly">{{ 'DONATE.SUMMARY.MONTHLY' | translate }}</span>
+        } @else {
+          <span class="badge badge--once">{{ 'DONATE.SUMMARY.ONE_TIME' | translate }}</span>
+        }
+      </span>
+    </div>
+
+    <div class="summary-row">
+      <span class="summary-row__label">{{ 'DONATE.SUMMARY.PROJECT' | translate }}</span>
+      <span class="summary-row__value summary-row__value--project">
+        {{ state().project_id ? ('project #' + state().project_id) : ('DONATE.SUMMARY.GENERAL_FUND' | translate) }}
+      </span>
+    </div>
+
+    <div class="summary-row">
+      <span class="summary-row__label">{{ 'DONATE.SUMMARY.DONOR' | translate }}</span>
+      <span class="summary-row__value">
+        {{ donorName() ?? ('DONATE.SUMMARY.ANONYMOUS' | translate) }}
+      </span>
+    </div>
+
+  </div>
+
+  <div class="summary-card__divider"></div>
+
+  <!-- Trust Badges -->
+  <div class="summary-card__trust">
+    <div class="trust-item">
+      <span class="material-icons trust-item__icon">email</span>
+      <span class="trust-item__text">{{ 'DONATE.SUMMARY.RECEIPT' | translate }}</span>
+    </div>
+    <div class="trust-item">
+      <span class="material-icons trust-item__icon">receipt_long</span>
+      <span class="trust-item__text">{{ 'DONATE.SUMMARY.TAX' | translate }}</span>
+    </div>
+    <div class="trust-item">
+      <span class="material-icons trust-item__icon">lock</span>
+      <span class="trust-item__text">{{ 'DONATE.SUMMARY.SECURE' | translate }}</span>
+    </div>
+  </div>
+
+</div>

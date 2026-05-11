@@ -1,0 +1,67 @@
+<div class="projects-page" [class.rtl]="isRtl()">
+
+  <app-navbar />
+
+  <!-- ── Page header ── -->
+  <header class="projects-header">
+    <div class="projects-header__inner">
+      <div class="projects-header__text">
+        <h1 class="projects-header__title">{{ 'PROJECTS.TITLE' | translate }}</h1>
+        <p class="projects-header__subtitle">
+          {{ totalCount() }} {{ 'PROJECTS.TOTAL_LABEL' | translate }}
+        </p>
+      </div>
+      <a routerLink="/home" class="projects-header__back">
+        <span class="material-icons">home</span>
+        <span>{{ 'PROJECTS.BACK_HOME' | translate }}</span>
+      </a>
+    </div>
+
+    <!-- Search bar -->
+    <div class="projects-header__search">
+      <app-search-bar />
+    </div>
+  </header>
+
+  <!-- ── Main layout ── -->
+  <div class="projects-layout">
+
+    <!-- Filters sidebar -->
+    <aside class="projects-layout__sidebar">
+      <app-filters-sidebar />
+    </aside>
+
+    <!-- Content area -->
+    <div class="projects-layout__content">
+
+      <!-- Toolbar -->
+      <app-projects-toolbar />
+
+      <!-- Grid -->
+      @if (projects().length > 0) {
+        <div class="projects-grid">
+          @for (project of projects(); track project.id) {
+            <app-project-card [project]="project" />
+          }
+        </div>
+
+        <!-- Pagination -->
+        <app-projects-pagination />
+
+      } @else {
+        <!-- No results -->
+        <div class="no-results">
+          <span class="material-icons no-results__icon">search_off</span>
+          <h3>{{ 'PROJECTS.NO_RESULTS' | translate }}</h3>
+          <button mat-stroked-button (click)="filterService.reset()">
+            {{ 'PROJECTS.FILTERS.RESET' | translate }}
+          </button>
+        </div>
+      }
+
+    </div>
+  </div>
+
+  <app-site-footer />
+
+</div>

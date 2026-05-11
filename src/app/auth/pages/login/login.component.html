@@ -1,0 +1,108 @@
+<div class="auth-card" style="width: 100%; max-width: 440px;">
+
+  <!-- Logo mark -->
+  <div class="auth-card__logo">
+    <div class="logo-pill">
+      <div class="logo-dot"></div>
+      <span class="logo-text">منصة بنيان</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="auth-card__header">
+    <h2>{{ 'AUTH.LOGIN.TITLE' | translate }}</h2>
+    <p>{{ 'AUTH.LOGIN.SUBTITLE' | translate }}</p>
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+
+    <!-- Email -->
+    <mat-form-field appearance="outline" class="full-width form-field-gap">
+      <mat-label>{{ 'AUTH.FIELDS.EMAIL' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-prefix-icon">mail_outline</mat-icon>
+      <input
+        matInput
+        type="email"
+        formControlName="email"
+        [placeholder]="'AUTH.FIELDS.EMAIL_PLACEHOLDER' | translate"
+        autocomplete="email"
+      />
+      @if (emailCtrl.touched && emailCtrl.invalid) {
+        <mat-error>{{ getEmailError() | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Password -->
+    <mat-form-field appearance="outline" class="full-width form-field-gap">
+      <mat-label>{{ 'AUTH.FIELDS.PASSWORD' | translate }}</mat-label>
+      <mat-icon matPrefix class="field-prefix-icon">lock_outline</mat-icon>
+      <input
+        matInput
+        [type]="showPassword() ? 'text' : 'password'"
+        formControlName="password"
+        [placeholder]="'AUTH.FIELDS.PASSWORD_PLACEHOLDER' | translate"
+        autocomplete="current-password"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        class="visibility-toggle"
+        (click)="togglePassword()"
+        [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+      >
+        <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      @if (passwordCtrl.touched && passwordCtrl.invalid) {
+        <mat-error>{{ getPasswordError() | translate }}</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Remember me + Forgot password -->
+    <div class="login__extras">
+      <mat-checkbox formControlName="remember" color="primary" class="login__remember">
+        {{ 'AUTH.LOGIN.REMEMBER_ME' | translate }}
+      </mat-checkbox>
+      <a routerLink="/auth/forgot-password" class="login__forgot">
+        {{ 'AUTH.LOGIN.FORGOT_PASSWORD' | translate }}
+      </a>
+    </div>
+
+    <!-- API Error -->
+    @if (apiError()) {
+      <div class="auth-error-banner" role="alert">
+        <span class="material-icons">error_outline</span>
+        <span>{{ apiError()! | translate }}</span>
+      </div>
+    }
+
+    <!-- Submit -->
+    <button
+      mat-flat-button
+      type="submit"
+      class="auth-submit-btn"
+      [disabled]="isLoading()"
+    >
+      <span class="btn-content">
+        @if (isLoading()) {
+          <mat-spinner diameter="22" color="accent" />
+          <span>{{ 'AUTH.LOGIN.LOADING' | translate }}</span>
+        } @else {
+          <span class="material-icons btn-icon">login</span>
+          <span>{{ 'AUTH.LOGIN.SUBMIT' | translate }}</span>
+        }
+      </span>
+    </button>
+
+    <!-- Social login -->
+    <app-social-login-buttons (socialLogin)="onSocialLogin($event)" />
+
+    <!-- Register link -->
+    <p class="auth-footer-text">
+      {{ 'AUTH.LOGIN.NO_ACCOUNT' | translate }}&nbsp;
+      <a routerLink="/auth/register">{{ 'AUTH.LOGIN.REGISTER' | translate }}</a>
+    </p>
+
+  </form>
+</div>

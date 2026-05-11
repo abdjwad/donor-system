@@ -1,0 +1,167 @@
+@use 'variables' as *;
+
+// ── Shared admin page styles ──────────────────────────────────────
+.admin-page {
+  &__title { font-size: 1.375rem; font-weight: 800; color: $color-text-primary; margin: 0 0 $space-xl; letter-spacing: -0.02em; }
+  &__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: $space-xl; flex-wrap: wrap; gap: $space-md; }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-lg;
+  margin-bottom: $space-2xl;
+  @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: $bp-mobile) { grid-template-columns: 1fr; }
+}
+
+.stat-card {
+  background: #fff; border: 1px solid #E2E8F0; border-radius: $radius-xl;
+  padding: $space-lg; display: flex; gap: $space-md; align-items: flex-start;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  &__icon { width: 44px; height: 44px; border-radius: $radius-md; background: rgba($color-primary,0.1);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    .material-icons { font-size: 1.375rem; color: $color-primary; }
+  }
+  &__label  { font-size: 0.8125rem; color: #64748B; font-weight: 500; margin-bottom: 4px; }
+  &__value  { font-size: 1.375rem; font-weight: 800; color: #0F172A; font-family: var(--font-latin); letter-spacing: -0.02em; }
+  &__change { font-size: 0.8125rem; font-weight: 600; color: $color-success; margin-top: 2px; font-family: var(--font-latin); }
+}
+
+.admin-card {
+  background: #fff; border: 1px solid #E2E8F0; border-radius: $radius-xl;
+  padding: $space-xl; box-shadow: 0 1px 4px rgba(0,0,0,0.05); margin-bottom: $space-xl;
+  &__title { font-size: 1rem; font-weight: 700; color: #0F172A; margin: 0 0 $space-lg; }
+}
+
+.table-wrap { overflow-x: auto; border-radius: $radius-lg; }
+
+.admin-table {
+  width: 100%; border-collapse: collapse; min-width: 600px;
+  th, td { padding: $space-sm $space-md; text-align: start; font-size: 0.875rem; border-bottom: 1px solid #F1F5F9; }
+  th { font-weight: 700; color: #64748B; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; background: #F8FAFC; }
+  tbody tr:hover td { background: #F8FAFC; }
+  tbody tr:last-child td { border-bottom: none; }
+}
+
+.id-cell   { color: #94A3B8; font-family: var(--font-latin); font-size: 0.8125rem; }
+.amount-cell { font-weight: 700; color: $color-primary; font-family: var(--font-latin); }
+.date-cell { color: #64748B; font-family: var(--font-latin); font-size: 0.8125rem; white-space: nowrap; }
+.donor-cell  { font-weight: 600; color: #0F172A; }
+
+.status-badge {
+  display: inline-flex; padding: 3px 10px; border-radius: $radius-full;
+  font-size: 0.75rem; font-weight: 700;
+  &--completed, &--active, &--approved { background: rgba($color-success,0.1); color: $color-success; }
+  &--pending  { background: rgba($color-warning,0.1); color: $color-warning; }
+  &--failed, &--rejected  { background: rgba($color-error,0.1); color: $color-error; }
+  &--refunded, &--paused { background: rgba($color-navy,0.08); color: $color-navy; }
+  &--ended { background: rgba(#64748B,0.1); color: #64748B; }
+}
+
+.action-btns { display: flex; gap: 4px; }
+.action-btn {
+  width: 30px; height: 30px; border: none; border-radius: $radius-sm; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: $transition-fast;
+  .material-icons { font-size: 1rem; }
+  &--view    { background: rgba($color-navy,0.08); color: $color-navy; &:hover { background: rgba($color-navy,0.16); } }
+  &--approve { background: rgba($color-success,0.1); color: $color-success; &:hover { background: rgba($color-success,0.2); } }
+  &--refund  { background: rgba($color-warning,0.1); color: $color-warning; &:hover { background: rgba($color-warning,0.2); } }
+}
+
+.admin-select {
+  height: 38px; padding: 0 $space-md; border: 1px solid #E2E8F0;
+  border-radius: $radius-md; background: #fff; font-family: inherit;
+  font-size: 0.875rem; color: #0F172A; cursor: pointer;
+  &:focus { outline: 2px solid $color-primary; }
+}
+
+.admin-primary-btn {
+  height: 40px !important; padding: 0 $space-lg !important;
+  font-weight: 700 !important; border-radius: $radius-md !important;
+  background: $color-primary !important; color: #fff !important;
+  display: flex !important; align-items: center; gap: $space-xs;
+  .material-icons { font-size: 1.125rem; }
+}
+
+// ── Overview grid ──────────────────────────────────────────────
+.overview-grid { display: grid; grid-template-columns: 1fr 340px; gap: $space-xl;
+  @media (max-width: $bp-desktop) { grid-template-columns: 1fr; }
+}
+
+.chart-list { display: flex; flex-direction: column; gap: $space-md; }
+.chart-row {
+  display: grid; grid-template-columns: 90px 1fr 36px; align-items: center; gap: $space-sm;
+  &__label { font-size: 0.8125rem; font-weight: 600; color: #374151; }
+  &__bar-wrap { height: 8px; background: #F1F5F9; border-radius: $radius-full; overflow: hidden; }
+  &__bar { height: 100%; border-radius: $radius-full; transition: width 0.6s ease; }
+  &__pct { font-size: 0.8125rem; font-weight: 700; color: #374151; font-family: var(--font-latin); text-align: end; }
+}
+
+// ── Campaigns grid ──────────────────────────────────────────────
+.campaigns-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: $space-lg;
+  @media (max-width: $bp-desktop) { grid-template-columns: repeat(2,1fr); }
+  @media (max-width: $bp-mobile)  { grid-template-columns: 1fr; }
+}
+
+.camp-card {
+  background: #fff; border: 1px solid #E2E8F0; border-radius: $radius-xl; padding: $space-lg;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  &__header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: $space-md; gap: $space-sm; }
+  &__title  { font-size: 0.9375rem; font-weight: 700; color: #0F172A; margin: 0; }
+  &__progress { margin-bottom: $space-md; }
+  &__meta { display: flex; gap: $space-md; font-size: 0.8125rem; color: #64748B; margin-bottom: $space-md;
+    span { display: flex; align-items: center; gap: 4px; }
+    .material-icons { font-size: 1rem; }
+  }
+  &__actions { display: flex; gap: $space-xs; }
+}
+
+.camp-progress-bar { height: 6px; background: #F1F5F9; border-radius: $radius-full; overflow: hidden; margin-bottom: $space-xs;
+  &__fill { height: 100%; background: $color-primary; border-radius: $radius-full; }
+}
+.camp-progress-labels { display: flex; justify-content: space-between; font-size: 0.75rem; }
+.camp-raised { font-weight: 700; color: $color-primary; font-family: var(--font-latin); }
+.camp-pct    { font-weight: 700; color: #374151; }
+.camp-goal   { color: #94A3B8; font-family: var(--font-latin); }
+
+.camp-btn {
+  height: 34px !important; font-size: 0.8125rem !important; font-weight: 600 !important;
+  border-radius: $radius-md !important; border-color: #E2E8F0 !important; color: #374151 !important;
+  display: flex !important; align-items: center; gap: 4px;
+  .material-icons { font-size: 1rem; }
+  &--edit { color: $color-primary !important; border-color: rgba($color-primary,0.3) !important; }
+}
+
+// ── Reports ──────────────────────────────────────────────────────
+.report-row {
+  display: flex; align-items: center; gap: $space-lg; padding: $space-md 0;
+  border-bottom: 1px solid #F1F5F9;
+  &:last-child { border-bottom: none; }
+  &__icon { width: 42px; height: 42px; border-radius: $radius-md; background: rgba($color-primary,0.08);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    .material-icons { font-size: 1.375rem; color: $color-primary; }
+  }
+  &__info { flex: 1; }
+  &__title { font-size: 0.9375rem; font-weight: 600; color: #0F172A; margin-bottom: 4px; }
+  &__meta  { display: flex; align-items: center; gap: $space-sm; flex-wrap: wrap; }
+}
+
+.report-badge {
+  font-size: 0.6875rem; font-weight: 700; padding: 2px 8px; border-radius: $radius-full;
+  &--quarterly { background: rgba($color-gold,0.1); color: $color-gold-dark; }
+  &--annual    { background: rgba($color-primary,0.1); color: $color-primary; }
+  &--monthly   { background: rgba($color-navy,0.08); color: $color-navy; }
+}
+
+.report-period, .report-size { font-size: 0.8125rem; color: #64748B; }
+
+.download-btn {
+  height: 36px !important; padding: 0 $space-md !important;
+  font-size: 0.8125rem !important; font-weight: 600 !important;
+  border-radius: $radius-md !important; flex-shrink: 0;
+  display: flex !important; align-items: center; gap: 4px;
+  .material-icons { font-size: 1rem; }
+}
+
+.admin-filters { display: flex; gap: $space-sm; }

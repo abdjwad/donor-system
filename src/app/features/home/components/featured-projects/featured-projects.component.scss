@@ -1,0 +1,16 @@
+@use '../../../../styles/variables' as *;
+
+.featured-projects-section {
+  background: rgba($color-primary, 0.02);
+  border-top: 1px solid $color-border;
+  border-bottom: 1px solid $color-border;
+}
+
+.featured-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-xl;
+
+  @media (max-width: $bp-desktop) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: $bp-mobile)  { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,194 @@
+@use '../../../../styles/variables' as *;
+
+.site-footer {
+  background: $color-primary-dark;
+  color: rgba(255,255,255,0.85);
+
+  &.rtl { direction: rtl; }
+
+  &__top {
+    padding: $space-3xl 0 $space-2xl;
+  }
+
+  &__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 $space-2xl;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: $space-2xl;
+
+    @media (max-width: $bp-desktop) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: $bp-mobile) {
+      grid-template-columns: 1fr;
+      padding: 0 $space-lg;
+    }
+  }
+
+  &__bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding: $space-lg 0;
+  }
+
+  &__bottom-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 $space-2xl;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $space-md;
+
+    @media (max-width: $bp-mobile) { padding: 0 $space-lg; }
+  }
+}
+
+// ── Footer Logo ───────────────────────────────────────────────
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: $space-md;
+
+  &__dot {
+    width: 10px;
+    height: 10px;
+    background: $color-gold;
+    border-radius: $radius-full;
+  }
+
+  &__text {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.01em;
+  }
+}
+
+// ── Columns ───────────────────────────────────────────────────
+.footer-col {
+  &__desc {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.75;
+    margin: 0 0 $space-lg;
+    max-width: 280px;
+  }
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $color-gold-light;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0 0 $space-md;
+  }
+}
+
+// ── Footer links ──────────────────────────────────────────────
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+
+  a {
+    font-size: 0.9375rem;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    transition: $transition-fast;
+
+    &:hover {
+      color: $color-gold-light;
+      padding-inline-start: 4px;
+    }
+  }
+}
+
+// ── Contact list ─────────────────────────────────────────────
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-sm;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.7);
+
+    a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      &:hover { color: $color-gold-light; }
+    }
+  }
+}
+
+.contact-icon {
+  font-size: 1.125rem;
+  color: $color-gold;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+// ── Social links ──────────────────────────────────────────────
+.footer-social {
+  display: flex;
+  gap: $space-sm;
+}
+
+.social-link {
+  width: 38px;
+  height: 38px;
+  border-radius: $radius-full;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  transition: $transition-fast;
+
+  .material-icons { font-size: 1.125rem; }
+
+  &:hover {
+    background: rgba($color-gold, 0.2);
+    border-color: $color-gold;
+    color: $color-gold-light;
+  }
+}
+
+// ── Bottom bar ────────────────────────────────────────────────
+.footer-rights {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.5);
+  margin: 0;
+}
+
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  font-size: 0.875rem;
+
+  a {
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    transition: $transition-fast;
+    &:hover { color: $color-gold-light; }
+  }
+
+  span { color: rgba(255,255,255,0.3); }
+}

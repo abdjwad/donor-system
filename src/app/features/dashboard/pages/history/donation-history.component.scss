@@ -1,0 +1,40 @@
+@use '../../../../styles/variables' as *;
+
+.history-page { min-height: 100vh; background: $color-background; &.rtl { direction: rtl; } }
+.history-layout { display: grid; grid-template-columns: 220px 1fr; gap: $space-xl; max-width: 1200px; margin: $space-xl auto; padding: 0 $space-xl; @media (max-width: $bp-tablet) { grid-template-columns: 1fr; } }
+
+.dash-sidebar { background: $color-card-bg; border: 1px solid $color-border; border-radius: $radius-xl; padding: $space-md; position: sticky; top: $space-xl; height: fit-content; @media (max-width: $bp-tablet) { display: none; } }
+.dash-nav__link { display: flex; align-items: center; gap: $space-sm; padding: $space-sm $space-md; border-radius: $radius-md; color: $color-text-secondary; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: $transition-fast; .material-icons { font-size: 1.125rem; } &:hover { background: rgba($color-primary,0.06); color: $color-primary; } &.active { background: rgba($color-primary,0.1); color: $color-primary; } }
+
+.history-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: $space-xl; flex-wrap: wrap; gap: $space-md; }
+.history-title { font-size: 1.375rem; font-weight: 800; color: $color-text-primary; margin: 0 0 4px; letter-spacing: -0.02em; }
+.history-subtitle { font-size: 0.875rem; color: $color-text-muted; margin: 0; }
+.export-btn { height: 38px !important; font-size: 0.875rem !important; font-weight: 600 !important; border-radius: $radius-md !important; border-color: $color-border !important; display: flex !important; align-items: center; gap: 4px; .material-icons { font-size: 1rem; } }
+
+.history-filters { margin-bottom: $space-lg; }
+.filter-chips { display: flex; flex-wrap: wrap; gap: $space-xs; }
+.filter-chip { height: 34px; padding: 0 $space-md; border: 1.5px solid $color-border; border-radius: $radius-full; background: $color-card-bg; font-size: 0.8125rem; font-weight: 600; cursor: pointer; font-family: inherit; color: $color-text-secondary; transition: $transition-fast;
+  &.active { border-color: $color-primary; background: rgba($color-primary,0.08); color: $color-primary; }
+  &:hover:not(.active) { border-color: $color-primary; }
+}
+
+.history-table-wrap { background: $color-card-bg; border: 1px solid $color-border; border-radius: $radius-xl; overflow-x: auto; box-shadow: $shadow-card; }
+.history-table { width: 100%; border-collapse: collapse;
+  th, td { padding: $space-md $space-lg; text-align: start; font-size: 0.875rem; border-bottom: 1px solid $color-background; }
+  th { font-weight: 700; color: $color-text-secondary; font-size: 0.8125rem; letter-spacing: 0.03em; text-transform: uppercase; background: $color-background; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: rgba($color-primary,0.02); }
+}
+
+.project-cell { font-weight: 600; color: $color-text-primary; max-width: 200px; }
+.amount-cell { font-weight: 700; color: $color-primary; font-family: var(--font-latin); }
+.empty-row { text-align: center; color: $color-text-muted; padding: $space-2xl !important; }
+
+.status-badge { border-radius: $radius-full; padding: 3px 10px; font-size: 0.75rem; font-weight: 600;
+  &--completed { background: rgba($color-success,0.1); color: $color-success; }
+  &--pending   { background: rgba($color-warning,0.1); color: $color-warning; }
+  &--failed    { background: rgba($color-error,0.1); color: $color-error; }
+  &--refunded  { background: rgba($color-navy,0.08); color: $color-navy; }
+}
+
+.invoice-btn { background: none; border: none; cursor: pointer; font-size: 0.8125rem; font-weight: 600; color: $color-primary; display: flex; align-items: center; gap: 3px; font-family: inherit; transition: $transition-fast; &:hover { text-decoration: underline; } .material-icons { font-size: 0.9375rem; } }

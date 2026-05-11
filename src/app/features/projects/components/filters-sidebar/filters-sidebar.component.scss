@@ -1,0 +1,155 @@
+@use '../../../../styles/variables' as *;
+
+.filters-sidebar {
+  background: $color-card-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
+  padding: $space-lg;
+  position: sticky;
+  top: $space-lg;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $space-lg;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: $color-text-primary;
+    margin: 0;
+
+    .material-icons { font-size: 1.25rem; color: $color-primary; }
+  }
+}
+
+.filters-reset-btn {
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  color: $color-error !important;
+  padding: 0 $space-sm !important;
+  min-width: auto !important;
+}
+
+// ── Filter group ──────────────────────────────────────────────
+.filter-group {
+  margin-bottom: $space-lg;
+  padding-bottom: $space-lg;
+  border-bottom: 1px solid $color-border;
+
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $color-text-secondary;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0 0 $space-sm;
+  }
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+  }
+}
+
+// ── Custom radio ───────────────────────────────────────────────
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  cursor: pointer;
+  padding: $space-xs 0;
+
+  input[type="radio"] { display: none; }
+
+  &__dot {
+    width: 18px;
+    height: 18px;
+    border: 2px solid $color-border;
+    border-radius: $radius-full;
+    flex-shrink: 0;
+    transition: $transition-fast;
+    position: relative;
+  }
+
+  input:checked + &__dot {
+    border-color: $color-primary;
+    background: $color-primary;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      background: #fff;
+      border-radius: $radius-full;
+    }
+  }
+
+  &__label {
+    font-size: 0.9rem;
+    color: $color-text-secondary;
+    font-weight: 500;
+    transition: $transition-fast;
+  }
+
+  &:hover &__label { color: $color-text-primary; }
+}
+
+// ── Custom checkbox ───────────────────────────────────────────
+.check-option {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  cursor: pointer;
+  padding: $space-xs $space-sm;
+  border-radius: $radius-sm;
+  transition: $transition-fast;
+  font-size: 0.9rem;
+  color: $color-text-secondary;
+  font-weight: 500;
+
+  &:hover {
+    background: rgba($color-primary, 0.04);
+    color: $color-text-primary;
+  }
+
+  &.checked {
+    color: $color-primary;
+    font-weight: 600;
+  }
+}
+
+.check-box {
+  width: 18px;
+  height: 18px;
+  border: 2px solid $color-border;
+  border-radius: $radius-sm;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition-fast;
+  background: $color-card-bg;
+
+  .check-option.checked & {
+    border-color: $color-primary;
+    background: $color-primary;
+  }
+}
+
+.check-icon {
+  font-size: 0.875rem !important;
+  color: #fff;
+}

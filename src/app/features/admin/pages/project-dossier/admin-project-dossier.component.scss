@@ -1,0 +1,119 @@
+@use '../../../../styles/variables' as *;
+
+.dossier-subtitle { color: $color-text-muted; font-size: 0.875rem; margin: 4px 0 0; }
+
+.dossier-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-md;
+  margin-bottom: $space-lg;
+
+  @media (max-width: $bp-mobile) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.dossier-summary__item {
+  background: #fff;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $space-md;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.dossier-summary__value { font-size: 1.25rem; font-weight: 800; color: $color-primary; font-family: var(--font-latin); }
+.dossier-summary__label { font-size: 0.75rem; color: $color-text-muted; }
+
+.dossier-tabs {
+  display: flex;
+  gap: $space-xs;
+  margin-bottom: $space-md;
+  border-bottom: 1px solid $color-border;
+}
+
+.dossier-tab {
+  padding: $space-sm $space-md;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: $color-text-muted;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover { color: $color-text-primary; }
+  &.active { color: $color-primary; border-bottom-color: $color-primary; }
+}
+
+.dossier-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-sm $space-lg;
+  margin-bottom: $space-md;
+
+  @media (max-width: $bp-mobile) { grid-template-columns: 1fr; }
+}
+
+.dossier-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  padding-bottom: $space-xs;
+  border-bottom: 1px solid $color-border;
+
+  span:first-child { color: $color-text-muted; }
+  span:last-child { font-weight: 600; color: $color-text-primary; }
+  .mono { font-family: var(--font-latin); direction: ltr; }
+}
+
+.dossier-description { font-size: 0.875rem; color: $color-text-secondary; line-height: 1.7; margin: 0; }
+
+.dossier-manage-btn { margin-top: $space-md; display: inline-flex !important; }
+
+.dossier-tranches { margin-top: $space-md; }
+
+// ── Timeline (نفس نمط project-detail الخاص بالمتبرع) ──
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: $color-border;
+  }
+}
+
+.timeline__item {
+  display: flex;
+  gap: $space-lg;
+  padding-bottom: $space-xl;
+  position: relative;
+  &:last-child { padding-bottom: 0; }
+}
+
+.timeline__dot {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 1;
+  .material-icons { font-size: 1rem; }
+  .timeline__item--completed & { background: $color-primary; color: #fff; }
+  .timeline__item--ongoing & { background: $color-gold; color: $color-primary-dark; }
+  .timeline__item--pending & { background: $color-card-bg; border: 2px solid $color-border; color: $color-text-muted; }
+}
+
+.timeline__content { flex: 1; padding-top: 4px; }
+.timeline__title { font-weight: 700; font-size: 0.9375rem; color: $color-text-primary; }
+.timeline__desc { font-size: 0.875rem; color: $color-text-muted; margin: 4px 0 0; line-height: 1.6; }

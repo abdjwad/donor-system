@@ -17,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { applyAuthError } from '../../../core/utils/auth-error.util';
 
 function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
   const password = group.get('password')?.value;
@@ -109,14 +110,8 @@ export class ResetPasswordComponent implements OnInit {
       .subscribe({
         next: () => this.isSuccess.set(true),
         error: (err: HttpErrorResponse) => {
-          if (err.status === 422 && err.error?.errors) {
-            const errors: Record<string, string[]> = err.error.errors;
-            Object.entries(errors).forEach(([field, messages]) => {
-              this.form.get(field)?.setErrors({ serverError: messages[0] });
-            });
-          } else {
-            this.apiError.set(err.error?.message ?? 'AUTH.ERRORS.GENERIC');
-          }
+          const bannerKey = applyAuthError(err, this.form);
+          if (bannerKey) this.apiError.set(bannerKey);
         },
       });
   }

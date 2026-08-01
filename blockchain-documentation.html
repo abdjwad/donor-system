@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>توثيق البلوك تشين — منصة بنيان</title>
+  <style>
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --surface2:  #21262d;
+      --border:    #30363d;
+      --accent:    #58a6ff;
+      --accent2:   #79c0ff;
+      --green:     #3fb950;
+      --purple:    #bc8cff;
+      --orange:    #f0883e;
+      --red:       #ff7b72;
+      --yellow:    #e3b341;
+      --text:      #c9d1d9;
+      --text-dim:  #8b949e;
+      --radius:    12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 40%, #1a1f2e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 40px 50px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(88,166,255,.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(88,166,255,.1);
+      border: 1px solid rgba(88,166,255,.3);
+      color: var(--accent);
+      border-radius: 50px;
+      padding: 6px 18px;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+    .hero p {
+      color: var(--text-dim);
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .stat-pill {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 13px;
+    }
+    .stat-pill .val { color: var(--accent); font-weight: 700; font-size: 16px; display: block; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    nav.toc {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,17,23,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    nav.toc ul {
+      display: flex;
+      gap: 2px;
+      list-style: none;
+      overflow-x: auto;
+      padding: 0;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    nav.toc ul li a {
+      display: block;
+      padding: 14px 16px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 13px;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: all .2s;
+    }
+    nav.toc ul li a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+    main { padding: 50px 24px 80px; max-width: 1100px; margin: 0 auto; }
+
+    /* ── SECTIONS ── */
+    section { margin-bottom: 70px; }
+    section h2 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    section h2 .icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    section h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--accent2);
+      margin: 28px 0 14px;
+    }
+    section h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--yellow);
+      margin: 20px 0 10px;
+    }
+    .section-desc {
+      color: var(--text-dim);
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .card-icon {
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .card-title { font-weight: 700; font-size: 1.05rem; color: #fff; }
+    .card-subtitle { font-size: 12px; color: var(--text-dim); }
+
+    /* ── CODE BLOCKS ── */
+    .code-block {
+      background: #010409;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 14px 0;
+    }
+    .code-header {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .code-label { font-size: 12px; color: var(--text-dim); font-weight: 600; }
+    .code-lang {
+      font-size: 11px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+      color: var(--accent);
+    }
+    pre {
+      padding: 20px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.6;
+      font-family: 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+    }
+
+    /* syntax highlight classes */
+    .kw  { color: #ff7b72; }   /* keywords */
+    .fn  { color: #d2a8ff; }   /* functions */
+    .str { color: #a5d6ff; }   /* strings */
+    .num { color: #79c0ff; }   /* numbers */
+    .cmt { color: #8b949e; font-style: italic; } /* comments */
+    .type{ color: #ffa657; }   /* types */
+    .ev  { color: #3fb950; }   /* events */
+    .dec { color: #e3b341; }   /* decorators */
+    .var { color: #c9d1d9; }
+
+    /* ── FLOW DIAGRAM ── */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 20px 0;
+    }
+    .flow-step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .flow-line {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .flow-dot {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .flow-connector {
+      width: 2px;
+      flex: 1;
+      min-height: 24px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+    .flow-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      flex: 1;
+    }
+    .flow-content .fc-title { font-weight: 600; font-size: 14px; color: #fff; }
+    .flow-content .fc-desc  { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+    .flow-content .fc-code  { font-family: monospace; font-size: 12px; color: var(--accent); background: rgba(88,166,255,.08); padding: 4px 8px; border-radius: 4px; margin-top: 6px; display: inline-block; }
+
+    /* ── TABLES ── */
+    .tbl-wrap { overflow-x: auto; margin: 16px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    thead th {
+      background: var(--surface2);
+      color: var(--text-dim);
+      font-weight: 600;
+      padding: 10px 16px;
+      text-align: right;
+      border-bottom: 2px solid var(--border);
+    }
+    tbody td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tbody tr:hover { background: rgba(255,255,255,.02); }
+    .td-fn  { color: var(--purple); font-family: monospace; }
+    .td-type{ color: var(--orange); font-size: 12px; }
+    .td-cost{ color: var(--green);  font-size: 12px; font-weight: 600; }
+    .td-cost.paid { color: var(--red); }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-green  { background: rgba(63,185,80,.15);  color: var(--green);  border: 1px solid rgba(63,185,80,.3);  }
+    .badge-blue   { background: rgba(88,166,255,.15); color: var(--accent); border: 1px solid rgba(88,166,255,.3); }
+    .badge-orange { background: rgba(240,136,62,.15); color: var(--orange); border: 1px solid rgba(240,136,62,.3); }
+    .badge-red    { background: rgba(255,123,114,.15);color: var(--red);    border: 1px solid rgba(255,123,114,.3);}
+    .badge-purple { background: rgba(188,140,255,.15);color: var(--purple); border: 1px solid rgba(188,140,255,.3);}
+
+    /* ── GRID ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    @media (max-width: 720px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.8rem; }
+    }
+
+    /* ── MINI CARD ── */
+    .mini-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .mini-card .mc-icon { font-size: 24px; margin-bottom: 10px; }
+    .mini-card .mc-title { font-weight: 600; font-size: 14px; color: #fff; margin-bottom: 4px; }
+    .mini-card .mc-text  { font-size: 13px; color: var(--text-dim); }
+
+    /* ── ADDRESS ── */
+    .address-box {
+      background: #010409;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: monospace;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin: 8px 0;
+      flex-wrap: wrap;
+    }
+    .address-box .addr { color: var(--green); }
+    .address-box .net  { color: var(--text-dim); font-size: 11px; }
+
+    /* ── NETWORK CHIPS ── */
+    .network-list { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0; }
+    .net-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+    }
+    .net-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* ── CALLOUT ── */
+    .callout {
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .callout-info   { background: rgba(88,166,255,.08);  border-right: 3px solid var(--accent);  }
+    .callout-warn   { background: rgba(240,136,62,.08);  border-right: 3px solid var(--orange);  }
+    .callout-success{ background: rgba(63,185,80,.08);   border-right: 3px solid var(--green);   }
+    .callout-icon   { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── FILE PATH ── */
+    .filepath {
+      display: inline-block;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--accent2);
+    }
+
+    /* ── ARROW FLOW ── */
+    .arrow-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      margin: 16px 0;
+      gap: 8px;
+    }
+    .af-node {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      text-align: center;
+    }
+    .af-node .afl { font-size: 11px; color: var(--text-dim); }
+    .af-node .afv { font-weight: 600; color: #fff; }
+    .af-arrow {
+      color: var(--accent);
+      font-size: 20px;
+      padding: 0 4px;
+    }
+
+    /* ── SECURITY ── */
+    .sec-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .sec-row:last-child { border-bottom: none; }
+    .sec-icon { font-size: 22px; flex-shrink: 0; width: 36px; text-align: center; }
+    .sec-title { font-weight: 600; color: #fff; font-size: 14px; }
+    .sec-desc  { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+
+    /* scroll smooth */
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  HERO                                                          -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-badge">⛓️ Blockchain Documentation</div>
+  <h1>توثيق نظام البلوك تشين<br/>منصة بنيان</h1>
+  <p>شرح شامل وكامل لكل كود البلوك تشين في المنصة — كيف يعمل، ليش مستخدم، وين موجود في الباك والفرونت</p>
+  <div class="hero-stats">
+    <div class="stat-pill"><span class="val">2</span>عقد ذكي (Solidity)</div>
+    <div class="stat-pill"><span class="val">ethers.js v6</span>مكتبة الربط</div>
+    <div class="stat-pill"><span class="val">Ganache → Polygon</span>الشبكات</div>
+    <div class="stat-pill"><span class="val">MetaMask</span>المحفظة</div>
+    <div class="stat-pill"><span class="val">OpenZeppelin</span>أمان العقود</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  NAV                                                           -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<nav class="toc">
+  <ul>
+    <li><a href="#why">ليش بلوك تشين؟</a></li>
+    <li><a href="#arch">المعمارية</a></li>
+    <li><a href="#contracts">العقود الذكية</a></li>
+    <li><a href="#donation-contract">BunianDonation</a></li>
+    <li><a href="#project-contract">BunianProject</a></li>
+    <li><a href="#frontend">الفرونت (Angular)</a></li>
+    <li><a href="#flow">تدفق البيانات</a></li>
+    <li><a href="#deploy">النشر والشبكات</a></li>
+    <li><a href="#security">الأمان</a></li>
+    <li><a href="#where-used">وين مستخدم</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  MAIN                                                          -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<main>
+
+<!-- ─── WHY ─────────────────────────────────────────────────────── -->
+<section id="why">
+  <h2>
+    <span class="icon" style="background:rgba(63,185,80,.15)">💡</span>
+    ليش استخدمنا البلوك تشين؟
+  </h2>
+  <p class="section-desc">منصة بنيان لإعادة الإعمار — المتبرعون بدهم يشوفوا وين راحت فلوسهم. هون يجي دور البلوك تشين.</p>
+
+  <div class="grid-3">
+    <div class="mini-card">
+      <div class="mc-icon">🔒</div>
+      <div class="mc-title">شفافية لا تُكذَّب</div>
+      <div class="mc-text">كل تبرع يُسجَّل على الـ blockchain بشكل دائم — ما حدا قادر يحذفه أو يعدله، ولا حتى الإدارة</div>
+    </div>
+    <div class="mini-card">
+      <div class="mc-icon">⚡</div>
+      <div class="mc-title">بدون وسيط</div>
+      <div class="mc-text">التبرع بالكريبتو يروح مباشرة للعقد الذكي — ما في بنك أو بوابة دفع بالمنتصف تأخذ عمولة أو تعطل</div>
+    </div>
+    <div class="mini-card">
+      <div class="mc-icon">🌍</div>
+      <div class="mc-title">بلا حدود</div>
+      <div class="mc-text">أي شخص في العالم عنده MetaMask يقدر يتبرع بـ MATIC لمشاريع سوريا مباشرة بدون قيود بنكية</div>
+    </div>
+    <div class="mini-card">
+      <div class="mc-icon">📋</div>
+      <div class="mc-title">مراحل إفراج الأموال</div>
+      <div class="mc-text">الأموال ما تُصرف دفعة وحدة — تتحرر بالتدريج مع إكمال كل مرحلة من مراحل المشروع الميداني</div>
+    </div>
+    <div class="mini-card">
+      <div class="mc-icon">🔍</div>
+      <div class="mc-title">قابلية التتبع</div>
+      <div class="mc-text">كل تبرع عنده TX Hash — رقم فريد يقدر المتبرع يتحقق منه على الـ blockchain بنفسه في أي وقت</div>
+    </div>
+    <div class="mini-card">
+      <div class="mc-icon">🤖</div>
+      <div class="mc-title">منطق تلقائي</div>
+      <div class="mc-text">العقد الذكي ينفذ الشروط أوتوماتيكياً — مثل: لا تقبل تبرع أقل من 0.1 MATIC، أو مشروع موقوف</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ARCHITECTURE ──────────────────────────────────────────────── -->
+<section id="arch">
+  <h2>
+    <span class="icon" style="background:rgba(88,166,255,.15)">🏗️</span>
+    المعمارية الكاملة
+  </h2>
+  <p class="section-desc">المنصة عندها طبقتين للدفع — تقليدية وبلوك تشين — يشتغلوا بالتوازي.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(188,140,255,.15)">🗂️</div>
+      <div>
+        <div class="card-title">Stack التقني الكامل</div>
+        <div class="card-subtitle">كل الأدوات المستخدمة في نظام البلوك تشين</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <h4>طبقة الـ Smart Contracts (الباك)</h4>
+        <table>
+          <tbody>
+            <tr><td>لغة البرمجة</td><td><span class="badge badge-purple">Solidity 0.8.24</span></td></tr>
+            <tr><td>بيئة التطوير</td><td><span class="badge badge-blue">Hardhat 2.28</span></td></tr>
+            <tr><td>مكتبة الأمان</td><td><span class="badge badge-green">OpenZeppelin 5.6</span></td></tr>
+            <tr><td>الشبكة المحلية</td><td><span class="badge badge-orange">Ganache (Chain 1337)</span></td></tr>
+            <tr><td>Testnet</td><td><span class="badge badge-blue">Polygon Amoy (80002)</span></td></tr>
+            <tr><td>Mainnet</td><td><span class="badge badge-green">Polygon (137)</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h4>طبقة الـ Frontend (الفرونت)</h4>
+        <table>
+          <tbody>
+            <tr><td>Framework</td><td><span class="badge badge-red">Angular 21</span></td></tr>
+            <tr><td>مكتبة Blockchain</td><td><span class="badge badge-blue">ethers.js 6.16</span></td></tr>
+            <tr><td>المحفظة</td><td><span class="badge badge-orange">MetaMask (EIP-1193)</span></td></tr>
+            <tr><td>State Management</td><td><span class="badge badge-purple">Angular Signals</span></td></tr>
+            <tr><td>عناوين العقود</td><td><span class="badge badge-green">JSON Asset File</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">ℹ️</span>
+    <div>
+      <strong>الفرق عن الباك-اند التقليدي:</strong> مافي سيرفر بالمنتصف للكريبتو — المتبرع يتحدث مباشرة مع العقد الذكي على الـ blockchain عبر MetaMask. الـ Angular فقط يبني الواجهة ويرسل الطلب.
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTRACTS OVERVIEW ─────────────────────────────────────────── -->
+<section id="contracts">
+  <h2>
+    <span class="icon" style="background:rgba(240,136,62,.15)">📜</span>
+    العقود الذكية — نظرة عامة
+  </h2>
+  <p class="section-desc">في عقدان ذكيان مكتوبان بـ Solidity ومنشوران على Ganache.</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(63,185,80,.15)">💚</div>
+        <div>
+          <div class="card-title">BunianDonation.sol</div>
+          <div class="card-subtitle">العقد الرئيسي — استقبال التبرعات</div>
+        </div>
+      </div>
+      <div class="address-box">
+        <span class="addr">0xC86bc613F3fA9C570612e651a54bF804f43A37B1</span>
+        <span class="net">Ganache</span>
+      </div>
+      <p style="font-size:13px;color:var(--text-dim);margin-top:10px;">يستقبل MATIC، يسجل التبرعات بشكل دائم، ويسمح للإدارة بسحب الأموال للمشاريع.</p>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="badge badge-green">payable</span>
+        <span class="badge badge-blue">ReentrancyGuard</span>
+        <span class="badge badge-purple">Ownable</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(88,166,255,.15)">🏗️</div>
+        <div>
+          <div class="card-title">BunianProject.sol</div>
+          <div class="card-subtitle">إدارة المشاريع والمراحل</div>
+        </div>
+      </div>
+      <div class="address-box">
+        <span class="addr">0x37a11279399BB69341218899075b996BCcbEF0f1</span>
+        <span class="net">Ganache</span>
+      </div>
+      <p style="font-size:13px;color:var(--text-dim);margin-top:10px;">يدير مشاريع إعادة الإعمار بنظام المراحل — الأموال تُحرَّر فقط بعد التحقق الميداني من كل مرحلة.</p>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="badge badge-orange">Milestones</span>
+        <span class="badge badge-purple">Ownable</span>
+        <span class="badge badge-blue">Cross-Contract</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DONATION CONTRACT ──────────────────────────────────────────── -->
+<section id="donation-contract">
+  <h2>
+    <span class="icon" style="background:rgba(63,185,80,.15)">💰</span>
+    BunianDonation.sol — شرح تفصيلي
+  </h2>
+  <p class="section-desc">
+    <span class="filepath">blockchain/contracts/BunianDonation.sol</span>
+    — 210 سطر — العقد الرئيسي الذي يستقبل كل تبرع
+  </p>
+
+  <h3>📦 هيكل البيانات (Struct)</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-label">كل تبرع يُخزَّن بهذا الشكل على الـ blockchain إلى الأبد</span>
+      <span class="code-lang">Solidity</span>
+    </div>
+    <pre><span class="kw">struct</span> <span class="type">Donation</span> {
+    <span class="type">address</span> donor;      <span class="cmt">// عنوان محفظة المتبرع (42 حرف يبدأ بـ 0x)</span>
+    <span class="type">uint256</span> amount;     <span class="cmt">// المبلغ بـ wei — 1 MATIC = 10^18 wei</span>
+    <span class="type">uint256</span> projectId;  <span class="cmt">// رقم المشروع (0 = الصندوق العام)</span>
+    <span class="type">uint256</span> timestamp;  <span class="cmt">// وقت التبرع — Unix timestamp</span>
+    <span class="type">string</span>  message;    <span class="cmt">// رسالة إهداء اختيارية من المتبرع</span>
+}</pre>
+  </div>
+
+  <h3>💾 التخزين الدائم (Storage Variables)</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-label">المتغيرات المخزنة على الـ blockchain — تبقى إلى الأبد</span>
+      <span class="code-lang">Solidity</span>
+    </div>
+    <pre><span class="cmt">// قائمة كل التبرعات — تكبر مع كل تبرع جديد</span>
+<span class="type">Donation</span>[] <span class="kw">public</span> donations;
+
+<span class="cmt">// إجمالي ما جُمع لكل مشروع: projectId → المبلغ الكلي بـ wei</span>
+<span class="kw">mapping</span>(<span class="type">uint256</span> => <span class="type">uint256</span>) <span class="kw">public</span> totalRaisedByProject;
+
+<span class="cmt">// عدد تبرعات كل متبرع: عنوان المحفظة → عدد التبرعات</span>
+<span class="kw">mapping</span>(<span class="type">address</span> => <span class="type">uint256</span>) <span class="kw">public</span> donationCountByDonor;
+
+<span class="cmt">// هل المشروع مفعّل ويقبل تبرعات؟</span>
+<span class="kw">mapping</span>(<span class="type">uint256</span> => <span class="type">bool</span>) <span class="kw">public</span> projectActive;
+
+<span class="cmt">// إجمالي كل ما جُمع على المنصة</span>
+<span class="type">uint256</span> <span class="kw">public</span> totalRaised;
+
+<span class="cmt">// الحد الأدنى للتبرع — 0.1 MATIC (ثابت لا يتغير)</span>
+<span class="type">uint256</span> <span class="kw">public constant</span> MIN_DONATION = <span class="num">0.1</span> <span class="kw">ether</span>;</pre>
+  </div>
+
+  <h3>📡 الأحداث (Events)</h3>
+  <div class="callout callout-info">
+    <span class="callout-icon">📡</span>
+    <div>الـ Events هي الطريقة اللي البلوك تشين يبلغ فيها الـ frontend — بمجرد ما تبرع يصل، ethers.js يستقبل الحدث فوراً ويعدّل الواجهة.</div>
+  </div>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-label">الأحداث التي يستمع إليها ethers.js في Angular</span>
+      <span class="code-lang">Solidity</span>
+    </div>
+    <pre><span class="cmt">// يُطلَق مع كل تبرع جديد — ethers.js يستمع لهذا</span>
+<span class="kw">event</span> <span class="ev">DonationReceived</span>(
+    <span class="type">address indexed</span> donor,       <span class="cmt">// indexed = قابل للبحث والفلترة</span>
+    <span class="type">uint256 indexed</span> projectId,    <span class="cmt">// indexed = تقدر تستعلم عن مشروع معين</span>
+    <span class="type">uint256</span>         amount,
+    <span class="type">uint256</span>         donationId,
+    <span class="type">uint256</span>         timestamp,
+    <span class="type">string</span>          message
+);
+
+<span class="cmt">// يُطلَق عند سحب أموال لمشروع</span>
+<span class="kw">event</span> <span class="ev">FundsWithdrawn</span>(
+    <span class="type">uint256 indexed</span> projectId,
+    <span class="type">address indexed</span> recipient,
+    <span class="type">uint256</span>         amount,
+    <span class="type">uint256</span>         timestamp
+);
+
+<span class="cmt">// يُطلَق عند تفعيل/إيقاف مشروع</span>
+<span class="kw">event</span> <span class="ev">ProjectStatusChanged</span>(<span class="type">uint256 indexed</span> projectId, <span class="type">bool</span> active);</pre>
+  </div>
+
+  <h3>⚡ الدوال الرئيسية</h3>
+
+  <h4>1. دالة التبرع — donate()</h4>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-label">الدالة الأهم — تُستدعى عند كل تبرع بكريبتو</span>
+      <span class="code-lang">Solidity</span>
+    </div>
+    <pre><span class="cmt">/// @notice التبرع بـ MATIC لمشروع معين أو الصندوق العام</span>
+<span class="cmt">/// @param projectId معرف المشروع (0 = الصندوق العام)</span>
+<span class="cmt">/// @param message   رسالة إهداء اختيارية</span>
+<span class="kw">function</span> <span class="fn">donate</span>(
+    <span class="type">uint256</span>  projectId,
+    <span class="type">string calldata</span> message
+) <span class="kw">external payable nonReentrant</span> {
+
+    <span class="cmt">// ① التحقق من الشروط — إذا فشل، يُرجع الـ MATIC ويوقف التنفيذ</span>
+    <span class="kw">require</span>(msg.value >= MIN_DONATION, <span class="str">"amount below minimum"</span>);
+    <span class="kw">require</span>(projectActive[projectId],  <span class="str">"project not active"</span>);
+
+    <span class="cmt">// ② تسجيل التبرع بشكل دائم على الـ blockchain</span>
+    <span class="type">uint256</span> donationId = donations.length;
+    donations.<span class="fn">push</span>(<span class="type">Donation</span>({
+        donor:     msg.sender,     <span class="cmt">// عنوان المتبرع تلقائياً</span>
+        amount:    msg.value,      <span class="cmt">// المبلغ المرسل بـ wei</span>
+        projectId: projectId,
+        timestamp: block.timestamp, <span class="cmt">// وقت البلوكة</span>
+        message:   message
+    }));
+
+    <span class="cmt">// ③ تحديث الإحصائيات</span>
+    totalRaisedByProject[projectId] += msg.value;
+    donationCountByDonor[msg.sender]++;
+    totalRaised += msg.value;
+
+    <span class="cmt">// ④ إطلاق الحدث — يصل للـ frontend فوراً عبر ethers.js</span>
+    <span class="kw">emit</span> <span class="ev">DonationReceived</span>(
+        msg.sender, projectId, msg.value,
+        donationId, block.timestamp, message
+    );
+}</pre>
+  </div>
+
+  <h4>2. دوال القراءة المجانية (View Functions)</h4>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>الدالة</th>
+          <th>ما ترجع</th>
+          <th>الكلفة</th>
+          <th>وين تُستخدم</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-fn">getDonationsCount()</td>
+          <td>عدد التبرعات الكلي</td>
+          <td class="td-cost">مجاني</td>
+          <td>إحصائيات الشفافية</td>
+        </tr>
+        <tr>
+          <td class="td-fn">getRecentDonations(count)</td>
+          <td>آخر N تبرع</td>
+          <td class="td-cost">مجاني</td>
+          <td>صفحة الشفافية + الداشبورد</td>
+        </tr>
+        <tr>
+          <td class="td-fn">getDonationsPaginated(offset, limit)</td>
+          <td>تبرعات بصفحات</td>
+          <td class="td-cost">مجاني</td>
+          <td>عرض قائمة التبرعات</td>
+        </tr>
+        <tr>
+          <td class="td-fn">getContractBalance()</td>
+          <td>الرصيد الحالي بـ wei</td>
+          <td class="td-cost">مجاني</td>
+          <td>إحصائيات الإدارة</td>
+        </tr>
+        <tr>
+          <td class="td-fn">totalRaisedByProject(id)</td>
+          <td>إجمالي مشروع معين</td>
+          <td class="td-cost">مجاني</td>
+          <td>تفاصيل المشروع</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>3. دوال الكتابة — للإدارة فقط (onlyOwner)</h4>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>الدالة</th>
+          <th>ما تعمل</th>
+          <th>الكلفة</th>
+          <th>من يستدعيها</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-fn">withdrawToProject(projectId, recipient, amount)</td>
+          <td>يسحب MATIC لمحفظة المشروع الميداني</td>
+          <td class="td-cost paid">Gas</td>
+          <td>الإدارة فقط</td>
+        </tr>
+        <tr>
+          <td class="td-fn">setProjectActive(projectId, active)</td>
+          <td>يفعّل أو يوقف قبول التبرعات لمشروع</td>
+          <td class="td-cost paid">Gas</td>
+          <td>الإدارة فقط</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ─── PROJECT CONTRACT ───────────────────────────────────────────── -->
+<section id="project-contract">
+  <h2>
+    <span class="icon" style="background:rgba(88,166,255,.15)">🏗️</span>
+    BunianProject.sol — شرح تفصيلي
+  </h2>
+  <p class="section-desc">
+    <span class="filepath">blockchain/contracts/BunianProject.sol</span>
+    — 347 سطر — يدير مشاريع إعادة الإعمار بنظام مراحل متعدد
+  </p>
+
+  <h3>📊 التعدادات (Enums)</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-label">الحالات الممكنة للمشروع والمراحل</span>
+      <span class="code-lang">Solidity</span>
+    </div>
+    <pre><span class="cmt">// حالة المشروع الكاملة</span>
+<span class="kw">enum</span> <span class="type">ProjectStatus</span> {
+    Active,     <span class="cmt">// 0 — نشط، يقبل تبرعات</span>
+    Paused,     <span class="cmt">// 1 — موقوف مؤقتاً</span>
+    Completed,  <span class="cmt">// 2 — اكتمل المشروع</span>
+    Cancelled   <span class="cmt">// 3 — ملغى</span>
+}
+
+<span class="cmt">// حالة كل مرحلة من مراحل المشروع</span>
+<span class="kw">enum</span> <span class="type">MilestoneStatus</span> {
+    Pending,    <span class="cmt">// 0 — لم تبدأ</span>
+    InProgress, <span class="cmt">// 1 — جارية</span>
+    Completed   <span class="cmt">// 2 — مكتملة، جاهزة للإفراج عن الأموال</span>
+}</pre>
+  </div>
+
+  <h3>📦 هيكل البيانات — Project + Milestone</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-label">كل مشروع عنده بيانات ثنائية اللغة + مراحل متعددة</span>
+      <span class="code-lang">Solidity</span>
+    </div>
+    <pre><span class="kw">struct</span> <span class="type">Project</span> {
+    <span class="type">uint256</span>       id;
+    <span class="type">string</span>        titleAr;       <span class="cmt">// "مدرسة حلب الجديدة"</span>
+    <span class="type">string</span>        titleEn;       <span class="cmt">// "New Aleppo School"</span>
+    <span class="type">string</span>        locationAr;    <span class="cmt">// "حلب"</span>
+    <span class="type">string</span>        locationEn;
+    <span class="type">string</span>        category;      <span class="cmt">// housing|education|health|water|infrastructure</span>
+    <span class="type">uint256</span>       fundingGoal;   <span class="cmt">// الهدف الكلي بـ wei</span>
+    <span class="type">uint256</span>       amountRaised;  <span class="cmt">// ما جُمع حتى الآن</span>
+    <span class="type">ProjectStatus</span> status;
+    <span class="type">uint256</span>       createdAt;
+    <span class="type">address</span>       projectWallet; <span class="cmt">// محفظة المشروع الميداني تستقبل الأموال المُفرَج عنها</span>
+    <span class="type">uint256</span>       milestoneCount;
+}
+
+<span class="kw">struct</span> <span class="type">Milestone</span> {
+    <span class="type">string</span>          descriptionAr;   <span class="cmt">// "حفر الأساسات وصب الخرسانة"</span>
+    <span class="type">string</span>          descriptionEn;
+    <span class="type">uint256</span>         requiredAmount;  <span class="cmt">// MATIC مطلوب لإتمام هذه المرحلة</span>
+    <span class="type">uint256</span>         releasedAmount;  <span class="cmt">// ما أُفرج عنه منها</span>
+    <span class="type">MilestoneStatus</span> status;
+    <span class="type">uint256</span>         completedAt;
+}</pre>
+  </div>
+
+  <h3>🔄 تدفق حياة المشروع — مثال عملي</h3>
+  <div class="callout callout-success">
+    <span class="callout-icon">🎯</span>
+    <div>مثال: مدرسة حلب — هدف 50,000 MATIC — 3 مراحل</div>
+  </div>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-line">
+        <div class="flow-dot" style="background:rgba(63,185,80,.2);color:var(--green)">1</div>
+        <div class="flow-connector"></div>
+      </div>
+      <div class="flow-content">
+        <div class="fc-title">الإدارة تنشئ المشروع على الـ blockchain</div>
+        <div class="fc-desc">يُسجَّل المشروع بشكل دائم مع كل تفاصيله</div>
+        <div class="fc-code">createProject("مدرسة حلب", "Aleppo School", "حلب", "Aleppo", "education", 50000 MATIC, projectWallet)</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line">
+        <div class="flow-dot" style="background:rgba(88,166,255,.2);color:var(--accent)">2</div>
+        <div class="flow-connector"></div>
+      </div>
+      <div class="flow-content">
+        <div class="fc-title">تُضاف المراحل الثلاث</div>
+        <div class="fc-desc">كل مرحلة عندها مبلغ مطلوب — الأموال ما تُحرَّر إلا بإكمالها</div>
+        <div class="fc-code">addMilestone(0, "أساسات", "Foundations", 15000 MATIC)</div>
+        <div class="fc-code" style="margin-top:4px">addMilestone(0, "هيكل", "Structure",   25000 MATIC)</div>
+        <div class="fc-code" style="margin-top:4px">addMilestone(0, "تشطيب", "Finishing",  10000 MATIC)</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line">
+        <div class="flow-dot" style="background:rgba(227,179,65,.2);color:var(--yellow)">3</div>
+        <div class="flow-connector"></div>
+      </div>
+      <div class="flow-content">
+        <div class="fc-title">المتبرعون يرسلون MATIC عبر MetaMask</div>
+        <div class="fc-desc">التبرعات تُسجَّل في BunianDonation وتتراكم</div>
+        <div class="fc-code">donate(projectId=0, message="للشعب السوري") ← 5 MATIC مثلاً</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line">
+        <div class="flow-dot" style="background:rgba(240,136,62,.2);color:var(--orange)">4</div>
+        <div class="flow-connector"></div>
+      </div>
+      <div class="flow-content">
+        <div class="fc-title">الإدارة تؤكد اكتمال المرحلة الأولى ميدانياً</div>
+        <div class="fc-desc">بعد التحقق الفعلي من الموقع، يُسجَّل الإكمال على البلوك تشين</div>
+        <div class="fc-code">completeMilestone(projectId=0, milestoneId=0)</div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line">
+        <div class="flow-dot" style="background:rgba(63,185,80,.2);color:var(--green)">5</div>
+      </div>
+      <div class="flow-content">
+        <div class="fc-title">الأموال تُحرَّر تلقائياً لمحفظة المشروع</div>
+        <div class="fc-desc">15,000 MATIC تنتقل لمحفظة الفريق الميداني — ويُبَث الحدث على الـ blockchain</div>
+        <div class="fc-code">releaseMilestoneFunds(projectId=0, milestoneId=0) → emit FundsReleased</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FRONTEND ──────────────────────────────────────────────────── -->
+<section id="frontend">
+  <h2>
+    <span class="icon" style="background:rgba(188,140,255,.15)">⚡</span>
+    تكامل الفرونت (Angular)
+  </h2>
+  <p class="section-desc">ثلاثة ملفات رئيسية في Angular تتحكم بكل تفاعل البلوك تشين.</p>
+
+  <!-- Web3Service -->
+  <div class="card" style="margin-bottom:28px">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(63,185,80,.15)">🔧</div>
+      <div>
+        <div class="card-title">Web3Service</div>
+        <div class="card-subtitle"><span class="filepath">src/app/core/services/web3.service.ts</span> — الخدمة المحورية للبلوك تشين</div>
+      </div>
+    </div>
+
+    <h4>الحالة التفاعلية (Angular Signals)</h4>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-label">Signals تتحدث أوتوماتيكياً مع أي component يستخدمها</span>
+        <span class="code-lang">TypeScript</span>
+      </div>
+      <pre><span class="cmt">// الحالة الأساسية — تتحدث عند تغيير المحفظة أو الشبكة</span>
+<span class="kw">readonly</span> walletAddress  = <span class="fn">signal</span>&lt;<span class="type">string | null</span>&gt;(<span class="kw">null</span>);
+<span class="kw">readonly</span> chainId        = <span class="fn">signal</span>&lt;<span class="type">number | null</span>&gt;(<span class="kw">null</span>);
+
+<span class="cmt">// computed — تُحسَب تلقائياً من القيم فوق</span>
+<span class="kw">readonly</span> isConnected    = <span class="fn">computed</span>(() => !!<span class="kw">this</span>.walletAddress());
+<span class="kw">readonly</span> isWrongNetwork = <span class="fn">computed</span>(() => {
+    <span class="kw">const</span> id = <span class="kw">this</span>.chainId();
+    <span class="kw">return</span> id !== <span class="kw">null</span>
+        && id !== <span class="num">1337</span>   <span class="cmt">// Ganache</span>
+        && id !== <span class="num">137</span>    <span class="cmt">// Polygon Mainnet</span>
+        && id !== <span class="num">80002</span>;  <span class="cmt">// Polygon Amoy Testnet</span>
+});</pre>
+    </div>
+
+    <h4>ABI — كيف يتكلم ethers.js مع العقد</h4>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-label">ABI = قائمة الدوال التي نستخدمها من العقد — بدونه لا يعرف ethers.js كيف يتكلم</span>
+        <span class="code-lang">TypeScript</span>
+      </div>
+      <pre><span class="kw">const</span> DONATION_ABI = [
+  <span class="cmt">// دوال الكتابة (تحتاج MetaMask + Gas)</span>
+  <span class="str">'function donate(uint256 projectId, string calldata message) external payable'</span>,
+
+  <span class="cmt">// دوال القراءة (مجانية، بدون MetaMask)</span>
+  <span class="str">'function totalRaised() external view returns (uint256)'</span>,
+  <span class="str">'function totalRaisedByProject(uint256) external view returns (uint256)'</span>,
+  <span class="str">'function getDonationsCount() external view returns (uint256)'</span>,
+  <span class="str">'function getRecentDonations(uint256 count) external view returns (tuple(address donor, uint256 amount, uint256 projectId, uint256 timestamp, string message)[])'</span>,
+  <span class="str">'function getContractBalance() external view returns (uint256)'</span>,
+
+  <span class="cmt">// الحدث الذي نستمع له</span>
+  <span class="str">'event DonationReceived(address indexed donor, uint256 indexed projectId, uint256 amount, uint256 donationId, uint256 timestamp, string message)'</span>,
+];</pre>
+    </div>
+
+    <h4>الدوال الرئيسية في Web3Service</h4>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-label">connectWallet — ربط MetaMask والاستماع لتغييراتها</span>
+        <span class="code-lang">TypeScript</span>
+      </div>
+      <pre><span class="kw">async</span> <span class="fn">connectWallet</span>(): <span class="type">Promise&lt;void&gt;</span> {
+    <span class="kw">const</span> eth = <span class="kw">this</span>.<span class="fn">getEthereum</span>(); <span class="cmt">// window.ethereum (MetaMask)</span>
+
+    <span class="cmt">// ① طلب الوصول للحسابات — MetaMask يفتح popup للمستخدم</span>
+    <span class="kw">const</span> accounts = <span class="kw">await</span> eth.<span class="fn">request</span>({ method: <span class="str">'eth_requestAccounts'</span> });
+
+    <span class="kw">if</span> (accounts[<span class="num">0</span>]) {
+        <span class="kw">this</span>.walletAddress.<span class="fn">set</span>(accounts[<span class="num">0</span>]);
+
+        <span class="cmt">// ② قراءة الشبكة الحالية</span>
+        <span class="kw">const</span> hex = <span class="kw">await</span> eth.<span class="fn">request</span>({ method: <span class="str">'eth_chainId'</span> });
+        <span class="kw">this</span>.chainId.<span class="fn">set</span>(<span class="fn">parseInt</span>(hex, <span class="num">16</span>));
+
+        <span class="cmt">// ③ الاستماع لتغيير الحساب أو الشبكة</span>
+        eth.<span class="fn">on</span>(<span class="str">'accountsChanged'</span>, (accs: <span class="type">string[]</span>) =>
+            <span class="kw">this</span>.walletAddress.<span class="fn">set</span>(accs[<span class="num">0</span>] ?? <span class="kw">null</span>));
+        eth.<span class="fn">on</span>(<span class="str">'chainChanged'</span>, (hexId: <span class="type">string</span>) =>
+            <span class="kw">this</span>.chainId.<span class="fn">set</span>(<span class="fn">parseInt</span>(hexId, <span class="num">16</span>)));
+    }
+}</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-label">donate — إرسال التبرع للعقد الذكي</span>
+        <span class="code-lang">TypeScript</span>
+      </div>
+      <pre><span class="cmt">/**
+ * إرسال تبرع للعقد الذكي
+ * @returns TX Hash — رقم المعاملة على الـ blockchain للتحقق منها
+ */</span>
+<span class="kw">async</span> <span class="fn">donate</span>(projectId: <span class="type">number</span>, amountEth: <span class="type">string</span>, message: <span class="type">string</span>): <span class="type">Promise&lt;string&gt;</span> {
+    <span class="kw">await this</span>.<span class="fn">loadAddresses</span>();           <span class="cmt">// تحميل عنوان العقد من الـ JSON</span>
+    <span class="kw">const</span> contract = <span class="kw">await this</span>.<span class="fn">getSignerContract</span>(); <span class="cmt">// عقد يحتاج توقيع</span>
+
+    <span class="cmt">// MetaMask يفتح popup لتأكيد المعاملة</span>
+    <span class="kw">const</span> tx = <span class="kw">await</span> contract[<span class="str">'donate'</span>](projectId, message, {
+        value: <span class="fn">parseEther</span>(amountEth), <span class="cmt">// تحويل "1.5" ETH → wei</span>
+    });
+
+    <span class="cmt">// انتظار تأكيد البلوكة على الـ blockchain</span>
+    <span class="kw">const</span> receipt = <span class="kw">await</span> tx.<span class="fn">wait</span>();
+    <span class="kw">return</span> receipt.hash; <span class="cmt">// TX Hash للتحقق</span>
+}
+
+<span class="cmt">// الفرق بين Read Contract و Write Contract:</span>
+
+<span class="cmt">// للقراءة — يستخدم RPC مباشرة، مجاني، بدون MetaMask</span>
+<span class="kw">private async</span> <span class="fn">getReadContract</span>(): <span class="type">Promise&lt;Contract&gt;</span> {
+    <span class="kw">const</span> provider = <span class="kw">await this</span>.<span class="fn">getProvider</span>(); <span class="cmt">// BrowserProvider</span>
+    <span class="kw">return new</span> <span class="type">Contract</span>(addr, DONATION_ABI, provider);
+}
+
+<span class="cmt">// للكتابة — يحتاج Signer (توقيع المستخدم في MetaMask)</span>
+<span class="kw">private async</span> <span class="fn">getSignerContract</span>(): <span class="type">Promise&lt;Contract&gt;</span> {
+    <span class="kw">const</span> provider = <span class="kw">await this</span>.<span class="fn">getProvider</span>();
+    <span class="kw">const</span> signer   = <span class="kw">await</span> provider.<span class="fn">getSigner</span>(); <span class="cmt">// حساب المستخدم</span>
+    <span class="kw">return new</span> <span class="type">Contract</span>(addr, DONATION_ABI, signer);
+}</pre>
+    </div>
+
+    <h4>معالجة الأخطاء</h4>
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-label">ترجمة أخطاء ethers.js لرسائل واضحة</span>
+        <span class="code-lang">TypeScript</span>
+      </div>
+      <pre><span class="fn">parseError</span>(err: <span class="type">any</span>): <span class="type">WalletError</span> {
+    <span class="kw">if</span> (err.code === <span class="str">'NO_METAMASK'</span>)        <span class="kw">return</span> <span class="str">'NO_METAMASK'</span>;
+    <span class="kw">if</span> (err.code === <span class="num">4001</span> ||
+        err.code === <span class="str">'ACTION_REJECTED'</span>)    <span class="kw">return</span> <span class="str">'USER_REJECTED'</span>;
+    <span class="kw">if</span> (err.code === <span class="str">'INSUFFICIENT_FUNDS'</span>) <span class="kw">return</span> <span class="str">'INSUFFICIENT_FUNDS'</span>;
+    <span class="kw">if</span> (err.message?.includes(<span class="str">'rejected'</span>)) <span class="kw">return</span> <span class="str">'TX_REJECTED'</span>;
+    <span class="kw">return</span> <span class="str">'UNKNOWN'</span>;
+}
+
+<span class="cmt">// الـ WalletError type:</span>
+<span class="kw">type</span> <span class="type">WalletError</span> =
+    | <span class="str">'NO_METAMASK'</span>        <span class="cmt">// MetaMask غير مثبت</span>
+    | <span class="str">'USER_REJECTED'</span>      <span class="cmt">// المستخدم رفض في MetaMask</span>
+    | <span class="str">'WRONG_NETWORK'</span>      <span class="cmt">// شبكة خاطئة</span>
+    | <span class="str">'INSUFFICIENT_FUNDS'</span> <span class="cmt">// رصيد غير كافٍ</span>
+    | <span class="str">'TX_REJECTED'</span>        <span class="cmt">// المعاملة رُفضت من الـ blockchain</span>
+    | <span class="str">'UNKNOWN'</span>;           <span class="cmt">// خطأ غير معروف</span></pre>
+    </div>
+  </div>
+
+  <!-- CryptoPaymentComponent -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(240,136,62,.15)">💳</div>
+      <div>
+        <div class="card-title">CryptoPaymentComponent</div>
+        <div class="card-subtitle"><span class="filepath">src/app/features/donate/components/crypto-payment/</span></div>
+      </div>
+    </div>
+    <p style="color:var(--text-dim);font-size:14px;margin-bottom:16px;">الـ component الذي يظهر للمستخدم عند اختيار الدفع بالكريبتو — يدير كل حالات الـ UI.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-label">حالات الـ Transaction وكيف تتغير</span>
+        <span class="code-lang">TypeScript</span>
+      </div>
+      <pre><span class="kw">type</span> <span class="type">TxState</span> = <span class="str">'idle'</span> | <span class="str">'pending'</span> | <span class="str">'success'</span> | <span class="str">'error'</span>;
+
+txState     = <span class="fn">signal</span>&lt;<span class="type">TxState</span>&gt;(<span class="str">'idle'</span>);    <span class="cmt">// حالة المعاملة</span>
+txHash      = <span class="fn">signal</span>&lt;<span class="type">string | null</span>&gt;(<span class="kw">null</span>); <span class="cmt">// TX Hash بعد النجاح</span>
+txError     = <span class="fn">signal</span>&lt;<span class="type">string | null</span>&gt;(<span class="kw">null</span>); <span class="cmt">// رسالة الخطأ</span>
+balance     = <span class="fn">signal</span>&lt;<span class="type">string</span>&gt;(<span class="str">'—'</span>);          <span class="cmt">// رصيد المحفظة</span>
+contractAddr = <span class="fn">signal</span>&lt;<span class="type">string</span>&gt;(<span class="str">''</span>);          <span class="cmt">// عنوان العقد للعرض</span>
+
+<span class="kw">async</span> <span class="fn">sendDonation</span>(): <span class="type">Promise&lt;void&gt;</span> {
+    <span class="kw">if</span> (!<span class="kw">this</span>.web3.<span class="fn">isConnected</span>()) <span class="kw">return</span>;
+
+    <span class="kw">this</span>.txState.<span class="fn">set</span>(<span class="str">'pending'</span>);   <span class="cmt">// ① يُظهر spinner</span>
+    <span class="kw">this</span>.txError.<span class="fn">set</span>(<span class="kw">null</span>);
+
+    <span class="kw">try</span> {
+        <span class="cmt">// ② MetaMask يفتح — المستخدم يوافق</span>
+        <span class="kw">const</span> hash = <span class="kw">await this</span>.web3.<span class="fn">donate</span>(
+            <span class="kw">this</span>.projectId, <span class="kw">this</span>.amount, <span class="kw">this</span>.message
+        );
+        <span class="kw">this</span>.txHash.<span class="fn">set</span>(hash);
+        <span class="kw">this</span>.txState.<span class="fn">set</span>(<span class="str">'success'</span>); <span class="cmt">// ③ نجاح — يُظهر TX Hash</span>
+        <span class="kw">this</span>.balance.<span class="fn">set</span>(<span class="kw">await this</span>.web3.<span class="fn">getWalletBalance</span>()); <span class="cmt">// تحديث الرصيد</span>
+    } <span class="kw">catch</span> (err: <span class="type">any</span>) {
+        <span class="kw">const</span> code = <span class="kw">this</span>.web3.<span class="fn">parseError</span>(err);
+        <span class="kw">this</span>.txError.<span class="fn">set</span>(<span class="kw">this</span>.<span class="fn">errorMessage</span>(code));
+        <span class="kw">this</span>.txState.<span class="fn">set</span>(<span class="str">'error'</span>);    <span class="cmt">// ④ فشل — يُظهر الخطأ</span>
+    }
+}</pre>
+    </div>
+
+    <h4>حالات الـ UI حسب الـ State</h4>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>الحالة</th><th>ما يظهر للمستخدم</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-blue">غير متصل</span></td><td>زر "ربط MetaMask" — عند الضغط يفتح MetaMask</td></tr>
+          <tr><td><span class="badge badge-red">شبكة خاطئة</span></td><td>تحذير + زر "تبديل الشبكة" → يضيف Ganache تلقائياً</td></tr>
+          <tr><td><span class="badge badge-green">متصل ✓</span></td><td>نموذج التبرع: المبلغ + رسالة الإهداء + زر الإرسال</td></tr>
+          <tr><td><span class="badge badge-orange">pending</span></td><td>Spinner + "جارٍ تأكيد المعاملة..."</td></tr>
+          <tr><td><span class="badge badge-green">success</span></td><td>رسالة نجاح + TX Hash قابل للنسخ + "تبرعك سُجِّل إلى الأبد"</td></tr>
+          <tr><td><span class="badge badge-red">error</span></td><td>رسالة الخطأ بالعربي أو الإنجليزي + زر إعادة المحاولة</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DATA FLOW ─────────────────────────────────────────────────── -->
+<section id="flow">
+  <h2>
+    <span class="icon" style="background:rgba(227,179,65,.15)">🔄</span>
+    تدفق البيانات الكامل
+  </h2>
+  <p class="section-desc">من لحظة ضغط "تبرع" حتى تسجيل التبرع على الـ blockchain.</p>
+
+  <div class="arrow-flow">
+    <div class="af-node"><div class="afl">المستخدم</div><div class="afv">👤 Browser</div></div>
+    <div class="af-arrow">←</div>
+    <div class="af-node"><div class="afl">Component</div><div class="afv">CryptoPayment</div></div>
+    <div class="af-arrow">←</div>
+    <div class="af-node"><div class="afl">Service</div><div class="afv">Web3Service</div></div>
+    <div class="af-arrow">←</div>
+    <div class="af-node"><div class="afl">المحفظة</div><div class="afv">🦊 MetaMask</div></div>
+    <div class="af-arrow">←</div>
+    <div class="af-node"><div class="afl">الشبكة</div><div class="afv">⛓️ Ganache/Polygon</div></div>
+    <div class="af-arrow">←</div>
+    <div class="af-node"><div class="afl">العقد</div><div class="afv">BunianDonation</div></div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h4 style="margin-top:0">خطوات التبرع خطوة بخطوة</h4>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:rgba(88,166,255,.2);color:var(--accent)">1</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <div class="fc-title">المستخدم يملأ نموذج التبرع في CryptoPaymentComponent</div>
+          <div class="fc-desc">المبلغ يأتي من DonationService، والرسالة من النموذج</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:rgba(88,166,255,.2);color:var(--accent)">2</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <div class="fc-title">sendDonation() تستدعي web3.donate(projectId, amount, message)</div>
+          <div class="fc-desc">txState يصبح 'pending' → يظهر spinner</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:rgba(240,136,62,.2);color:var(--orange)">3</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <div class="fc-title">Web3Service يحمّل عنوان العقد من JSON ويبني Contract object</div>
+          <div class="fc-code">fetch('/assets/blockchain/contract-addresses.json')</div>
+          <div class="fc-desc" style="margin-top:6px">ثم: new Contract(address, ABI, signer)</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:rgba(240,136,62,.2);color:var(--orange)">4</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <div class="fc-title">MetaMask يفتح popup للمستخدم — يعرض المبلغ + تكلفة الـ Gas</div>
+          <div class="fc-desc">المستخدم يوافق أو يرفض — الرفض يُطلق خطأ ACTION_REJECTED</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:rgba(63,185,80,.2);color:var(--green)">5</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <div class="fc-title">المعاملة تُرسَل للـ Ganache/Polygon وتنتظر التعدين</div>
+          <div class="fc-code">const receipt = await tx.wait()</div>
+          <div class="fc-desc" style="margin-top:6px">على Ganache: فوري. على Polygon: ثوانٍ معدودة.</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:rgba(63,185,80,.2);color:var(--green)">6</div>
+          <div class="flow-connector"></div>
+        </div>
+        <div class="flow-content">
+          <div class="fc-title">العقد يُنفِّذ donate() — يسجل التبرع ويُطلق DonationReceived</div>
+          <div class="fc-desc">التبرع الآن دائم على الـ blockchain — لا يمكن لأحد محوه</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line">
+          <div class="flow-dot" style="background:rgba(63,185,80,.2);color:var(--green)">7</div>
+        </div>
+        <div class="flow-content">
+          <div class="fc-title">receipt.hash يُعاد للـ component → txState = 'success'</div>
+          <div class="fc-desc">يُعرض TX Hash للمستخدم — يستطيع نسخه والتحقق منه</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DEPLOY ─────────────────────────────────────────────────────── -->
+<section id="deploy">
+  <h2>
+    <span class="icon" style="background:rgba(63,185,80,.15)">🚀</span>
+    النشر والشبكات
+  </h2>
+  <p class="section-desc">العقود منشورة حالياً على Ganache المحلي، ومجهّزة للترقية لـ Polygon.</p>
+
+  <h3>الشبكات المدعومة</h3>
+  <div class="network-list">
+    <div class="net-chip">
+      <div class="net-dot" style="background:var(--orange)"></div>
+      <div>
+        <div style="font-weight:600;font-size:13px">Ganache Local</div>
+        <div style="font-size:11px;color:var(--text-dim)">ChainID: 1337 • http://127.0.0.1:8545 • للتطوير</div>
+      </div>
+    </div>
+    <div class="net-chip">
+      <div class="net-dot" style="background:var(--accent)"></div>
+      <div>
+        <div style="font-weight:600;font-size:13px">Polygon Amoy</div>
+        <div style="font-size:11px;color:var(--text-dim)">ChainID: 80002 • Testnet • للاختبار</div>
+      </div>
+    </div>
+    <div class="net-chip">
+      <div class="net-dot" style="background:var(--green)"></div>
+      <div>
+        <div style="font-weight:600;font-size:13px">Polygon Mainnet</div>
+        <div style="font-size:11px;color:var(--text-dim)">ChainID: 137 • للإنتاج الفعلي</div>
+      </div>
+    </div>
+    <div class="net-chip">
+      <div class="net-dot" style="background:var(--text-dim)"></div>
+      <div>
+        <div style="font-weight:600;font-size:13px">Hardhat Network</div>
+        <div style="font-size:11px;color:var(--text-dim)">ChainID: 31337 • للاختبارات الوحدوية</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>ملفات النشر والإعداد</h3>
+  <div class="grid-2">
+    <div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">blockchain/deployments/ganache.json — عناوين العقود المنشورة</span>
+          <span class="code-lang">JSON</span>
+        </div>
+        <pre>{
+  <span class="str">"network"</span>:    <span class="str">"ganache"</span>,
+  <span class="str">"chainId"</span>:    <span class="num">1337</span>,
+  <span class="str">"deployedAt"</span>: <span class="str">"2026-05-12T16:59:18.276Z"</span>,
+  <span class="str">"deployer"</span>:   <span class="str">"0xea8Eaf9BD08b277C545910d673Ed1f8A46fB7Fa3"</span>,
+  <span class="str">"contracts"</span>: {
+    <span class="str">"BunianDonation"</span>: {
+      <span class="str">"address"</span>: <span class="str">"0xC86bc613F3fA9C570612e651a54bF804f43A37B1"</span>
+    },
+    <span class="str">"BunianProject"</span>: {
+      <span class="str">"address"</span>: <span class="str">"0x37a11279399BB69341218899075b996BCcbEF0f1"</span>
+    }
+  }
+}</pre>
+      </div>
+    </div>
+    <div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">src/assets/blockchain/contract-addresses.json — نفس الملف للـ Angular</span>
+          <span class="code-lang">JSON</span>
+        </div>
+        <pre><span class="cmt">// هذا الملف يُنسَخ تلقائياً من deploy.js
+// بعد كل نشر جديد</span>
+{
+  <span class="str">"BunianDonation"</span>: {
+    <span class="str">"address"</span>:     <span class="str">"0xC86bc613..."</span>,
+    <span class="str">"explorerUrl"</span>: <span class="str">""</span>
+  },
+  <span class="str">"BunianProject"</span>: {
+    <span class="str">"address"</span>:     <span class="str">"0x37a11279..."</span>,
+    <span class="str">"explorerUrl"</span>: <span class="str">""</span>
+  }
+}
+
+<span class="cmt">// Web3Service يحمل هذا الملف عبر:
+// fetch('/assets/blockchain/contract-addresses.json')</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <h3>أوامر Hardhat المستخدمة</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-label">من داخل مجلد blockchain/</span>
+      <span class="code-lang">Shell</span>
+    </div>
+    <pre><span class="cmt"># تشغيل الاختبارات</span>
+npx hardhat test
+
+<span class="cmt"># نشر على Ganache المحلي</span>
+npx hardhat run scripts/deploy.js --network ganache
+
+<span class="cmt"># نشر على Polygon Testnet</span>
+npx hardhat run scripts/deploy.js --network amoy
+
+<span class="cmt"># تجربة التفاعل يدوياً</span>
+npx hardhat run scripts/interact.js --network ganache
+
+<span class="cmt"># تشغيل console تفاعلي</span>
+npx hardhat console --network ganache</pre>
+  </div>
+</section>
+
+<!-- ─── SECURITY ──────────────────────────────────────────────────── -->
+<section id="security">
+  <h2>
+    <span class="icon" style="background:rgba(255,123,114,.15)">🛡️</span>
+    الأمان — كيف حمينا العقود
+  </h2>
+  <p class="section-desc">استخدمنا مكتبة OpenZeppelin الصناعية المعيارية لحماية الأموال.</p>
+
+  <div class="card">
+    <div class="sec-row">
+      <div class="sec-icon">🔁</div>
+      <div>
+        <div class="sec-title">ReentrancyGuard — منع هجمات إعادة الدخول</div>
+        <div class="sec-desc">
+          خطر: عقد خبيث يستدعي donate() مجدداً قبل انتهاء التنفيذ — يسرق الأموال.
+          الحل: <code style="color:var(--accent);background:rgba(88,166,255,.1);padding:1px 6px;border-radius:3px">nonReentrant</code> modifier يمنع أي استدعاء متداخل للدالة.
+        </div>
+      </div>
+    </div>
+    <div class="sec-row">
+      <div class="sec-icon">👑</div>
+      <div>
+        <div class="sec-title">Ownable — صلاحيات الإدارة</div>
+        <div class="sec-desc">
+          كل دوال الإدارة (سحب أموال، إيقاف مشروع، إنشاء مشروع) محمية بـ
+          <code style="color:var(--accent);background:rgba(88,166,255,.1);padding:1px 6px;border-radius:3px">onlyOwner</code>
+          — فقط محفظة الإدارة تستطيع تنفيذها.
+        </div>
+      </div>
+    </div>
+    <div class="sec-row">
+      <div class="sec-icon">✅</div>
+      <div>
+        <div class="sec-title">Input Validation — التحقق من المدخلات</div>
+        <div class="sec-desc">
+          <code style="color:var(--accent);background:rgba(88,166,255,.1);padding:1px 6px;border-radius:3px">require(msg.value >= MIN_DONATION)</code>
+          — لا يقبل تبرع أقل من 0.1 MATIC (يمنع spam المعاملات).
+          <br><code style="color:var(--accent);background:rgba(88,166,255,.1);padding:1px 6px;border-radius:3px">require(projectActive[projectId])</code>
+          — يرفض التبرع للمشاريع الموقوفة.
+        </div>
+      </div>
+    </div>
+    <div class="sec-row">
+      <div class="sec-icon">🔗</div>
+      <div>
+        <div class="sec-title">onlyDonationContract — ربط آمن بين العقدين</div>
+        <div class="sec-desc">
+          دالة <code style="color:var(--accent);background:rgba(88,166,255,.1);padding:1px 6px;border-radius:3px">updateAmountRaised()</code>
+          في BunianProject تقبل الاستدعاء فقط من عنوان BunianDonation — يمنع أي عقد آخر من تلاعب البيانات.
+        </div>
+      </div>
+    </div>
+    <div class="sec-row">
+      <div class="sec-icon">📱</div>
+      <div>
+        <div class="sec-title">Network Validation — التحقق من الشبكة في الفرونت</div>
+        <div class="sec-desc">
+          isWrongNetwork Signal تمنع إرسال أي معاملة إذا كان MetaMask على شبكة خاطئة — تحمي من إرسال MATIC للعقد على شبكة غلط.
+        </div>
+      </div>
+    </div>
+    <div class="sec-row">
+      <div class="sec-icon">🌐</div>
+      <div>
+        <div class="sec-title">isPlatformBrowser — SSR Safety</div>
+        <div class="sec-desc">
+          Web3Service يتحقق أنه يعمل في المتصفح قبل أي وصول لـ window.ethereum — يمنع الأعطال عند Server-Side Rendering.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-warn">
+    <span class="callout-icon">⚠️</span>
+    <div>
+      <strong>تحذير مهم للإنتاج:</strong> hardhat.config.js يحتوي على Private Keys مشفرة للاختبار فقط. قبل النشر على Polygon Mainnet، يجب استخدام متغيرات البيئة (.env) واستبدال المفاتيح بمفاتيح إنتاج آمنة.
+    </div>
+  </div>
+</section>
+
+<!-- ─── WHERE USED ─────────────────────────────────────────────────── -->
+<section id="where-used">
+  <h2>
+    <span class="icon" style="background:rgba(188,140,255,.15)">📍</span>
+    وين مستخدم البلوك تشين في المشروع
+  </h2>
+  <p class="section-desc">خريطة كاملة لكل الملفات المرتبطة بالبلوك تشين — باك وفرونت.</p>
+
+  <h3>🗂️ ملفات الباك-اند (Blockchain Layer)</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>المسار</th>
+          <th>الدور</th>
+          <th>الأهمية</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-fn">blockchain/contracts/BunianDonation.sol</td>
+          <td>العقد الرئيسي — يستقبل التبرعات</td>
+          <td><span class="badge badge-red">أساسي</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">blockchain/contracts/BunianProject.sol</td>
+          <td>إدارة المشاريع والمراحل</td>
+          <td><span class="badge badge-red">أساسي</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">blockchain/scripts/deploy.js</td>
+          <td>نشر العقود على الشبكة وحفظ العناوين</td>
+          <td><span class="badge badge-orange">مهم</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">blockchain/scripts/interact.js</td>
+          <td>اختبار يدوي للعقود (تبرعات تجريبية)</td>
+          <td><span class="badge badge-blue">اختبار</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">blockchain/test/BunianDonation.test.js</td>
+          <td>18+ اختبار وحدوي للعقد</td>
+          <td><span class="badge badge-blue">اختبار</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">blockchain/hardhat.config.js</td>
+          <td>إعداد Hardhat والشبكات</td>
+          <td><span class="badge badge-orange">مهم</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">blockchain/deployments/ganache.json</td>
+          <td>عناوين العقود المنشورة (Ganache)</td>
+          <td><span class="badge badge-green">مرجعي</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>⚡ ملفات الفرونت (Angular Integration)</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>المسار</th>
+          <th>الدور</th>
+          <th>الأهمية</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-fn">src/app/core/services/web3.service.ts</td>
+          <td>الخدمة المحورية — كل تفاعل مع البلوك تشين</td>
+          <td><span class="badge badge-red">أساسي</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">src/app/core/models/blockchain.model.ts</td>
+          <td>TypeScript interfaces للبيانات والأخطاء</td>
+          <td><span class="badge badge-orange">مهم</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">src/assets/blockchain/contract-addresses.json</td>
+          <td>عناوين العقود يقرأها Web3Service وقت التشغيل</td>
+          <td><span class="badge badge-red">أساسي</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">src/app/features/donate/components/crypto-payment/</td>
+          <td>UI الدفع بالكريبتو — يُعرض عند اختيار Crypto</td>
+          <td><span class="badge badge-red">أساسي</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">src/app/features/donate/components/payment-form/</td>
+          <td>النموذج الرئيسي — يحتوي تبويب Crypto يُحمِّل CryptoPayment</td>
+          <td><span class="badge badge-orange">مهم</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">src/app/shared/components/navbar/navbar.component.ts</td>
+          <td>يُظهر زر "Connect MetaMask" وعنوان المحفظة</td>
+          <td><span class="badge badge-green">ثانوي</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">src/app/features/donate/services/donation.service.ts</td>
+          <td>يدير حالة التبرع (payment_method: 'crypto')</td>
+          <td><span class="badge badge-blue">مرتبط</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">package.json (root)</td>
+          <td>يحتوي dependency: ethers ^6.16.0</td>
+          <td><span class="badge badge-green">إعداد</span></td>
+        </tr>
+        <tr>
+          <td class="td-fn">blockchain/package.json</td>
+          <td>Hardhat + OpenZeppelin + dotenv dependencies</td>
+          <td><span class="badge badge-green">إعداد</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>🔗 العلاقات بين الملفات</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-label">خريطة الاستيرادات والارتباطات</span>
+      <span class="code-lang">Diagram</span>
+    </div>
+    <pre><span class="cmt">── BLOCKCHAIN LAYER ──────────────────────────────────────────</span>
+
+BunianDonation.sol
+    ← import OpenZeppelin/Ownable
+    ← import OpenZeppelin/ReentrancyGuard
+    → يُنشَر بـ deploy.js → عنوانه يُحفَظ في ganache.json
+    → ganache.json يُنسَخ → src/assets/blockchain/contract-addresses.json
+
+BunianProject.sol
+    ← import OpenZeppelin/Ownable
+    → setDonationContract(BunianDonation.address)
+    → مرتبط بـ BunianDonation عبر donationContract address
+
+<span class="cmt">── ANGULAR LAYER ─────────────────────────────────────────────</span>
+
+web3.service.ts
+    ← import ethers (BrowserProvider, Contract, parseEther, formatEther)
+    ← import blockchain.model.ts (interfaces)
+    ← يقرأ contract-addresses.json → يبني Contract objects
+    → يُحقَن في: CryptoPaymentComponent, NavbarComponent
+
+blockchain.model.ts
+    → BlockchainDonation interface
+    → ContractAddresses interface
+    → WalletError type
+
+crypto-payment.component.ts
+    ← inject(Web3Service)
+    ← inject(DonationService)  ← يأخذ المبلغ ورسالة الإهداء
+    → يستدعي: web3.connectWallet(), web3.donate(), web3.getWalletBalance()
+    → يستدعي: web3.switchToGanache(), web3.parseError()
+
+navbar.component.ts
+    ← inject(Web3Service)
+    → يعرض: walletAddress Signal, isConnected Signal
+    → زر "Connect MetaMask" → web3.connectWallet()</pre>
+  </div>
+
+  <div class="callout callout-success">
+    <span class="callout-icon">✅</span>
+    <div>
+      <strong>الخلاصة:</strong> منصة بنيان تستخدم البلوك تشين كطبقة شفافية إضافية — التبرعات التقليدية (Stripe/PayPal/بنك) تمر بالباك-اند العادي، أما التبرعات بالكريبتو فتذهب مباشرة للعقد الذكي على الـ blockchain وتُسجَّل للأبد. النتيجة: ثقة كاملة من المتبرعين لأن البيانات علنية وغير قابلة للتعديل.
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  FOOTER                                                        -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<footer style="border-top:1px solid var(--border);padding:30px 24px;text-align:center;color:var(--text-dim);font-size:13px;">
+  <div style="max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div>⛓️ <strong style="color:var(--text)">منصة بنيان</strong> — Blockchain Documentation</div>
+    <div>Solidity 0.8.24 • ethers.js 6.16 • Hardhat 2.28 • OpenZeppelin 5.6</div>
+    <div>BunianDonation: <code style="color:var(--green)">0xC86bc613...</code> • BunianProject: <code style="color:var(--green)">0x37a11279...</code></div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -9,7 +9,7 @@
 
   <!-- Header -->
   <div class="auth-card__header">
-    <h2>{{ 'AUTH.REGISTER.TITLE' | translate }}</h2>
+    <h2>{{ 'أبدأ من هنا' | translate }}</h2>
     <p>{{ 'AUTH.REGISTER.SUBTITLE' | translate }}</p>
   </div>
 
@@ -65,6 +65,22 @@
         <mat-error>{{ getPhoneError() | translate }}</mat-error>
       }
     </mat-form-field>
+
+    <!-- OTP Channel -->
+    <div class="register__otp-channel form-field-gap">
+      <label class="otp-channel-label">{{ 'AUTH.FIELDS.OTP_CHANNEL' | translate }}</label>
+      <mat-radio-group formControlName="otpChannel" class="otp-channel-group">
+        <mat-radio-button value="email" color="primary">
+          {{ 'AUTH.FIELDS.OTP_CHANNEL_EMAIL' | translate }}
+        </mat-radio-button>
+        <mat-radio-button value="whatsapp" color="primary">
+          {{ 'AUTH.FIELDS.OTP_CHANNEL_WHATSAPP' | translate }}
+        </mat-radio-button>
+      </mat-radio-group>
+      @if (otpChannelCtrl.value === 'whatsapp') {
+        <p class="otp-channel-hint">{{ 'AUTH.FIELDS.OTP_CHANNEL_WHATSAPP_HINT' | translate }}</p>
+      }
+    </div>
 
     <!-- Password -->
     <mat-form-field appearance="outline" class="full-width form-field-gap">

@@ -1,24 +1,24 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, shareReplay } from 'rxjs';
-
-import { GuestDonation, GuestDonationResponse } from '../../../core/models/guest-donation.model';
+import { Observable, map } from 'rxjs';
+import { ConfirmBankTransferPayload, GuestDonation, GuestDonationResponse, WalletInfo } from '../../../core/models/guest-donation.model';
+import { ApiResponse } from '../../../core/models/auth-response.models';
+import { ProjectsApiService } from '../../../core/services/projects-api.service';
 import { Project } from '../../../core/models/project.model';
-import { MOCK_PROJECTS } from '../../home/data/mock-data';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DonationService {
-  private readonly http = inject(HttpClient);
-  private readonly API_BASE = '/api';
+  private readonly http        = inject(HttpClient);
+  private readonly projectsApi = inject(ProjectsApiService);
+  private readonly API         = `${environment.apiUrl}/v1`;
 
   readonly donationState = signal<Partial<GuestDonation>>({
-    currency: 'USD',
-    donation_type: 'one_time',
+    currency:       'USD',
+    donation_type:  'one_time',
     payment_method: 'stripe',
-    is_anonymous: false,
+    is_anonymous:   false,
   });
-
-  private projects$?: Observable<Project[]>;
 
   updateState(partial: Partial<GuestDonation>): void {
     this.donationState.update((s) => ({ ...s, ...partial }));
@@ -26,26 +26,67 @@ export class DonationService {
 
   resetState(): void {
     this.donationState.set({
-      currency: 'USD',
-      donation_type: 'one_time',
+      currency:       'USD',
+      donation_type:  'one_time',
       payment_method: 'stripe',
-      is_anonymous: false,
+      is_anonymous:   false,
     });
   }
 
+  // ── Guest donation ─────────────────────────────────────────────
   submitGuestDonation(payload: GuestDonation): Observable<GuestDonationResponse> {
-    return this.http.post<GuestDonationResponse>(
-      `${this.API_BASE}/guest-donations`,
-      payload
-    );
+    return this.http
+      .post<ApiResponse<GuestDonationResponse>>(`${this.API}/donate/guest`, payload)
+      .pipe(map((res) => res.data));
   }
 
+  // ── Authenticated donation ─────────────────────────────────────
+  submitAuthDonation(payload: Partial<GuestDonation>): Observable<GuestDonationResponse> {
+    return this.http
+      .post<ApiResponse<GuestDonationResponse>>(`${this.API}/donate/authenticated`, payload)
+      .pipe(map((res) => res.data));
+  }
+
+  // ── Verify donation by reference ───────────────────────────────
+  getDonationByRef(ref: string): Observable<GuestDonationResponse> {
+    return this.http
+      .get<ApiResponse<GuestDonationResponse>>(`${this.API}/donate/success/${ref}`)
+      .pipe(map((res) => res.data));
+  }
+
+  // ── Active platform wallet (bank transfer donations) ────────────
+  getActiveWallet(): Observable<WalletInfo> {
+    return this.http
+      .get<ApiResponse<WalletInfo>>(`${this.API}/wallets/active`)
+      .pipe(map((res) => res.data));
+  }
+
+  // ── Confirm bank transfer (step 2 of the bank donation flow) ────
+  confirmBankTransfer(reference: string, payload: ConfirmBankTransferPayload): Observable<void> {
+    const form = new FormData();
+    form.append('bank_transfer_reference', payload.bank_transfer_reference);
+    form.append('receipt', payload.receipt);
+    return this.http
+      .post<ApiResponse<null>>(`${this.API}/donate/${reference}/confirm-transfer`, form)
+      .pipe(map(() => void 0));
+  }
+
+  // ── Dashboard stats ────────────────────────────────────────────
+  getDashboardStats(): Observable<any> {
+    return this.http
+      .get<ApiResponse<any>>(`${this.API}/dashboard/stats`)
+      .pipe(map((res) => res.data));
+  }
+
+  // ── Donation history ───────────────────────────────────────────
+  getHistory(page = 1): Observable<any> {
+    return this.http
+      .get<ApiResponse<any>>(`${this.API}/dashboard/history?page=${page}`)
+      .pipe(map((res) => res.data));
+  }
+
+  // ── Get projects list (for amount form dropdown) ───────────────
   getProjects(): Observable<Project[]> {
-    if (!this.projects$) {
-      // Swap for real API when backend is ready:
-      // this.projects$ = this.http.get<Project[]>(`${this.API_BASE}/projects`).pipe(shareReplay(1));
-      this.projects$ = of(MOCK_PROJECTS).pipe(shareReplay(1));
-    }
-    return this.projects$;
+    return this.projectsApi.getProjects({ per_page: 48 }).pipe(map((res) => res.data));
   }
 }

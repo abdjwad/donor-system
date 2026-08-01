@@ -4,6 +4,58 @@
   margin-bottom: $space-xl;
 }
 
+.locked-project-banner {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-md $space-lg;
+  border: 2px solid rgba($color-primary, 0.25);
+  border-radius: $radius-md;
+  background: rgba($color-primary, 0.06);
+
+  &--loading {
+    color: $color-text-muted;
+    font-size: 0.9375rem;
+  }
+
+  &__icon {
+    color: $color-primary;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    color: $color-text-muted;
+  }
+
+  &__title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: $color-text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__switch {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: $color-primary;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+  }
+}
+
 .amount-chips {
   display: flex;
   flex-wrap: wrap;

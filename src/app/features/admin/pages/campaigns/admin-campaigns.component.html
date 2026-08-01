@@ -1,47 +1,125 @@
 <div class="admin-page">
+
+  <!-- Create Campaign Modal -->
+  @if (showForm()) {
+    <div class="admin-modal-backdrop" (click)="showForm.set(false)">
+      <div class="admin-modal admin-modal--wide" (click)="$event.stopPropagation()">
+        <h3 class="admin-modal__title">{{ isRtl() ? 'حملة جديدة' : 'New Campaign' }}</h3>
+        <form [formGroup]="createForm" (ngSubmit)="submitCreate()" class="admin-form">
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label>{{ isRtl() ? 'العنوان عربي' : 'Title (AR)' }}</label>
+              <input class="admin-input" formControlName="title_ar" />
+            </div>
+            <div class="admin-form__group">
+              <label>{{ isRtl() ? 'العنوان إنجليزي' : 'Title (EN)' }}</label>
+              <input class="admin-input" formControlName="title_en" />
+            </div>
+          </div>
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label>{{ isRtl() ? 'الوصف عربي' : 'Description (AR)' }}</label>
+              <textarea class="admin-input" formControlName="description_ar" rows="2"></textarea>
+            </div>
+            <div class="admin-form__group">
+              <label>{{ isRtl() ? 'الوصف إنجليزي' : 'Description (EN)' }}</label>
+              <textarea class="admin-input" formControlName="description_en" rows="2"></textarea>
+            </div>
+          </div>
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label>{{ isRtl() ? 'الفئة' : 'Category' }}</label>
+              <select class="admin-input" formControlName="category">
+                <option value="housing">{{ isRtl() ? 'إسكان' : 'Housing' }}</option>
+                <option value="education">{{ isRtl() ? 'تعليم' : 'Education' }}</option>
+                <option value="health">{{ isRtl() ? 'صحة' : 'Health' }}</option>
+                <option value="infrastructure">{{ isRtl() ? 'بنية تحتية' : 'Infrastructure' }}</option>
+                <option value="water">{{ isRtl() ? 'مياه' : 'Water' }}</option>
+              </select>
+            </div>
+            <div class="admin-form__group">
+              <label>{{ isRtl() ? 'الهدف المالي ($)' : 'Funding Goal ($)' }}</label>
+              <input class="admin-input" type="number" formControlName="funding_goal" min="1" />
+            </div>
+          </div>
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label>{{ isRtl() ? 'تاريخ الانتهاء' : 'End Date' }}</label>
+              <input class="admin-input" type="date" formControlName="ends_at" />
+            </div>
+            <div class="admin-form__group admin-form__group--check">
+              <label class="admin-check">
+                <input type="checkbox" formControlName="is_urgent" />
+                {{ isRtl() ? 'حملة عاجلة' : 'Urgent Campaign' }}
+              </label>
+            </div>
+          </div>
+          <div class="admin-modal__actions">
+            <button type="submit" class="admin-btn admin-btn--primary" [disabled]="saving()">
+              {{ saving() ? '...' : (isRtl() ? 'إنشاء الحملة' : 'Create Campaign') }}
+            </button>
+            <button type="button" class="admin-btn admin-btn--ghost" (click)="showForm.set(false)">
+              {{ isRtl() ? 'إلغاء' : 'Cancel' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
   <div class="admin-page__header">
     <h1 class="admin-page__title">{{ 'ADMIN.CAMPAIGNS.TITLE' | translate }}</h1>
-    <button mat-flat-button class="admin-primary-btn">
+    <button mat-flat-button class="admin-primary-btn" (click)="showForm.set(true)">
       <span class="material-icons">add</span>
       {{ 'ADMIN.CAMPAIGNS.NEW' | translate }}
     </button>
   </div>
 
-  <div class="campaigns-grid">
-    @for (c of campaigns(); track c.id) {
-      <div class="camp-card">
-        <div class="camp-card__header">
-          <h3 class="camp-card__title">{{ title(c) }}</h3>
-          <span class="status-badge status-badge--{{ c.status }}">{{ c.status }}</span>
-        </div>
-
-        <div class="camp-card__progress">
-          <div class="camp-progress-bar">
-            <div class="camp-progress-bar__fill" [style.width.%]="pct(c)"></div>
+  @if (loading()) {
+    <div class="admin-loading">{{ isRtl() ? 'جاري التحميل...' : 'Loading...' }}</div>
+  } @else {
+    <div class="campaigns-grid">
+      @for (c of campaigns(); track c.id) {
+        <div class="camp-card">
+          <div class="camp-card__header">
+            <h3 class="camp-card__title">{{ title(c) }}</h3>
+            <div class="camp-card__badges">
+              <span class="status-badge status-badge--{{ c.status }}">{{ c.status }}</span>
+              @if (c.is_urgent) { <span class="urgent-pill">{{ isRtl() ? 'عاجل' : 'Urgent' }}</span> }
+            </div>
           </div>
-          <div class="camp-progress-labels">
-            <span class="camp-raised">{{ fmt(c.raised) }}</span>
-            <span class="camp-pct">{{ pct(c) }}%</span>
-            <span class="camp-goal">{{ fmt(c.goal) }}</span>
+
+          <div class="camp-card__progress">
+            <div class="camp-progress-bar">
+              <div class="camp-progress-bar__fill" [style.width.%]="pct(c)"></div>
+            </div>
+            <div class="camp-progress-labels">
+              <span class="camp-raised">{{ fmt(c.amount_raised) }}</span>
+              <span class="camp-pct">{{ pct(c) }}%</span>
+              <span class="camp-goal">{{ fmt(c.funding_goal) }}</span>
+            </div>
+          </div>
+
+          <div class="camp-card__meta">
+            <span><span class="material-icons">group</span>{{ c.donors_count }}</span>
+            <span><span class="material-icons">event</span>{{ c.ends_at ?? '—' }}</span>
+            <span><span class="material-icons">schedule</span>{{ c.days_left }} {{ isRtl() ? 'يوم' : 'd' }}</span>
+          </div>
+
+          <div class="camp-card__actions">
+            <button mat-stroked-button class="camp-btn" (click)="toggle(c.id, c.status)">
+              <span class="material-icons">{{ c.status === 'active' ? 'pause' : 'play_arrow' }}</span>
+              {{ (c.status === 'active' ? 'ADMIN.CAMPAIGNS.PAUSE' : 'ADMIN.CAMPAIGNS.ACTIVATE') | translate }}
+            </button>
+            <button mat-stroked-button class="camp-btn camp-btn--delete" (click)="deleteCampaign(c.id)">
+              <span class="material-icons">delete</span>
+            </button>
           </div>
         </div>
-
-        <div class="camp-card__meta">
-          <span><span class="material-icons">group</span>{{ c.donors }}</span>
-          <span><span class="material-icons">event</span>{{ c.endsAt }}</span>
-        </div>
-
-        <div class="camp-card__actions">
-          <button mat-stroked-button class="camp-btn" (click)="toggle(c.id)">
-            <span class="material-icons">{{ c.status === 'active' ? 'pause' : 'play_arrow' }}</span>
-            {{ (c.status === 'active' ? 'ADMIN.CAMPAIGNS.PAUSE' : 'ADMIN.CAMPAIGNS.ACTIVATE') | translate }}
-          </button>
-          <button mat-stroked-button class="camp-btn camp-btn--edit">
-            <span class="material-icons">edit</span>
-            {{ 'ADMIN.CAMPAIGNS.EDIT' | translate }}
-          </button>
-        </div>
-      </div>
-    }
-  </div>
+      }
+      @if (campaigns().length === 0) {
+        <div class="admin-empty">{{ isRtl() ? 'لا توجد حملات' : 'No campaigns found' }}</div>
+      }
+    </div>
+  }
 </div>

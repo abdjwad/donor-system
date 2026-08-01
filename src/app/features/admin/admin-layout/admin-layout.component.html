@@ -29,9 +29,28 @@
         <span class="material-icons">campaign</span>
         {{ 'ADMIN.NAV.CAMPAIGNS' | translate }}
       </a>
-      <a routerLink="reports"    routerLinkActive="active" class="admin-nav__link">
+      <a routerLink="projects"   routerLinkActive="active" class="admin-nav__link">
+        <span class="material-icons">construction</span>
+        {{ isRtl() ? 'المشاريع' : 'Projects' }}
+      </a>
+      <a routerLink="reports"       routerLinkActive="active" class="admin-nav__link">
         <span class="material-icons">assessment</span>
         {{ 'ADMIN.NAV.REPORTS' | translate }}
+      </a>
+      <a routerLink="disbursements" routerLinkActive="active" class="admin-nav__link">
+        <span class="material-icons">account_balance_wallet</span>
+        {{ isRtl() ? 'صرف التبرعات' : 'Disbursements' }}
+      </a>
+      <a routerLink="wallet-settings" routerLinkActive="active" class="admin-nav__link">
+        <span class="material-icons">account_balance</span>
+        {{ isRtl() ? 'المحفظة البنكية' : 'Bank Wallet' }}
+      </a>
+      <a routerLink="notifications" routerLinkActive="active" class="admin-nav__link">
+        <span class="material-icons">notifications</span>
+        {{ isRtl() ? 'الإشعارات' : 'Notifications' }}
+        @if (unreadNotifications() > 0) {
+          <span class="admin-nav__badge">{{ unreadNotifications() }}</span>
+        }
       </a>
     </nav>
 
@@ -49,6 +68,7 @@
 
   <!-- Main content -->
   <main class="admin-main">
+    <app-back-button class="admin-main__back" fallback="/admin/overview" />
     <router-outlet/>
   </main>
 

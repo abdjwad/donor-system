@@ -122,6 +122,93 @@
   }
 }
 
+// ── Pending / failed icon variants ─────────────────────────────
+.success-card__icon-ring--pending { background: rgba($color-gold, 0.08); box-shadow: 0 0 0 12px rgba($color-gold, 0.04); }
+.success-card__icon--pending {
+  background: linear-gradient(135deg, $color-gold, $color-gold-light);
+  box-shadow: 0 4px 16px rgba($color-gold, 0.4);
+}
+.success-card__icon-ring--failed { background: rgba($color-error, 0.08); box-shadow: 0 0 0 12px rgba($color-error, 0.04); }
+.success-card__icon--failed {
+  background: $color-error;
+  box-shadow: 0 4px 16px rgba($color-error, 0.35);
+}
+
+.state-loading {
+  font-size: 0.9375rem;
+  color: $color-text-muted;
+  text-align: center;
+  padding: $space-2xl 0;
+}
+
+// ── Wallet card (reused pattern) ────────────────────────────────
+.wallet-card {
+  background: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $space-md;
+  margin-bottom: $space-lg;
+  text-align: start;
+}
+.wallet-card__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $space-xs 0;
+  border-bottom: 1px solid $color-border;
+  gap: $space-md;
+
+  &:last-child { border-bottom: none; }
+}
+.wallet-card__label { font-size: 0.8125rem; color: $color-text-muted; flex-shrink: 0; }
+.wallet-card__value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: $color-text-primary;
+  text-align: end;
+
+  &--mono { font-family: var(--font-latin); direction: ltr; }
+}
+
+// ── Bank transfer confirmation form ──────────────────────────────
+.confirm-form {
+  text-align: start;
+  margin-bottom: $space-md;
+}
+.confirm-field {
+  margin-bottom: $space-md;
+
+  label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: $color-text-secondary;
+    margin-bottom: 4px;
+  }
+}
+.confirm-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 $space-md;
+  border: 1.5px solid $color-border;
+  border-radius: $radius-md;
+  font-family: inherit;
+  font-size: 0.9375rem;
+
+  &:focus { outline: none; border-color: $color-primary; }
+}
+.confirm-file-input { display: block; width: 100%; font-size: 0.875rem; }
+.confirm-file-name { display: block; font-size: 0.8125rem; color: $color-success; margin-top: 4px; }
+.confirm-file-error { display: block; font-size: 0.8125rem; color: $color-error; margin-top: 4px; }
+.confirm-error-banner {
+  background: $color-error-bg;
+  color: $color-error;
+  border-radius: $radius-md;
+  padding: $space-sm $space-md;
+  font-size: 0.8125rem;
+  margin-bottom: $space-md;
+}
+
 // ── Detail rows ───────────────────────────────────────────────
 .detail-row {
   display: flex;
@@ -146,6 +233,37 @@
       letter-spacing: 0.03em;
     }
   }
+}
+
+// ── Certificate button ────────────────────────────────────────
+.success-card__cert-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-sm;
+  width: 100%;
+  height: 48px;
+  border-radius: $radius-md;
+  border: 1.5px solid $color-gold;
+  background: rgba($color-gold, 0.06);
+  color: $color-gold-dark;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  margin-bottom: $space-md;
+  transition: $transition-base;
+
+  .material-icons { font-size: 1.125rem; }
+
+  &:hover:not(:disabled) {
+    background: rgba($color-gold, 0.14);
+    border-color: $color-gold-dark;
+    transform: translateY(-1px);
+    box-shadow: $shadow-gold;
+  }
+
+  &:disabled { opacity: 0.6; cursor: wait; }
 }
 
 // ── CTAs ──────────────────────────────────────────────────────

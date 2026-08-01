@@ -1,0 +1,9 @@
+<svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="400" fill="#FBF7F0"/>
+  <g transform="translate(250,150)" fill="none" stroke="#1B6B3A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 45 L50 10 L95 45"/>
+    <path d="M15 38 L15 90 L85 90 L85 38"/>
+    <rect x="40" y="58" width="20" height="32"/>
+  </g>
+  <text x="300" y="270" font-family="Arial, sans-serif" font-size="18" fill="#7F8C8D" text-anchor="middle">لا توجد صورة متاحة</text>
+</svg>

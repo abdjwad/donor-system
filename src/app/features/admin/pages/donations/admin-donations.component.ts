@@ -1,26 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { LanguageService } from '../../../../core/services/language.service';
-
-interface Donation {
-  id: number; donor: string; donorAr: string;
-  amount: number; project: string; projectAr: string;
-  method: string; status: 'completed'|'pending'|'refunded'|'failed'; date: string;
-}
-
-const MOCK: Donation[] = [
-  { id:1,  donor:'Ahmad Al-Ali',   donorAr:'أحمد العلي',    amount:150, project:'Homes Aleppo',   projectAr:'منازل حلب',     method:'Stripe', status:'completed', date:'2025-05-10' },
-  { id:2,  donor:'Sara Hassan',    donorAr:'سارة حسن',      amount:50,  project:'Hope School',    projectAr:'مدرسة الأمل',   method:'PayPal', status:'completed', date:'2025-05-10' },
-  { id:3,  donor:'Omar Khalil',    donorAr:'عمر خليل',      amount:200, project:'General Fund',   projectAr:'الصندوق العام', method:'Stripe', status:'pending',   date:'2025-05-09' },
-  { id:4,  donor:'Nour Ibrahim',   donorAr:'نور إبراهيم',   amount:75,  project:'Medical Idlib',  projectAr:'مركز إدلب',    method:'Bank',   status:'completed', date:'2025-05-09' },
-  { id:5,  donor:'Khaled Mustafa', donorAr:'خالد مصطفى',   amount:500, project:'Water Project',  projectAr:'مشروع مياه',   method:'Stripe', status:'completed', date:'2025-05-08' },
-  { id:6,  donor:'Lina Ramadan',   donorAr:'لينا رمضان',   amount:25,  project:'General Fund',   projectAr:'الصندوق العام', method:'PayPal', status:'refunded',  date:'2025-05-07' },
-  { id:7,  donor:'Tariq Nasser',   donorAr:'طارق ناصر',    amount:100, project:'Homes Daraa',    projectAr:'منازل درعا',    method:'Stripe', status:'failed',    date:'2025-05-06' },
-  { id:8,  donor:'Rima Aziz',      donorAr:'ريم عزيز',     amount:300, project:'School Damascus', projectAr:'مدرسة دمشق',   method:'Stripe', status:'completed', date:'2025-05-05' },
-];
+import { AdminApiService, AdminDonation, PageMeta } from '../../../../core/services/admin-api.service';
 
 @Component({
   selector: 'app-admin-donations',
@@ -29,16 +13,88 @@ const MOCK: Donation[] = [
   templateUrl: './admin-donations.component.html',
   styleUrl:    './admin-donations.component.scss',
 })
-export class AdminDonationsComponent {
+export class AdminDonationsComponent implements OnInit {
   private readonly langService = inject(LanguageService);
+  private readonly adminApi    = inject(AdminApiService);
+
   readonly isRtl = computed(() => this.langService.currentLang() === 'ar');
 
-  filterStatus = signal<string>('all');
-  readonly donations = computed(() => {
-    const s = this.filterStatus();
-    return s === 'all' ? MOCK : MOCK.filter(d => d.status === s);
-  });
+  donations    = signal<AdminDonation[]>([]);
+  meta         = signal<PageMeta>({ total: 0, current_page: 1, last_page: 1 });
+  loading      = signal(true);
+  filterStatus = signal('all');
 
-  donorName(d: Donation): string   { return this.isRtl() ? d.donorAr   : d.donor;   }
-  projectName(d: Donation): string { return this.isRtl() ? d.projectAr : d.project; }
+  // Refund modal
+  showRefundModal  = signal(false);
+  refundTargetId   = signal<number | null>(null);
+  refundReason     = signal('');
+  refundSubmitting = signal(false);
+
+  // Reject (bank transfer) modal
+  showRejectModal  = signal(false);
+  rejectTargetId   = signal<number | null>(null);
+  rejectReason     = signal('');
+  rejectSubmitting = signal(false);
+  confirmingId     = signal<number | null>(null);
+
+  ngOnInit(): void { this.load(); }
+
+  load(): void {
+    this.loading.set(true);
+    this.adminApi.getDonations({ status: this.filterStatus(), page: this.meta().current_page }).subscribe({
+      next: (res) => { this.donations.set(res.data); this.meta.set(res.meta); this.loading.set(false); },
+      error: () => this.loading.set(false),
+    });
+  }
+
+  onFilterChange(status: string): void {
+    this.filterStatus.set(status);
+    this.meta.update(m => ({ ...m, current_page: 1 }));
+    this.load();
+  }
+
+  openRefund(id: number): void {
+    this.refundTargetId.set(id);
+    this.refundReason.set('');
+    this.showRefundModal.set(true);
+  }
+
+  confirmRefund(): void {
+    const id = this.refundTargetId();
+    const reason = this.refundReason().trim();
+    if (!id || !reason) return;
+    this.refundSubmitting.set(true);
+    this.adminApi.refundDonation(id, reason).subscribe({
+      next: () => { this.showRefundModal.set(false); this.refundSubmitting.set(false); this.load(); },
+      error: () => this.refundSubmitting.set(false),
+    });
+  }
+
+  confirmDonation(id: number): void {
+    this.confirmingId.set(id);
+    this.adminApi.confirmDonation(id).subscribe({
+      next: () => { this.confirmingId.set(null); this.load(); },
+      error: () => this.confirmingId.set(null),
+    });
+  }
+
+  openReject(id: number): void {
+    this.rejectTargetId.set(id);
+    this.rejectReason.set('');
+    this.showRejectModal.set(true);
+  }
+
+  confirmReject(): void {
+    const id = this.rejectTargetId();
+    const reason = this.rejectReason().trim();
+    if (!id || !reason) return;
+    this.rejectSubmitting.set(true);
+    this.adminApi.rejectDonation(id, reason).subscribe({
+      next: () => { this.showRejectModal.set(false); this.rejectSubmitting.set(false); this.load(); },
+      error: () => this.rejectSubmitting.set(false),
+    });
+  }
+
+  donorName(d: AdminDonation): string   { return d.name; }
+  projectName(d: AdminDonation): string { return this.isRtl() ? d.project_ar : d.project_en; }
 }

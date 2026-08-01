@@ -37,11 +37,15 @@
       <!-- Toolbar -->
       <app-projects-toolbar />
 
-      <!-- Grid -->
-      @if (projects().length > 0) {
+      @if (loading()) {
+        <!-- Loading -->
+        <div class="projects-loading">
+          <span class="material-icons projects-loading__icon">autorenew</span>
+        </div>
+      } @else if (projects().length > 0) {
         <div class="projects-grid">
           @for (project of projects(); track project.id) {
-            <app-project-card [project]="project" />
+            <app-repair-project-card [project]="project" />
           }
         </div>
 

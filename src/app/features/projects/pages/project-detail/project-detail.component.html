@@ -1,4 +1,26 @@
-@if (project(); as p) {
+@if (loading()) {
+  <div class="page-loading" [class.rtl]="isRtl()">
+    <app-navbar />
+    <div class="skeleton-hero"></div>
+    <div class="skeleton-body">
+      <div class="skeleton-block skeleton-block--wide"></div>
+      <div class="skeleton-block"></div>
+      <div class="skeleton-block skeleton-block--short"></div>
+    </div>
+  </div>
+} @else if (error()) {
+  <div class="page-error" [class.rtl]="isRtl()">
+    <app-navbar />
+    <div class="page-error__inner">
+      <span class="material-icons">error_outline</span>
+      <h2>{{ isRtl() ? 'تعذّر تحميل المشروع' : 'Failed to load project' }}</h2>
+      <p>{{ isRtl() ? 'المشروع غير موجود أو حدث خطأ في الاتصال' : 'Project not found or connection error' }}</p>
+      <a routerLink="/projects" mat-flat-button class="error-back-btn">
+        {{ isRtl() ? 'العودة للمشاريع' : 'Back to Projects' }}
+      </a>
+    </div>
+  </div>
+} @else if (project(); as p) {
 <div class="project-detail" [class.rtl]="isRtl()">
 
   <app-navbar />
@@ -43,30 +65,75 @@
         <p class="detail-section__text">
           {{ isRtl() ? (p.descriptionAr ?? 'هذا المشروع يهدف إلى إعادة بناء البنية التحتية وتوفير بيئة آمنة للعائلات المتضررة من النزاع. سيستفيد من هذا المشروع مئات العائلات التي فقدت منازلها.') : (p.description ?? 'This project aims to rebuild infrastructure and provide a safe environment for families affected by the conflict. Hundreds of families who lost their homes will benefit from this project.') }}
         </p>
+        @if (p.beneficiaryName || p.beneficiaryFamilySize) {
+          <div class="beneficiary-note">
+            <span class="material-icons">groups</span>
+            <span>
+              @if (p.beneficiaryFamilySize) {
+                {{ isRtl() ? 'أسرة مكوّنة من ' + p.beneficiaryFamilySize + ' أفراد' : 'A family of ' + p.beneficiaryFamilySize + ' members' }}
+              }
+              @if (p.beneficiaryName) { — {{ p.beneficiaryName }} }
+            </span>
+          </div>
+        }
       </section>
+
+      <!-- Cost breakdown — بالضبط وين رايحة فلوس المتبرع -->
+      @if (p.costBreakdown?.length) {
+        <section class="detail-section">
+          <h2 class="detail-section__title">{{ isRtl() ? 'تفصيل بنود التكلفة' : 'Cost Breakdown' }}</h2>
+          <div class="cost-breakdown-table-wrap">
+            <table class="cost-breakdown-table">
+              <thead>
+                <tr>
+                  <th>{{ isRtl() ? 'البند' : 'Item' }}</th>
+                  <th>{{ isRtl() ? 'الكمية' : 'Qty' }}</th>
+                  <th>{{ isRtl() ? 'سعر الوحدة' : 'Unit Price' }}</th>
+                  <th>{{ isRtl() ? 'الإجمالي' : 'Total' }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of p.costBreakdown; track $index) {
+                  <tr>
+                    <td>{{ item.itemName }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ formatAmount(item.unitPrice) }}</td>
+                    <td class="cost-breakdown-table__total">{{ formatAmount(item.totalPrice) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      }
 
       <!-- Timeline -->
       <section class="detail-section">
         <h2 class="detail-section__title">{{ 'PROJECTS.DETAIL.TIMELINE' | translate }}</h2>
         <div class="timeline">
-          @for (m of MILESTONES; track $index) {
-            <div class="timeline__item timeline__item--{{ m.status }}">
+          @for (m of roadmap(); track m.id) {
+            <div class="timeline__item timeline__item--{{ displayStatus(m) }}">
               <div class="timeline__dot">
-                @if (m.status === 'completed') { <span class="material-icons">check</span> }
-                @else if (m.status === 'ongoing') { <span class="material-icons">radio_button_checked</span> }
+                @if (displayStatus(m) === 'completed') { <span class="material-icons">check</span> }
+                @else if (displayStatus(m) === 'ongoing') { <span class="material-icons">radio_button_checked</span> }
                 @else { <span class="material-icons">radio_button_unchecked</span> }
               </div>
               <div class="timeline__content">
                 <div class="timeline__header">
-                  <span class="timeline__title">{{ getMilestoneTitle(m) }}</span>
+                  <span class="timeline__title">{{ m.name }}</span>
                   <span class="timeline__date">{{ getMilestoneDate(m) }}</span>
-                  <span class="timeline__badge timeline__badge--{{ m.status }}">
-                    {{ ('PROJECTS.DETAIL.MILESTONE_' + m.status.toUpperCase()) | translate }}
+                  <span class="timeline__badge timeline__badge--{{ displayStatus(m) }}">
+                    {{ ('PROJECTS.DETAIL.MILESTONE_' + displayStatus(m).toUpperCase()) | translate }}
                   </span>
                 </div>
-                <p class="timeline__desc">{{ getMilestoneDesc(m) }}</p>
+                @if (getMilestoneDesc(m)) {
+                  <p class="timeline__desc">{{ getMilestoneDesc(m) }}</p>
+                }
               </div>
             </div>
+          }
+          @if (!roadmap().length) {
+            <p class="timeline__empty">{{ isRtl() ? 'لا توجد مراحل تنفيذ مسجّلة بعد لهذا المشروع' : 'No execution milestones recorded for this project yet' }}</p>
           }
         </div>
       </section>
@@ -110,11 +177,18 @@
           </div>
         </div>
 
-        <a [routerLink]="['/donate/guest']" [queryParams]="{ project: p.id }"
-           mat-flat-button class="funding-card__btn">
-          <span class="material-icons">volunteer_activism</span>
-          {{ 'PROJECTS.DETAIL.DONATE_BTN' | translate }}
-        </a>
+        @if (progressPct < 100) {
+          <a [routerLink]="['/donate/guest']" [queryParams]="{ project: p.id }"
+             mat-flat-button class="funding-card__btn">
+            <span class="material-icons">volunteer_activism</span>
+            {{ 'PROJECTS.DETAIL.DONATE_BTN' | translate }}
+          </a>
+        } @else {
+          <div class="funding-card__funded-note">
+            <span class="material-icons">check_circle</span>
+            {{ isRtl() ? 'اكتمل تمويل هذا المشروع — شكراً لكل من ساهم' : 'This project is fully funded — thank you to everyone who contributed' }}
+          </div>
+        }
       </div>
 
       <!-- Project info card -->

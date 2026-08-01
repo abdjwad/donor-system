@@ -1,6 +1,12 @@
 <div class="admin-page">
-  <h1 class="admin-page__title">{{ 'ADMIN.REFUNDS.TITLE' | translate }}</h1>
+  <div class="admin-page__header">
+    <h1 class="admin-page__title">{{ 'ADMIN.REFUNDS.TITLE' | translate }}</h1>
+    <span class="admin-badge">{{ total() }} {{ isRtl() ? 'إجمالي' : 'total' }}</span>
+  </div>
 
+  @if (loading()) {
+    <div class="admin-card"><div class="admin-loading">{{ isRtl() ? 'جاري التحميل...' : 'Loading...' }}</div></div>
+  } @else {
   <div class="admin-card">
     <div class="table-wrap">
       <table class="admin-table">
@@ -20,7 +26,7 @@
               <td>{{ donorName(r) }}</td>
               <td class="amount-cell">${{ r.amount }}</td>
               <td>{{ reasonText(r) }}</td>
-              <td class="date-cell">{{ r.date }}</td>
+              <td class="date-cell">{{ r.requested_at }}</td>
               <td>
                 <span class="status-badge status-badge--{{ r.status }}">
                   {{ ('ADMIN.REFUNDS.' + r.status.toUpperCase()) | translate }}
@@ -44,4 +50,5 @@
       </table>
     </div>
   </div>
+  } <!-- end @else -->
 </div>

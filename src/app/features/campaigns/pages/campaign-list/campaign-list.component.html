@@ -9,8 +9,34 @@
   </header>
 
   <div class="campaigns-content">
+
+    @if (loading()) {
+      <div class="campaigns-grid">
+        @for (_ of [1,2,3]; track $index) {
+          <div class="campaign-card bunian-card skeleton-card">
+            <div class="skeleton skeleton--image"></div>
+            <div class="skeleton-card__body">
+              <div class="skeleton skeleton--title"></div>
+              <div class="skeleton skeleton--text"></div>
+              <div class="skeleton skeleton--bar"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (error()) {
+      <div class="page-error__inner">
+        <span class="material-icons">error_outline</span>
+        <p>{{ isRtl() ? 'تعذّر تحميل الحملات' : 'Failed to load campaigns' }}</p>
+      </div>
+    } @else if (campaigns().length === 0) {
+      <div class="page-error__inner">
+        <span class="material-icons">campaign</span>
+        <p>{{ isRtl() ? 'لا توجد حملات نشطة حالياً' : 'No active campaigns at the moment' }}</p>
+      </div>
+    } @else {
+
     <div class="campaigns-grid">
-      @for (c of campaigns; track c.id) {
+      @for (c of campaigns(); track c.id) {
         <article class="campaign-card bunian-card">
 
           <div class="campaign-card__image-wrap">
@@ -63,6 +89,9 @@
         </article>
       }
     </div>
+
+    } <!-- end @else -->
+
   </div>
 
   <app-site-footer />

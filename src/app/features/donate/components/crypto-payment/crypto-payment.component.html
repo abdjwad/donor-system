@@ -1,0 +1,152 @@
+<div class="crypto-pay" [class.rtl]="isRtl()">
+
+  <!-- ── غير متصل بمحفظة ─────────────────────────────────────── -->
+  @if (!web3.isConnected()) {
+    <div class="crypto-pay__not-connected">
+      <div class="crypto-pay__icon-wrap">
+        <span class="material-icons">account_balance_wallet</span>
+      </div>
+      <h3>{{ isRtl() ? 'ربط محفظتك الرقمية' : 'Connect Your Wallet' }}</h3>
+      <p>{{ isRtl()
+        ? 'لإتمام التبرع بالعملات الرقمية، يرجى ربط محفظة MetaMask أولاً'
+        : 'To donate with crypto, please connect your MetaMask wallet first' }}</p>
+
+      <button mat-flat-button class="crypto-pay__connect-btn" (click)="connect()">
+        <svg viewBox="0 0 35 33" class="crypto-pay__mm-icon">
+          <path fill="#E2761B" stroke="#E2761B" stroke-linecap="round" stroke-linejoin="round"
+            d="M32.958 1L19.57 10.7l2.44-5.735L32.957 1z"/>
+          <path fill="#E4761B" stroke="#E4761B" stroke-linecap="round" stroke-linejoin="round"
+            d="M2.031 1l13.277 9.809-2.322-5.844L2.03 1zM28.18 23.507l-3.562 5.453 7.625 2.1 2.19-7.433-6.254-.12zM1.58 23.627l2.178 7.433 7.625-2.1-3.562-5.453-6.241.12z"/>
+        </svg>
+        {{ isRtl() ? 'ربط MetaMask' : 'Connect MetaMask' }}
+      </button>
+
+      <p class="crypto-pay__no-mm">
+        {{ isRtl() ? 'لا تملك MetaMask؟' : "Don't have MetaMask?" }}
+        <a href="https://metamask.io/download/" target="_blank">
+          {{ isRtl() ? 'ثبّته مجاناً' : 'Install free' }}
+        </a>
+      </p>
+    </div>
+  }
+
+  <!-- ── شبكة خاطئة ────────────────────────────────────────────── -->
+  @if (web3.isConnected() && web3.isWrongNetwork()) {
+    <div class="crypto-pay__wrong-net">
+      <span class="material-icons">warning</span>
+      <div>
+        <strong>{{ isRtl() ? 'شبكة غير صحيحة' : 'Wrong Network' }}</strong>
+        <p>{{ isRtl() ? 'يرجى التبديل لشبكة Ganache أو Polygon' : 'Please switch to Ganache or Polygon network' }}</p>
+      </div>
+      <button mat-stroked-button (click)="web3.switchToGanache()">
+        {{ isRtl() ? 'تبديل الشبكة' : 'Switch Network' }}
+      </button>
+    </div>
+  }
+
+  <!-- ── متصل وجاهز ────────────────────────────────────────────── -->
+  @if (web3.isConnected() && !web3.isWrongNetwork() && txState() === 'idle') {
+    <div class="crypto-pay__ready">
+
+      <!-- معلومات المحفظة -->
+      <div class="crypto-pay__wallet-info">
+        <div class="crypto-pay__wallet-row">
+          <span class="material-icons">account_balance_wallet</span>
+          <div>
+            <div class="crypto-pay__wallet-label">{{ isRtl() ? 'محفظتك' : 'Your Wallet' }}</div>
+            <div class="crypto-pay__wallet-addr">{{ web3.walletAddress() }}</div>
+          </div>
+          <div class="crypto-pay__balance">
+            <span class="crypto-pay__balance-value">{{ balance() }}</span>
+            <span class="crypto-pay__balance-unit">ETH</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ملخص المعاملة -->
+      <div class="crypto-pay__tx-summary">
+        <div class="crypto-pay__tx-row">
+          <span>{{ isRtl() ? 'المبلغ' : 'Amount' }}</span>
+          <strong class="crypto-pay__tx-amount">{{ amount }} ETH</strong>
+        </div>
+        <div class="crypto-pay__tx-row">
+          <span>{{ isRtl() ? 'العقد الذكي' : 'Smart Contract' }}</span>
+          <span class="crypto-pay__contract-addr">{{ contractAddr() | slice:0:10 }}...</span>
+        </div>
+        <div class="crypto-pay__tx-row">
+          <span>{{ isRtl() ? 'الشبكة' : 'Network' }}</span>
+          <span class="crypto-pay__network-badge">Ganache Local</span>
+        </div>
+      </div>
+
+      <button mat-flat-button class="crypto-pay__send-btn" (click)="sendDonation()">
+        <span class="material-icons">send</span>
+        {{ isRtl() ? 'إرسال التبرع عبر MetaMask' : 'Send Donation via MetaMask' }}
+      </button>
+
+      <p class="crypto-pay__hint">
+        <span class="material-icons">info</span>
+        {{ isRtl()
+          ? 'MetaMask سيفتح لتأكيد المعاملة — تحقق من المبلغ قبل الموافقة'
+          : 'MetaMask will open to confirm — verify the amount before approving' }}
+      </p>
+    </div>
+  }
+
+  <!-- ── جارٍ المعالجة ──────────────────────────────────────────── -->
+  @if (txState() === 'pending') {
+    <div class="crypto-pay__pending">
+      <div class="crypto-pay__spinner"></div>
+      <h3>{{ isRtl() ? 'جارٍ المعالجة...' : 'Processing...' }}</h3>
+      <p>{{ isRtl()
+        ? 'وافق على المعاملة في MetaMask وانتظر التأكيد'
+        : 'Approve the transaction in MetaMask and wait for confirmation' }}</p>
+    </div>
+  }
+
+  <!-- ── نجاح ──────────────────────────────────────────────────── -->
+  @if (txState() === 'success') {
+    <div class="crypto-pay__success">
+      <div class="crypto-pay__success-icon">
+        <span class="material-icons">check_circle</span>
+      </div>
+      <h3>{{ isRtl() ? 'تم التبرع بنجاح! 🎉' : 'Donation Successful! 🎉' }}</h3>
+      <p>{{ isRtl()
+        ? 'تبرعك سُجِّل على الـ blockchain وهو الآن جزء من السجل الدائم'
+        : 'Your donation was recorded on the blockchain permanently' }}</p>
+
+      <!-- TX Hash -->
+      <div class="crypto-pay__tx-hash">
+        <span class="crypto-pay__tx-label">
+          {{ isRtl() ? 'رقم المعاملة (TX Hash)' : 'Transaction Hash' }}
+        </span>
+        <div class="crypto-pay__tx-value">
+          <code>{{ txHash() }}</code>
+          <button class="crypto-pay__copy-btn"
+                  (click)="copyHash()"
+                  [title]="isRtl() ? 'نسخ' : 'Copy'">
+            <span class="material-icons">content_copy</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="crypto-pay__success-actions">
+        <a routerLink="/home" mat-stroked-button class="crypto-pay__home-btn">
+          {{ isRtl() ? 'العودة للرئيسية' : 'Back to Home' }}
+        </a>
+      </div>
+    </div>
+  }
+
+  <!-- ── خطأ ────────────────────────────────────────────────────── -->
+  @if (txState() === 'error') {
+    <div class="crypto-pay__error">
+      <span class="material-icons">error</span>
+      <p>{{ txError() }}</p>
+      <button mat-stroked-button (click)="txState.set('idle')">
+        {{ isRtl() ? 'حاول مرة أخرى' : 'Try Again' }}
+      </button>
+    </div>
+  }
+
+</div>

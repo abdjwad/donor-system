@@ -5,67 +5,80 @@
   top: 0;
   z-index: 1000;
   background: rgba($color-primary-dark, 0.97);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba($color-gold, 0.2);
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba($color-gold, 0.15);
+  box-shadow: 0 1px 20px rgba(0, 0, 0, 0.25);
 
   &.rtl { direction: rtl; }
 
+  // ── Layout ────────────────────────────────────────────────────
   &__inner {
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 0 auto;
     padding: 0 $space-xl;
-    height: 64px;
+    height: 60px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: $space-xl;
+    gap: $space-lg;
+
+    @media (max-width: $bp-tablet)  { padding: 0 $space-lg; }
+    @media (max-width: $bp-mobile)  { padding: 0 $space-md; gap: $space-sm; }
   }
 
-  // ── Logo ──────────────────────────────────────────────────
+  &__back {
+    color: #fff;
+    flex-shrink: 0;
+    @media (max-width: $bp-mobile) { display: none; }
+  }
+
+  // ── Logo ──────────────────────────────────────────────────────
   &__logo {
     display: flex;
     align-items: center;
     gap: $space-sm;
     text-decoration: none;
     flex-shrink: 0;
+    transition: $transition-fast;
+    &:hover { opacity: 0.85; }
   }
 
   &__logo-dot {
-    width: 10px;
-    height: 10px;
+    width: 9px;
+    height: 9px;
     background: $color-gold;
     border-radius: $radius-full;
     flex-shrink: 0;
-    box-shadow: 0 0 8px rgba($color-gold, 0.6);
+    box-shadow: 0 0 8px rgba($color-gold, 0.7);
+  }
+
+  &__logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
   }
 
   &__logo-ar {
-    font-size: 1.0625rem;
+    font-size: 1rem;
     font-weight: 800;
     color: #fff;
-    letter-spacing: 0.01em;
-  }
-
-  &__logo-sep {
-    color: rgba($color-gold, 0.5);
-    font-size: 0.875rem;
   }
 
   &__logo-en {
-    font-size: 0.9rem;
+    font-size: 0.5625rem;
     font-weight: 700;
-    color: $color-gold-light;
+    color: rgba($color-gold, 0.8);
     font-family: var(--font-latin);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
+    margin-top: 1px;
   }
 
-  // ── Desktop links ──────────────────────────────────────────
+  // ── Nav links ─────────────────────────────────────────────────
   &__links {
     display: flex;
     align-items: center;
-    gap: $space-xs;
+    gap: 2px;
     flex: 1;
     justify-content: center;
 
@@ -73,124 +86,213 @@
   }
 
   &__link {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: $space-xs $space-md;
+    padding: 6px 14px;
     border-radius: $radius-md;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.65);
     text-decoration: none;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     font-weight: 500;
     transition: $transition-fast;
+    white-space: nowrap;
+    position: relative;
 
-    .material-icons { font-size: 1.125rem; }
-
-    &:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.08);
-    }
+    &:hover { color: rgba(255,255,255,0.92); background: rgba(255,255,255,0.07); }
 
     &.active {
       color: $color-gold-light;
-      background: rgba($color-gold, 0.12);
       font-weight: 700;
+      // thin underline indicator
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 16px;
+        height: 2px;
+        background: $color-gold;
+        border-radius: $radius-full;
+      }
     }
   }
 
-  // ── Actions ───────────────────────────────────────────────
+  // ── Actions ───────────────────────────────────────────────────
   &__actions {
     display: flex;
     align-items: center;
-    gap: $space-sm;
+    gap: $space-xs;
     flex-shrink: 0;
   }
 
-  // ── Generic icon button (dash, profile, notifications) ──────
-  &__icon-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: $radius-md;
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.75);
-    text-decoration: none;
-    transition: $transition-fast;
-    position: relative;
-    flex-shrink: 0;
-    .material-icons { font-size: 1.125rem; }
-    &:hover { background: rgba($color-gold, 0.18); color: $color-gold-light; }
-  }
-
-  // ── Notification bell dot ─────────────────────────────────────
-  &__notif-dot {
-    position: absolute;
-    top: 5px;
-    inset-inline-end: 5px;
-    width: 8px;
-    height: 8px;
-    background: $color-error;
-    border-radius: 50%;
-    border: 1.5px solid $color-primary-dark;
-  }
-
-  // keep old class name as alias so nothing breaks
-  &__dash-btn {
-    @extend .navbar__icon-btn;
-  }
-
+  // ── Language ──────────────────────────────────────────────────
   &__lang-btn {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    height: 30px;
+    padding: 0 10px;
     border-radius: $radius-full;
-    padding: 4px 12px;
-    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.7);
     font-size: 0.8125rem;
     font-weight: 700;
     cursor: pointer;
     font-family: inherit;
     transition: $transition-fast;
-    height: 34px;
+    &:hover { border-color: rgba($color-gold,0.5); color: $color-gold-light; }
+  }
 
-    .material-icons { font-size: 1rem; }
+  // ── Icon group ────────────────────────────────────────────────
+  &__icon-group {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: $radius-md;
+    padding: 3px;
 
-    &:hover {
-      border-color: $color-gold;
-      color: $color-gold-light;
-      background: rgba($color-gold, 0.1);
+    @media (max-width: $bp-tablet) { display: none; }
+  }
+
+  &__icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: $radius-sm;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    transition: $transition-fast;
+    position: relative;
+    .material-icons { font-size: 1.0625rem; }
+    &:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  }
+
+  &__notif-dot {
+    position: absolute;
+    top: 4px;
+    inset-inline-end: 4px;
+    width: 7px;
+    height: 7px;
+    background: $color-error;
+    border-radius: 50%;
+    border: 1.5px solid $color-primary-dark;
+  }
+
+  // ── Divider ───────────────────────────────────────────────────
+  &__divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(255,255,255,0.12);
+    flex-shrink: 0;
+
+    @media (max-width: $bp-tablet) { display: none; }
+  }
+
+  // ── Wallet ────────────────────────────────────────────────────
+  &__wallet {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(39,174,96,0.1);
+    border: 1px solid rgba(39,174,96,0.3);
+    border-radius: $radius-full;
+    padding: 3px 8px 3px 6px;
+    height: 32px;
+
+    &-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: $color-success;
+      box-shadow: 0 0 5px rgba($color-success,0.7);
+      flex-shrink: 0;
+    }
+
+    &-addr {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.88);
+      font-family: var(--font-latin);
+      letter-spacing: 0.01em;
+    }
+
+    &-out {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(255,255,255,0.35);
+      display: flex;
+      align-items: center;
+      padding: 0 2px;
+      transition: $transition-fast;
+      .material-icons { font-size: 0.8125rem; }
+      &:hover { color: $color-error; }
     }
   }
 
+  &__wallet-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba($color-gold,0.1);
+    border: 1px solid rgba($color-gold,0.35);
+    border-radius: $radius-full;
+    padding: 3px 12px 3px 8px;
+    color: $color-gold-light;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    height: 32px;
+    transition: $transition-fast;
+    white-space: nowrap;
+    &:hover { background: rgba($color-gold,0.18); border-color: $color-gold; }
+
+    @media (max-width: $bp-tablet) { display: none; }
+  }
+
+  // ── Login link ────────────────────────────────────────────────
   &__login-btn {
-    height: 36px !important;
-    font-size: 0.875rem !important;
-    font-weight: 600 !important;
-    border-radius: $radius-md !important;
-    border-color: rgba(255, 255, 255, 0.25) !important;
-    color: rgba(255, 255, 255, 0.85) !important;
+    padding: 0 12px;
+    height: 32px;
+    border-radius: $radius-md;
+    color: rgba(255,255,255,0.72);
     text-decoration: none;
-    display: flex !important;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    transition: $transition-fast;
+    &:hover { color: #fff; background: rgba(255,255,255,0.07); }
+
+    @media (max-width: $bp-tablet) { display: none; }
+  }
+
+  // ── Wrong network ─────────────────────────────────────────────
+  &__wrong-network {
+    display: flex;
     align-items: center;
     gap: 4px;
-    transition: $transition-fast;
-
-    &:hover {
-      border-color: rgba(255, 255, 255, 0.6) !important;
-      color: #fff !important;
-    }
-
-    .material-icons { font-size: 1.0625rem; }
-
-    @media (max-width: $bp-tablet) { display: none !important; }
+    background: rgba($color-error,0.12);
+    border: 1px solid rgba($color-error,0.35);
+    border-radius: $radius-full;
+    padding: 0 10px;
+    color: #FF8080;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    height: 32px;
+    animation: blink 2s infinite;
+    .material-icons { font-size: 0.875rem; }
   }
 
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+  // ── Donate CTA ────────────────────────────────────────────────
   &__donate-btn {
-    height: 36px !important;
+    height: 34px !important;
+    padding: 0 $space-md !important;
     font-size: 0.875rem !important;
     font-weight: 700 !important;
     border-radius: $radius-md !important;
@@ -199,91 +301,93 @@
     text-decoration: none;
     display: flex !important;
     align-items: center;
-    gap: 4px;
-    transition: $transition-base;
-    box-shadow: 0 2px 8px rgba($color-gold, 0.4);
+    gap: 5px;
+    white-space: nowrap;
+    box-shadow: 0 2px 10px rgba($color-gold,0.35);
+    transition: $transition-base !important;
 
     &:hover {
       background: $color-gold-light !important;
       transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba($color-gold, 0.5);
+      box-shadow: 0 4px 14px rgba($color-gold,0.45);
     }
 
-    .material-icons { font-size: 1.0625rem; }
+    .material-icons { font-size: 1rem; }
 
     @media (max-width: $bp-mobile) { display: none !important; }
   }
 
-  // ── Hamburger ──────────────────────────────────────────────
+  // ── Hamburger ─────────────────────────────────────────────────
   &__hamburger {
     display: none;
-    background: none;
-    border: none;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
     cursor: pointer;
-    color: rgba(255, 255, 255, 0.85);
-    padding: $space-xs;
+    color: rgba(255,255,255,0.8);
+    width: 36px;
+    height: 36px;
     border-radius: $radius-sm;
+    align-items: center;
+    justify-content: center;
     transition: $transition-fast;
+    .material-icons { font-size: 1.375rem; }
+    &:hover { background: rgba(255,255,255,0.12); color: #fff; }
 
-    .material-icons { font-size: 1.5rem; }
-
-    &:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
-
-    @media (max-width: $bp-tablet) { display: flex; align-items: center; }
+    @media (max-width: $bp-tablet) { display: flex; }
   }
 
-  // ── Mobile menu ───────────────────────────────────────────
+  // ── Mobile menu ───────────────────────────────────────────────
   &__mobile-menu {
-    padding: $space-sm $space-xl $space-lg;
+    padding: $space-xs $space-lg $space-md;
     display: flex;
     flex-direction: column;
-    gap: $space-xs;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 1px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    background: rgba($color-primary-dark,0.98);
   }
 }
 
-// ── Mobile link ────────────────────────────────────────────────
+// ── Mobile links ───────────────────────────────────────────────
 .mobile-link {
   display: flex;
   align-items: center;
   gap: $space-sm;
-  padding: $space-sm $space-md;
+  padding: 9px $space-md;
   border-radius: $radius-md;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255,255,255,0.72);
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   transition: $transition-fast;
 
-  .material-icons { font-size: 1.25rem; }
+  .material-icons { font-size: 1.1875rem; color: rgba(255,255,255,0.4); flex-shrink: 0; }
 
   &:hover {
     color: #fff;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255,255,255,0.06);
+    .material-icons { color: rgba(255,255,255,0.7); }
   }
 
   &--donate {
     color: $color-gold-light;
     font-weight: 700;
+    .material-icons { color: rgba($color-gold,0.7); }
   }
 
   &--admin {
-    color: rgba($color-gold, 0.9);
-    font-weight: 600;
-    .material-icons { color: rgba($color-gold, 0.8); }
-    &:hover { background: rgba($color-gold, 0.08); }
+    color: rgba($color-gold,0.85);
+    .material-icons { color: rgba($color-gold,0.5); }
   }
 }
 
 .mobile-divider-line {
   height: 1px;
-  background: rgba(255, 255, 255, 0.08);
-  margin: $space-xs $space-md;
+  background: rgba(255,255,255,0.07);
+  margin: 4px $space-md;
 }
 
 .mobile-badge {
-  min-width: 18px;
-  height: 18px;
+  min-width: 18px; height: 18px;
   background: $color-error;
   color: #fff;
   border-radius: $radius-full;

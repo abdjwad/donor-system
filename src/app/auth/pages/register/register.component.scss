@@ -5,6 +5,28 @@
   width: 100%;
 }
 
+// ── OTP channel picker ────────────────────────────────────────
+.register__otp-channel {
+  .otp-channel-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: $color-text-secondary;
+    margin-bottom: $space-xs;
+  }
+
+  .otp-channel-group {
+    display: flex;
+    gap: $space-lg;
+  }
+
+  .otp-channel-hint {
+    font-size: 0.8125rem;
+    color: $color-text-muted;
+    margin: $space-xs 0 0;
+  }
+}
+
 // ── Terms checkbox row ───────────────────────────────────────
 .register__terms {
   margin-bottom: $space-lg;

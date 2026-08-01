@@ -16,13 +16,6 @@
   font-size: 1.125rem;
 }
 
-.paypal-icon {
-  font-weight: 800;
-  color: #003087;
-  font-size: 1.125rem;
-  font-family: var(--font-latin);
-}
-
 .card-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -42,30 +35,85 @@
   margin-inline-end: $space-xs;
 }
 
-// ── PayPal section ────────────────────────────────────────────
-.paypal-content {
+// ── Bank transfer ──────────────────────────────────────────────
+.bank-instructions {
+  background: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $space-md;
+  margin-bottom: $space-lg;
+}
+
+.bank-instructions__title {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: $space-lg;
-  text-align: center;
-}
-
-.paypal-logo {
-  font-size: 2rem;
-  font-family: var(--font-latin);
-  font-weight: 800;
-  margin: $space-md 0;
-
-  .paypal-p { color: #003087; }
-  .paypal-b { color: #009cde; }
-}
-
-.paypal-desc {
+  gap: $space-xs;
   font-size: 0.9375rem;
-  color: $color-text-muted;
-  max-width: 300px;
+  font-weight: 700;
+  color: $color-text-primary;
+  margin-bottom: $space-xs;
+
+  .material-icons { font-size: 1.125rem; color: $color-primary; }
+}
+
+.bank-instructions__text {
+  font-size: 0.875rem;
+  color: $color-text-secondary;
+  white-space: pre-line;
   margin: 0;
+}
+
+.wallet-card {
+  background: $color-card-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $space-md;
+  margin-bottom: $space-md;
+
+  &--loading {
+    text-align: center;
+    color: $color-text-muted;
+    font-size: 0.875rem;
+    border-style: dashed;
+  }
+}
+
+.wallet-card__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $space-xs 0;
+  border-bottom: 1px solid $color-border;
+  gap: $space-md;
+
+  &:last-child { border-bottom: none; }
+}
+
+.wallet-card__label {
+  font-size: 0.8125rem;
+  color: $color-text-muted;
+  flex-shrink: 0;
+}
+
+.wallet-card__value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: $color-text-primary;
+  text-align: end;
+
+  &--mono { font-family: var(--font-latin); direction: ltr; }
+}
+
+.bank-next-step-hint {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  font-size: 0.8125rem;
+  color: $color-primary;
+  font-weight: 600;
+  margin: 0 0 $space-lg;
+
+  .material-icons { font-size: 1rem; }
 }
 
 // ── Terms ────────────────────────────────────────────────────

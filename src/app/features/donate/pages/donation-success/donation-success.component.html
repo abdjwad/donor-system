@@ -9,40 +9,152 @@
   <!-- Success Card -->
   <div class="success-card">
 
-    <!-- Icon -->
-    <div class="success-card__icon-ring">
-      <div class="success-card__icon">
-        <span class="material-icons">favorite</span>
-      </div>
-    </div>
+    @if (loading()) {
 
-    <!-- Message -->
-    <h1 class="success-card__title">{{ 'DONATE.SUCCESS.TITLE' | translate }}</h1>
-    <p class="success-card__subtitle">{{ 'DONATE.SUCCESS.SUBTITLE' | translate }}</p>
+      <p class="state-loading">{{ isRtl() ? 'جاري التحقق من حالة تبرعك...' : 'Checking your donation status...' }}</p>
 
-    <!-- Details -->
-    @if (amount || ref) {
-      <div class="success-card__details">
-        @if (amount) {
-          <div class="detail-row">
-            <span class="detail-row__label">{{ 'DONATE.SUCCESS.AMOUNT_LABEL' | translate }}</span>
-            <span class="detail-row__value">${{ amount }}</span>
-          </div>
-        }
-        @if (ref) {
-          <div class="detail-row">
-            <span class="detail-row__label">{{ 'DONATE.SUCCESS.REF_LABEL' | translate }}</span>
-            <span class="detail-row__value detail-row__value--ref">{{ ref }}</span>
-          </div>
-        }
+    } @else if (needsBankProof) {
+
+      <!-- ── بانتظار إثبات التحويل البنكي ── -->
+      <div class="success-card__icon-ring success-card__icon-ring--pending">
+        <div class="success-card__icon success-card__icon--pending">
+          <span class="material-icons">account_balance</span>
+        </div>
       </div>
+      <h1 class="success-card__title">{{ isRtl() ? 'خطوة أخيرة — أكّد تحويلك' : 'One Last Step — Confirm Your Transfer' }}</h1>
+      <p class="success-card__subtitle">
+        {{ isRtl()
+            ? 'حوّلنا نيّة تبرعك بنجاح. إذا حوّلت المبلغ فعلاً لحساب المنصة، أدخل رقم مرجع الحوالة وأرفق صورة الإيصال بالأسفل.'
+            : "We've registered your donation intent. If you've already transferred the amount to the platform's account, enter the transfer reference and attach the receipt below." }}
+      </p>
+
+      @if (donation()?.wallet; as wallet) {
+        <div class="wallet-card">
+          <div class="wallet-card__row">
+            <span class="wallet-card__label">{{ 'DONATE.PAYMENT.WALLET_BANK_NAME' | translate }}</span>
+            <span class="wallet-card__value">{{ wallet.bank_name }}</span>
+          </div>
+          <div class="wallet-card__row">
+            <span class="wallet-card__label">{{ 'DONATE.PAYMENT.WALLET_ACCOUNT_HOLDER' | translate }}</span>
+            <span class="wallet-card__value">{{ wallet.account_holder_name }}</span>
+          </div>
+          <div class="wallet-card__row">
+            <span class="wallet-card__label">{{ 'DONATE.PAYMENT.WALLET_ACCOUNT_NUMBER' | translate }}</span>
+            <span class="wallet-card__value wallet-card__value--mono">{{ wallet.account_number }}</span>
+          </div>
+          <div class="wallet-card__row">
+            <span class="wallet-card__label">IBAN</span>
+            <span class="wallet-card__value wallet-card__value--mono">{{ wallet.iban }}</span>
+          </div>
+        </div>
+      }
+
+      <form [formGroup]="confirmForm" class="confirm-form" novalidate>
+        <div class="confirm-field">
+          <label>{{ isRtl() ? 'رقم مرجع الحوالة' : 'Transfer Reference Number' }}</label>
+          <input type="text" formControlName="bank_transfer_reference" class="confirm-input"
+                 [placeholder]="isRtl() ? 'الرقم الظاهر على إيصال التحويل' : 'The number shown on your transfer receipt'"/>
+        </div>
+        <div class="confirm-field">
+          <label>{{ isRtl() ? 'صورة الإيصال' : 'Receipt Image' }}</label>
+          <input type="file" accept="image/*" (change)="onReceiptSelected($event)" class="confirm-file-input"/>
+          @if (receiptFile()) { <span class="confirm-file-name">{{ receiptFile()!.name }}</span> }
+          @if (receiptError()) { <span class="confirm-file-error">{{ receiptError() }}</span> }
+        </div>
+
+        @if (confirmError()) {
+          <div class="confirm-error-banner">{{ confirmError() }}</div>
+        }
+
+        <button type="button" class="success-card__cert-btn" (click)="submitTransferProof()" [disabled]="confirming()">
+          <span class="material-icons">{{ confirming() ? 'hourglass_empty' : 'send' }}</span>
+          {{ confirming() ? (isRtl() ? 'جارٍ الإرسال...' : 'Submitting...') : (isRtl() ? 'تأكيد إرسال التحويل' : 'Confirm Transfer') }}
+        </button>
+      </form>
+
+    } @else if (awaitingBankConfirmation) {
+
+      <!-- ── إثبات مُرسل، بانتظار تأكيد الإدارة ── -->
+      <div class="success-card__icon-ring success-card__icon-ring--pending">
+        <div class="success-card__icon success-card__icon--pending">
+          <span class="material-icons">schedule</span>
+        </div>
+      </div>
+      <h1 class="success-card__title">{{ isRtl() ? 'تم استلام إثبات التحويل' : 'Transfer Proof Received' }}</h1>
+      <p class="success-card__subtitle">
+        {{ isRtl()
+            ? 'شكراً لك — استلمنا رقم المرجع وصورة الإيصال. سيقوم فريقنا بتأكيد التبرع خلال يوم عمل، وستصلك رسالة تأكيد فور اعتماده.'
+            : "Thank you — we've received your reference number and receipt. Our team will confirm the donation within one business day, and you'll get a confirmation once approved." }}
+      </p>
+
+    } @else if (isFailed) {
+
+      <!-- ── تبرع مرفوض ── -->
+      <div class="success-card__icon-ring success-card__icon-ring--failed">
+        <div class="success-card__icon success-card__icon--failed">
+          <span class="material-icons">error_outline</span>
+        </div>
+      </div>
+      <h1 class="success-card__title">{{ isRtl() ? 'لم نتمكن من تأكيد تبرعك' : "We Couldn't Confirm Your Donation" }}</h1>
+      <p class="success-card__subtitle">
+        {{ donation()?.rejection_reason || (isRtl() ? 'يرجى التواصل معنا لمزيد من التفاصيل.' : 'Please contact us for more details.') }}
+      </p>
+
+    } @else if (isProcessing) {
+
+      <!-- ── قيد المعالجة (طرق دفع غير التحويل البنكي) ── -->
+      <div class="success-card__icon-ring success-card__icon-ring--pending">
+        <div class="success-card__icon success-card__icon--pending">
+          <span class="material-icons">hourglass_top</span>
+        </div>
+      </div>
+      <h1 class="success-card__title">{{ isRtl() ? 'تبرعك قيد المعالجة' : 'Your Donation Is Being Processed' }}</h1>
+      <p class="success-card__subtitle">
+        {{ isRtl() ? 'سنرسل لك تأكيداً بالبريد الإلكتروني فور اكتمال العملية.' : "We'll email you a confirmation once processing is complete." }}
+      </p>
+
+    } @else {
+
+      <!-- ── مكتمل (الحالة الافتراضية/الأصلية) ── -->
+      <div class="success-card__icon-ring">
+        <div class="success-card__icon">
+          <span class="material-icons">favorite</span>
+        </div>
+      </div>
+
+      <h1 class="success-card__title">{{ 'DONATE.SUCCESS.TITLE' | translate }}</h1>
+      <p class="success-card__subtitle">{{ 'DONATE.SUCCESS.SUBTITLE' | translate }}</p>
+
+      @if (amount || ref) {
+        <div class="success-card__details">
+          @if (amount) {
+            <div class="detail-row">
+              <span class="detail-row__label">{{ 'DONATE.SUCCESS.AMOUNT_LABEL' | translate }}</span>
+              <span class="detail-row__value">${{ amount }}</span>
+            </div>
+          }
+          @if (ref) {
+            <div class="detail-row">
+              <span class="detail-row__label">{{ 'DONATE.SUCCESS.REF_LABEL' | translate }}</span>
+              <span class="detail-row__value detail-row__value--ref">{{ ref }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="success-card__notice">
+        <span class="material-icons notice-icon">email</span>
+        <span>{{ 'DONATE.SUCCESS.EMAIL_NOTICE' | translate }}</span>
+      </div>
+
+      @if (ref) {
+        <button class="success-card__cert-btn" (click)="downloadCertificate()" [disabled]="generating()">
+          <span class="material-icons">{{ generating() ? 'hourglass_empty' : 'workspace_premium' }}</span>
+          {{ generating() ? (isRtl() ? 'جارٍ التحضير...' : 'Generating...') : (isRtl() ? 'تحميل شهادة المساهمة' : 'Download Certificate') }}
+        </button>
+      }
+
     }
-
-    <!-- Email notice -->
-    <div class="success-card__notice">
-      <span class="material-icons notice-icon">email</span>
-      <span>{{ 'DONATE.SUCCESS.EMAIL_NOTICE' | translate }}</span>
-    </div>
 
     <!-- CTAs -->
     <div class="success-card__actions">

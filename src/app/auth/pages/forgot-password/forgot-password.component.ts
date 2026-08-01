@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { applyAuthError } from '../../../core/utils/auth-error.util';
 
 @Component({
   selector: 'app-forgot-password',
@@ -57,7 +58,8 @@ export class ForgotPasswordComponent {
     this.authService.forgotPassword({ email: this.form.value.email }).subscribe({
       next: () => this.isSuccess.set(true),
       error: (err: HttpErrorResponse) => {
-        this.apiError.set(err.error?.message ?? 'AUTH.ERRORS.GENERIC');
+        const bannerKey = applyAuthError(err, this.form);
+        if (bannerKey) this.apiError.set(bannerKey);
       },
     });
   }

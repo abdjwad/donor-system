@@ -1,0 +1,108 @@
+<article class="project-card bunian-card">
+
+<a class="project-card__link" [routerLink]="['/projects', project.id]">
+  <!-- Image -->
+  <div class="project-card__image-wrap">
+    <img [src]="thumbnailUrl" [alt]="project.requestNumber" class="project-card__image" loading="lazy"
+         (error)="onImageError($event)"/>
+
+    <!-- Badges on image -->
+    <div class="project-card__badges">
+      <span class="damage-badge damage-badge--{{ project.damageType.code }}">
+        {{ ('PROJECTS.REPAIR.DAMAGE_TYPE.' + project.damageType.code.toUpperCase()) | translate }}
+      </span>
+      <span class="status-badge status-badge--{{ project.status.code }}">
+        {{ ('PROJECTS.REPAIR.STATUS.' + project.status.code.toUpperCase()) | translate }}
+      </span>
+    </div>
+
+    @if (isCompleted) {
+      <div class="project-card__completed-overlay">
+        <span class="material-icons">check_circle</span>
+        <span>{{ 'PROJECTS.REPAIR.STATUS.COMPLETED' | translate }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Content -->
+  <div class="project-card__body">
+
+    <!-- Title -->
+    <h3 class="project-card__title">{{ title }}</h3>
+
+    <!-- Location -->
+    <div class="project-card__location">
+      <span class="material-icons location-icon">location_on</span>
+      <span>{{ project.location }}</span>
+    </div>
+
+    <!-- Funding progress -->
+    <div class="project-card__progress">
+      <div class="progress-bar">
+        <div class="progress-bar__fill" [style.width.%]="fundingProgressPct"></div>
+      </div>
+      <div class="project-card__progress-labels">
+        <span class="progress-pct">{{ fundingProgressPct | number:'1.0-0' }}% {{ 'PROJECTS.REPAIR.CARD.FUNDED' | translate }}</span>
+      </div>
+    </div>
+
+    <!-- Amounts row -->
+    <div class="project-card__amounts">
+      <div class="amount-block">
+        <span class="amount-block__value raised">{{ formatCurrency(project.collectedAmount) }}</span>
+        <span class="amount-block__label">{{ 'PROJECTS.REPAIR.CARD.COLLECTED' | translate }}</span>
+      </div>
+      <div class="amount-block amount-block--right">
+        <span class="amount-block__value goal">{{ formatCurrency(project.totalEstimatedCost) }}</span>
+        <span class="amount-block__label">{{ 'PROJECTS.REPAIR.CARD.ESTIMATED_COST' | translate }}</span>
+      </div>
+    </div>
+
+    <!-- Completion progress (بس لما يبلش التنفيذ فعلياً) -->
+    @if (showCompletion) {
+      <div class="project-card__progress">
+        <div class="progress-bar progress-bar--gold">
+          <div class="progress-bar__fill" [style.width.%]="completionPct"></div>
+        </div>
+        <div class="project-card__progress-labels">
+          <span class="progress-pct">{{ completionPct | number:'1.0-0' }}% {{ 'PROJECTS.REPAIR.CARD.COMPLETION' | translate }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- Meta row -->
+    <div class="project-card__meta">
+      <span class="meta-item">
+        <span class="material-icons meta-icon">groups</span>
+        {{ project.familySize }} {{ 'PROJECTS.REPAIR.CARD.FAMILY_MEMBERS' | translate }}
+      </span>
+      @if (project.contractorName) {
+        <span class="meta-item">
+          <span class="material-icons meta-icon">engineering</span>
+          {{ project.contractorName }}
+        </span>
+      }
+    </div>
+
+    <!-- Created date -->
+    <div class="project-card__date">
+      <span class="material-icons">event</span>
+      {{ project.createdAt | date:'mediumDate' }}
+    </div>
+
+  </div>
+</a>
+
+  <!-- CTA Button (خارج رابط التفاصيل عشان ما يصير <a> جوا <a>) -->
+  @if (canDonate) {
+    <div class="project-card__cta">
+      <a [routerLink]="['/donate/guest']" [queryParams]="{ project: project.id }"
+         (click)="$event.stopPropagation()"
+         mat-flat-button class="project-card__donate-btn">
+        <span class="material-icons">volunteer_activism</span>
+        {{ 'PROJECTS.REPAIR.CARD.DONATE' | translate }}
+      </a>
+    </div>
+  }
+
+</article>

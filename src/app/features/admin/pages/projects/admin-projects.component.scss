@@ -1,0 +1,61 @@
+@use '../../../../styles/variables' as *;
+
+// Stat card body layout (not defined in shared _admin.scss)
+.stat-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+// Beneficiary cell (name + phone)
+.beneficiary-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &__name { font-weight: 600; font-size: 0.875rem; color: #0F172A; }
+  &__phone {
+    font-size: 0.75rem;
+    color: #94A3B8;
+    font-family: var(--font-latin);
+    direction: ltr;
+    text-align: start;
+  }
+}
+
+.empty-value {
+  color: #94A3B8;
+  font-size: 0.8125rem;
+}
+
+// Damage type badge
+.damage-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: $radius-full;
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  &--minor   { background: rgba($color-success, 0.1); color: $color-success; }
+  &--partial { background: rgba($color-warning, 0.1); color: $color-warning; }
+  &--total   { background: rgba($color-error, 0.1);   color: $color-error; }
+}
+
+// Priority badge
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 3px 10px;
+  border-radius: $radius-full;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: var(--font-latin);
+
+  &--high   { background: rgba($color-error, 0.1);   color: $color-error; }
+  &--medium { background: rgba($color-warning, 0.1); color: $color-warning; }
+  &--low    { background: rgba($color-navy, 0.08);   color: $color-navy; }
+  &--none   { background: rgba(#64748B, 0.1);        color: #64748B; }
+}

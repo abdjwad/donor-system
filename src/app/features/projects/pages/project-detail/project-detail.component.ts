@@ -5,19 +5,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { LanguageService } from '../../../../core/services/language.service';
-import { Project } from '../../../../core/models/project.model';
-import { MOCK_PROJECTS } from '../../../home/data/mock-data';
-import { NavbarComponent } from '../../../../shared/components/navbar/navbar.component';
+import { LanguageService }    from '../../../../core/services/language.service';
+import { ProjectsApiService } from '../../../../core/services/projects-api.service';
+import { RepairProjectsApiService } from '../../../../core/services/repair-projects-api.service';
+import { Project }            from '../../../../core/models/project.model';
+import { ProjectMilestoneItem } from '../../../../core/models/repair-project.model';
+import { NavbarComponent }    from '../../../../shared/components/navbar/navbar.component';
 import { SiteFooterComponent } from '../../../home/components/site-footer/site-footer.component';
 import { ProjectCardComponent } from '../../components/project-card/project-card.component';
-
-interface Milestone {
-  titleAr: string; titleEn: string;
-  dateAr: string;  dateEn: string;
-  status: 'completed' | 'ongoing' | 'pending';
-  descriptionAr: string; descriptionEn: string;
-}
 
 @Component({
   selector: 'app-project-detail',
@@ -30,40 +25,44 @@ interface Milestone {
 export class ProjectDetailComponent implements OnInit {
   @Input() id = '';
 
-  private readonly langService = inject(LanguageService);
+  private readonly langService  = inject(LanguageService);
+  private readonly api          = inject(ProjectsApiService);
+  private readonly repairApi    = inject(RepairProjectsApiService);
   readonly isRtl = computed(() => this.langService.currentLang() === 'ar');
 
-  project = signal<Project | null>(null);
-  related = signal<Project[]>([]);
+  project    = signal<Project | null>(null);
+  related    = signal<Project[]>([]);
   activeImage = signal(0);
+  loading    = signal(true);
+  error      = signal(false);
 
-  readonly GALLERY_EXTRAS = [
-    'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-    'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&q=80',
-    'https://images.unsplash.com/photo-1529963183134-61a90db47eaf?w=800&q=80',
-  ];
-
-  readonly MILESTONES: Milestone[] = [
-    { titleAr: 'المسح الميداني',  titleEn: 'Field Survey',    dateAr: 'يناير 2025',  dateEn: 'Jan 2025',  status: 'completed', descriptionAr: 'تم حصر الأضرار وتقييم الاحتياجات',       descriptionEn: 'Damage assessment and needs evaluation completed' },
-    { titleAr: 'تأمين الموارد',  titleEn: 'Resource Securing', dateAr: 'مارس 2025',   dateEn: 'Mar 2025',  status: 'completed', descriptionAr: 'تأمين المواد والمقاولين',                 descriptionEn: 'Materials and contractors secured' },
-    { titleAr: 'بدء الأعمال',    titleEn: 'Construction Start', dateAr: 'مايو 2025',   dateEn: 'May 2025',  status: 'ongoing',   descriptionAr: 'جارية أعمال البناء على قدم وساق',         descriptionEn: 'Construction work in full swing' },
-    { titleAr: 'التسليم النهائي', titleEn: 'Final Handover',   dateAr: 'سبتمبر 2025', dateEn: 'Sep 2025',  status: 'pending',   descriptionAr: 'تسليم المشروع للمستفيدين',               descriptionEn: 'Handover to beneficiaries' },
-  ];
+  roadmap = signal<ProjectMilestoneItem[]>([]);
 
   ngOnInit(): void {
     const pid = parseInt(this.id, 10);
-    const found = MOCK_PROJECTS.find((p) => p.id === pid) ?? MOCK_PROJECTS[0];
-    this.project.set(found);
-    this.related.set(MOCK_PROJECTS.filter((p) => p.id !== found.id && p.category === found.category).slice(0, 3));
-    if (this.related().length < 3) {
-      this.related.set(MOCK_PROJECTS.filter((p) => p.id !== found.id).slice(0, 3));
-    }
+    if (isNaN(pid)) { this.error.set(true); this.loading.set(false); return; }
+
+    this.api.getProject(pid).subscribe({
+      next: (p) => {
+        this.project.set(p);
+        this.loading.set(false);
+        this.api.getProjects({ category: p.category, per_page: 4 }).subscribe(res => {
+          this.related.set(res.data.filter(r => r.id !== p.id).slice(0, 3));
+        });
+      },
+      error: () => { this.error.set(true); this.loading.set(false); },
+    });
+
+    this.repairApi.getProjectProgress(pid).subscribe({
+      next: (progress) => this.roadmap.set(progress.roadmap),
+      error: () => this.roadmap.set([]),
+    });
   }
 
   get images(): string[] {
     const p = this.project();
     if (!p) return [];
-    return [p.imageUrl, ...this.GALLERY_EXTRAS];
+    return p.images.length ? p.images : [p.imageUrl];
   }
 
   get progressPct(): number {
@@ -74,15 +73,27 @@ export class ProjectDetailComponent implements OnInit {
 
   formatAmount(n: number): string {
     if (n >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
-    if (n >= 1000) return '$' + (n / 1000).toFixed(0) + 'K';
+    if (n >= 1000)    return '$' + (n / 1000).toFixed(0) + 'K';
     return '$' + n;
   }
 
   setImage(i: number): void { this.activeImage.set(i); }
 
-  getTitle(p: Project): string { return this.isRtl() ? p.titleAr : p.title; }
+  getTitle(p: Project): string    { return this.isRtl() ? p.titleAr : p.title; }
   getLocation(p: Project): string { return this.isRtl() ? (p.locationAr ?? p.location) : p.location; }
-  getMilestoneTitle(m: Milestone): string { return this.isRtl() ? m.titleAr : m.titleEn; }
-  getMilestoneDate(m: Milestone): string { return this.isRtl() ? m.dateAr : m.dateEn; }
-  getMilestoneDesc(m: Milestone): string { return this.isRtl() ? m.descriptionAr : m.descriptionEn; }
+
+  // النمط الحالي بالـ template/i18n يستخدم 'ongoing' — الباك اند يرجّع 'in_progress'
+  displayStatus(m: ProjectMilestoneItem): 'completed' | 'ongoing' | 'pending' {
+    return m.status === 'in_progress' ? 'ongoing' : m.status;
+  }
+
+  getMilestoneDate(m: ProjectMilestoneItem): string {
+    const date = m.completedAt ?? m.startedAt;
+    if (!date) return this.isRtl() ? 'لم تبدأ بعد' : 'Not started yet';
+    return new Date(date).toLocaleDateString(this.isRtl() ? 'ar' : 'en', { year: 'numeric', month: 'short' });
+  }
+
+  getMilestoneDesc(m: ProjectMilestoneItem): string {
+    return m.latestUpdate?.notes ?? '';
+  }
 }

@@ -22,7 +22,11 @@
       "PASSWORD": "كلمة المرور",
       "PASSWORD_PLACEHOLDER": "8 أحرف على الأقل",
       "CONFIRM_PASSWORD": "تأكيد كلمة المرور",
-      "CONFIRM_PASSWORD_PLACEHOLDER": "أعد إدخال كلمة المرور"
+      "CONFIRM_PASSWORD_PLACEHOLDER": "أعد إدخال كلمة المرور",
+      "OTP_CHANNEL": "طريقة استلام رمز التحقق",
+      "OTP_CHANNEL_EMAIL": "البريد الإلكتروني",
+      "OTP_CHANNEL_WHATSAPP": "واتساب",
+      "OTP_CHANNEL_WHATSAPP_HINT": "سنرسل رمز التحقق إلى رقم الهاتف المُدخل أعلاه عبر واتساب"
     },
     "ERRORS": {
       "EMAIL_REQUIRED": "البريد الإلكتروني مطلوب",
@@ -39,7 +43,11 @@
       "TERMS_REQUIRED": "يجب الموافقة على شروط الاستخدام للمتابعة",
       "OTP_REQUIRED": "رمز التحقق مطلوب",
       "OTP_LENGTH": "رمز التحقق يجب أن يكون 6 أرقام",
-      "GENERIC": "حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى"
+      "GENERIC": "حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى",
+      "NETWORK": "تعذّر الاتصال بالخادم، تحقق من اتصالك بالإنترنت وحاول مرة أخرى",
+      "RATE_LIMIT": "عدد المحاولات كبير جداً، يرجى الانتظار قليلاً قبل إعادة المحاولة",
+      "WHATSAPP_FAILED": "تعذّر إرسال رمز التحقق عبر واتساب، جرّب البريد الإلكتروني أو أعد المحاولة لاحقاً",
+      "SESSION_EXPIRED": "انتهت جلسة التسجيل، يرجى تعبئة البيانات من جديد"
     },
     "LOGIN": {
       "TITLE": "تسجيل الدخول",
@@ -56,11 +64,11 @@
       "SUBTITLE": "انضم إلى آلاف المتبرعين وكن جزءاً من التغيير الحقيقي",
       "TERMS_PREFIX": "أوافق على",
       "TERMS_LINK": "شروط الاستخدام وسياسة الخصوصية",
-      "SUBMIT": "إنشاء الحساب",
+      "SUBMIT": "إرسال رمز التحقق",
       "HAVE_ACCOUNT": "لديك حساب بالفعل؟",
       "LOGIN": "تسجيل الدخول",
-      "LOADING": "جاري إنشاء الحساب...",
-      "SUCCESS": "تم إنشاء حسابك بنجاح! يرجى التحقق من بريدك الإلكتروني"
+      "LOADING": "جاري إرسال رمز التحقق...",
+      "SUCCESS": "تم إنشاء حسابك بنجاح!"
     },
     "FORGOT_PASSWORD": {
       "TITLE": "استعادة كلمة المرور",
@@ -81,14 +89,14 @@
       "BACK_TO_LOGIN": "تسجيل الدخول"
     },
     "VERIFY_EMAIL": {
-      "TITLE": "التحقق من البريد الإلكتروني",
-      "SUBTITLE": "أدخل الرمز المكوّن من 6 أرقام الذي أرسلناه إلى بريدك الإلكتروني",
+      "TITLE": "التحقق من الحساب",
+      "SUBTITLE": "أدخل الرمز المكوّن من 6 أرقام الذي أرسلناه إليك",
       "SUBMIT": "تحقق الآن",
       "RESEND": "إعادة إرسال الرمز",
       "RESEND_TIMER": "إعادة الإرسال خلال {{seconds}} ثانية",
       "LOADING": "جاري التحقق...",
-      "SUCCESS": "تم التحقق من بريدك الإلكتروني بنجاح!",
-      "HINT": "لم يصلك الرمز؟ تحقق من مجلد البريد غير المرغوب"
+      "SUCCESS": "تم التحقق بنجاح!",
+      "HINT": "لم يصلك الرمز؟ تحقق من مجلد البريد غير المرغوب فيه (أو تطبيق واتساب)"
     },
     "GUEST_DONATE": "تبرّع كضيف بدون إنشاء حساب"
   },
@@ -128,6 +136,9 @@
       "TYPE_MONTHLY": "تبرع شهري",
       "PROJECT_LABEL": "المشروع",
       "GENERAL_FUND": "الصندوق العام",
+      "DONATING_TO": "أنت تتبرع لمشروع",
+      "SWITCH_GENERAL_FUND": "تبرّع للصندوق العام بدلاً من ذلك",
+      "LOADING_PROJECT": "جاري تحميل بيانات المشروع...",
       "DEDICATION_LABEL": "رسالة إهداء (اختياري)",
       "DEDICATION_PLACEHOLDER": "أهدي هذا التبرع إلى...",
       "DEDICATION_HINT": "{{remaining}} حرف متبقٍ",
@@ -137,8 +148,8 @@
     "PAYMENT": {
       "TITLE": "طريقة الدفع",
       "CARD": "بطاقة بنكية",
-      "PAYPAL": "PayPal",
       "BANK": "تحويل بنكي",
+      "CRYPTO": "عملة رقمية",
       "CARD_NUMBER": "رقم البطاقة",
       "CARD_NUMBER_PLACEHOLDER": "0000 0000 0000 0000",
       "CARD_EXPIRY": "تاريخ الانتهاء",
@@ -146,9 +157,12 @@
       "CARD_CVV": "رمز الأمان CVV",
       "CARD_CVV_PLACEHOLDER": "123",
       "CARD_NAME": "الاسم المدوّن على البطاقة",
-      "PAYPAL_BTN": "المتابعة عبر PayPal",
-      "BANK_IBAN": "رقم الآيبان IBAN",
-      "BANK_NAME": "اسم البنك",
+      "BANK_INSTRUCTIONS_TITLE": "بيانات الحساب البنكي للمنصة",
+      "BANK_ACCOUNT_INFO": "حوّل المبلغ لبيانات الحساب البنكي التالي، ثم اضغط \"إتمام التبرع\" — رح توصلك صفحة لتأكيد التحويل برقم المرجع وصورة الإيصال بعدها مباشرة.",
+      "WALLET_BANK_NAME": "اسم البنك",
+      "WALLET_ACCOUNT_HOLDER": "اسم صاحب الحساب",
+      "WALLET_ACCOUNT_NUMBER": "رقم الحساب",
+      "BANK_NEXT_STEP_HINT": "بعد إتمام التبرع، رح توصل صفحة لتأكيد تحويلك برقم المرجع وصورة الإيصال.",
       "TERMS_PREFIX": "أوافق على",
       "TERMS_LINK": "شروط الاستخدام وسياسة الخصوصية",
       "TERMS_REQUIRED": "يجب الموافقة على الشروط للمتابعة",
@@ -264,7 +278,13 @@
       "CATEGORY": "الفئة",
       "LOCATION": "الموقع الجغرافي",
       "STATUS": "حالة المشروع",
+      "FUNDING_STATUS": "حالة التبرع",
+      "NEEDS_FUNDING": "يحتاج تمويل",
+      "FUNDING_COMPLETE": "اكتمل تمويله",
       "URGENCY": "درجة الإلحاح",
+      "DAMAGE_TYPE": "نوع الضرر",
+      "CITY": "المدينة",
+      "LOADING": "جاري تحميل خيارات التصفية...",
       "RESET": "مسح جميع الفلاتر"
     },
     "SORT": {
@@ -272,7 +292,10 @@
       "NEWEST": "الأحدث",
       "MOST_FUNDED": "الأعلى تمويلاً",
       "MOST_URGENT": "الأكثر إلحاحاً",
-      "NEAR_COMPLETE": "الأقرب للاكتمال"
+      "NEAR_COMPLETE": "الأقرب للاكتمال",
+      "DIRECTION": "اتجاه الترتيب",
+      "ASC": "تصاعدي",
+      "DESC": "تنازلي"
     },
     "CARD": {
       "DONATE": "تبرع لهذا المشروع",
@@ -319,6 +342,39 @@
       "MILESTONE_COMPLETED": "مكتملة",
       "MILESTONE_ONGOING": "جارية",
       "MILESTONE_PENDING": "قادمة"
+    },
+    "REPAIR": {
+      "DAMAGE_TYPE": {
+        "PARTIAL": "جزئي",
+        "TOTAL": "كامل",
+        "MINOR": "بسيط"
+      },
+      "STATUS": {
+        "NEW": "طلب جديد",
+        "UNDER_REVIEW": "قيد المراجعة",
+        "APPROVED": "مقبول - يبحث عن تمويل",
+        "AWAITING_CONTRACTOR": "بانتظار مقاول",
+        "IN_PROGRESS": "قيد التنفيذ",
+        "COMPLETED": "مكتمل"
+      },
+      "SORT": {
+        "CREATED_AT": "تاريخ الإنشاء",
+        "PRIORITY": "الأولوية",
+        "BUDGET": "الميزانية",
+        "COMPLETION": "نسبة الإنجاز",
+        "FAMILY_SIZE": "عدد أفراد الأسرة"
+      },
+      "CARD": {
+        "DONATE": "تبرع لهذا المشروع",
+        "FUNDED": "تم تمويله",
+        "COLLECTED": "تم جمعه",
+        "ESTIMATED_COST": "التكلفة المقدرة",
+        "COMPLETION": "نسبة الإنجاز",
+        "FAMILY_MEMBERS": "أفراد الأسرة",
+        "PRIORITY": "الأولوية",
+        "REQUEST_NUMBER": "رقم الطلب",
+        "CONTRACTOR": "المقاول"
+      }
     }
   },
 
@@ -617,6 +673,38 @@
       "ANNUAL": "سنوي",
       "MONTHLY": "شهري",
       "GENERATE": "إنشاء تقرير"
+    },
+    "PROJECTS": {
+      "TITLE": "المشاريع المقبولة",
+      "SUBTITLE": "المشاريع المقبولة بانتظار التمويل والتنفيذ",
+      "STATS": {
+        "TOTAL": "إجمالي المشاريع",
+        "TOTAL_COST": "إجمالي التكلفة المقدرة",
+        "HIGH_PRIORITY": "أولوية عالية",
+        "MEDIUM_PRIORITY": "أولوية متوسطة",
+        "LOW_PRIORITY": "أولوية منخفضة"
+      },
+      "TABLE": {
+        "REQUEST_NUMBER": "رقم الطلب",
+        "BENEFICIARY": "المستفيد",
+        "LOCATION": "الموقع",
+        "DAMAGE_TYPE": "نوع الضرر",
+        "PRIORITY": "الأولوية",
+        "ESTIMATED_COST": "التكلفة المقدرة",
+        "STATUS": "الحالة",
+        "CREATED_AT": "تاريخ الإنشاء",
+        "ACTIONS": "الإجراءات"
+      },
+      "NOT_SPECIFIED": "غير محدد",
+      "NO_RESULTS": "لا توجد مشاريع مقبولة",
+      "EDIT_DISPLAY": "تعديل بيانات العرض",
+      "DISPLAY_MODAL_TITLE": "تعديل بيانات العرض للمتبرعين",
+      "DISPLAY_TITLE_AR": "العنوان (عربي)",
+      "DISPLAY_TITLE_EN": "العنوان (إنجليزي)",
+      "DISPLAY_CATEGORY": "التصنيف",
+      "DISPLAY_DESCRIPTION_EN": "الوصف (إنجليزي)",
+      "SAVE": "حفظ",
+      "CANCEL": "إلغاء"
     }
   },
 

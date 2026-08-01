@@ -67,12 +67,12 @@
 
         <div class="impact-card__stats">
           <div class="impact-stat">
-            <span class="impact-stat__number">{{ stats.donors | number }}</span>
+            <span class="impact-stat__number">{{ stats().donors | number }}</span>
             <span class="impact-stat__label">{{ 'HOME.STATS.DONORS' | translate }}</span>
           </div>
           <div class="impact-stat__divider"></div>
           <div class="impact-stat">
-            <span class="impact-stat__number">{{ stats.families | number }}</span>
+            <span class="impact-stat__number">{{ stats().families | number }}</span>
             <span class="impact-stat__label">{{ 'HOME.STATS.FAMILIES' | translate }}</span>
           </div>
         </div>
@@ -80,7 +80,7 @@
         <div class="impact-card__projects">
           <div class="impact-project-bar">
             <span class="impact-project-bar__label">{{ 'HOME.HERO.PROJECTS_COMPLETED' | translate }}</span>
-            <span class="impact-project-bar__value">{{ stats.projects | number }}</span>
+            <span class="impact-project-bar__value">{{ stats().projects | number }}</span>
           </div>
           <div class="progress-bar">
             <div class="progress-bar__fill" style="width: 84%"></div>

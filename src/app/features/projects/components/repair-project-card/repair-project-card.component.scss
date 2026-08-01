@@ -1,0 +1,232 @@
+@use '../../../../styles/variables' as *;
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+
+  &__link {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  &__cta {
+    padding: 0 $space-lg $space-lg;
+  }
+
+  &__image-wrap {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: $color-border;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+    display: block;
+  }
+
+  &:hover &__image {
+    transform: scale(1.04);
+  }
+
+  &__badges {
+    position: absolute;
+    top: $space-sm;
+    inset-inline-start: $space-sm;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-xs;
+  }
+
+  &__completed-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba($color-primary-dark, 0.72);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $space-xs;
+    color: #fff;
+    font-size: 0.9375rem;
+    font-weight: 700;
+
+    .material-icons { font-size: 2rem; }
+  }
+
+  &__body {
+    padding: $space-lg;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  &__location {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8125rem;
+    color: $color-text-muted;
+    font-weight: 500;
+    margin-bottom: $space-xs;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $color-text-primary;
+    margin: 0 0 $space-xs;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__date {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: $color-text-muted;
+    margin-bottom: $space-md;
+
+    .material-icons { font-size: 0.9375rem; }
+  }
+
+  &__progress {
+    margin-bottom: $space-md;
+  }
+
+  &__progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $space-xs;
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  &__amounts {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: $space-md;
+  }
+
+  &__meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: $space-md;
+    flex: 1;
+    align-items: flex-end;
+  }
+
+  &__donate-btn {
+    width: 100% !important;
+    height: 44px !important;
+    font-size: 0.9375rem !important;
+    font-weight: 700 !important;
+    border-radius: $radius-md !important;
+    background: $color-primary !important;
+    color: #fff !important;
+    text-decoration: none;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: $space-xs;
+    transition: $transition-base;
+
+    &:hover {
+      background: $color-primary-dark !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($color-primary, 0.35);
+    }
+
+    .material-icons { font-size: 1.125rem; }
+  }
+}
+
+// ── Progress pct/remaining ───────────────────────────────────
+.progress-pct {
+  color: $color-primary;
+  font-weight: 700;
+}
+
+.progress-remaining {
+  color: $color-text-muted;
+}
+
+// ── Amount blocks ─────────────────────────────────────────────
+.amount-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &--right { text-align: end; }
+
+  &__value {
+    font-family: var(--font-latin);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+
+    &.raised { color: $color-primary; }
+    &.goal   { color: $color-text-secondary; }
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    color: $color-text-muted;
+    font-weight: 500;
+  }
+}
+
+// ── Meta row ─────────────────────────────────────────────────
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8125rem;
+  color: $color-text-muted;
+  font-weight: 500;
+}
+
+.meta-icon {
+  font-size: 0.9375rem;
+  color: $color-text-muted;
+}
+
+.location-icon {
+  font-size: 1rem;
+  color: $color-primary;
+}
+
+// ── Damage type / status badges ───────────────────────────────
+.damage-badge,
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: $radius-full;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.damage-badge {
+  &--minor   { background: rgba($color-success, 0.12); color: $color-success; }
+  &--partial { background: rgba($color-warning, 0.12); color: $color-warning; }
+  &--total   { background: rgba($color-error, 0.12);   color: $color-error; }
+}
+
+.status-badge {
+  &--new                 { background: rgba($color-navy, 0.08);    color: $color-navy; }
+  &--under_review        { background: rgba($color-warning, 0.12); color: $color-warning; }
+  &--approved            { background: rgba($color-primary, 0.1);  color: $color-primary; }
+  &--awaiting_contractor { background: rgba($color-gold, 0.15);    color: $color-gold-dark; }
+  &--in_progress         { background: rgba($color-gold, 0.15);    color: $color-gold-dark; }
+  &--completed           { background: rgba($color-success, 0.12); color: $color-success; }
+}

@@ -1,0 +1,274 @@
+<div class="admin-page">
+
+  <!-- ── Header ── -->
+  <div class="admin-page__header">
+    <h1 class="admin-page__title">{{ isRtl() ? 'صرف التبرعات' : 'Disbursements' }}</h1>
+    <button mat-button class="admin-primary-btn" (click)="toggleCreate()">
+      <span class="material-icons">{{ showCreate() ? 'close' : 'add' }}</span>
+      {{ showCreate()
+          ? (isRtl() ? 'إلغاء' : 'Cancel')
+          : (isRtl() ? 'إنشاء خطة صرف' : 'New Plan') }}
+    </button>
+  </div>
+
+  <!-- ── Stats ── -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card__icon"><span class="material-icons">account_balance_wallet</span></div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'إجمالي الخطط' : 'Total Plans' }}</div>
+        <div class="stat-card__value">{{ summary().total_plans }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon" style="background:rgba(197,149,42,0.1)">
+        <span class="material-icons" style="color:#C5952A">payments</span>
+      </div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'إجمالي المصروف' : 'Total Disbursed' }}</div>
+        <div class="stat-card__value">{{ fmt(summary().total_disbursed) }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon" style="background:rgba(230,126,34,0.1)">
+        <span class="material-icons" style="color:#E67E22">pending_actions</span>
+      </div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'دفعات بانتظار المراجعة' : 'Pending Tranches' }}</div>
+        <div class="stat-card__value">{{ summary().pending_tranches }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon" style="background:rgba(52,152,219,0.1)">
+        <span class="material-icons" style="color:#3498DB">construction</span>
+      </div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'مشاريع قيد التنفيذ' : 'Projects In Progress' }}</div>
+        <div class="stat-card__value">{{ executionStats().total }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon" style="background:rgba(155,89,182,0.1)">
+        <span class="material-icons" style="color:#9B59B6">trending_up</span>
+      </div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'متوسط نسبة الإنجاز' : 'Avg. Completion' }}</div>
+        <div class="stat-card__value">{{ executionStats().avgCompletion | number:'1.0-1' }}%</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon" style="background:rgba(39,174,96,0.1)">
+        <span class="material-icons" style="color:#27AE60">groups</span>
+      </div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'عدد المقاولين' : 'Contractors' }}</div>
+        <div class="stat-card__value">{{ executionStats().totalContractors }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Create Form ── -->
+  @if (showCreate()) {
+    <div class="admin-card disb-create">
+      <div class="admin-card__title">
+        <span class="material-icons">add_circle</span>
+        {{ isRtl() ? 'إنشاء خطة صرف جديدة' : 'New Disbursement Plan' }}
+      </div>
+
+    <!-- Project -->
+<!-- Project -->
+<div class="disb-form-section">
+  <div class="disb-section-label">{{ isRtl() ? 'المشروع' : 'Project' }}</div>
+  <select class="admin-select disb-full-select" [(ngModel)]="createForm.project_id"
+          (ngModelChange)="onProjectSelect($event)">
+    <option [ngValue]="null" disabled>
+      {{ isRtl() ? 'اختر المشروع...' : 'Select project...' }}
+    </option>
+    @for (p of projects(); track p.id) {
+      <option [ngValue]="p.id">
+        {{ projectTitle(p) }} — {{ isRtl() ? 'المبلغ المجمّع' : 'Collected' }}: {{ fmt(p.collectedAmount) }}
+      </option>
+    }
+  </select>
+  @if (projects().length === 0) {
+    <div class="disb-hint">
+      {{ isRtl()
+        ? 'لا توجد مشاريع جاهزة حالياً — يلزم أن يكون للمشروع مقاول معيَّن وتمويل مكتمل 100% ولا توجد له خطة صرف سابقة.'
+        : 'No projects ready yet — a project needs an assigned contractor, 100% funding, and no existing disbursement plan.' }}
+    </div>
+  }
+</div>
+      <!-- Contractor (تلقائي بالكامل — مسحوب من بروفايل المقاول، غير قابل للتعديل هون) -->
+      <div class="disb-form-section">
+        <div class="disb-section-label">{{ isRtl() ? 'بيانات المقاول (تلقائي من بروفايله)' : 'Contractor Info (auto-filled from profile)' }}</div>
+
+        @if (!createForm.project_id) {
+          <div class="disb-hint">
+            {{ isRtl() ? 'اختر مشروعاً أولاً لتظهر بيانات المقاول وحسابه البنكي هون.' : 'Select a project first to show the contractor and their bank account here.' }}
+          </div>
+        } @else if (!selectedContractor()?.hasBankInfo) {
+          <div class="disb-warning">
+            <span class="material-icons">warning</span>
+            {{ isRtl()
+              ? 'هذا المقاول لم يسجّل بيانات حسابه البنكي بعد — لا يمكن إنشاء خطة صرف قبل ذلك.'
+              : 'This contractor has not registered their bank account yet — a disbursement plan cannot be created before that.' }}
+          </div>
+        } @else {
+          <div class="disb-form-grid">
+            <div class="disb-field">
+              <label>{{ isRtl() ? 'اسم المقاول' : 'Contractor Name' }}</label>
+              <input class="disb-input" [ngModel]="createForm.contractor_name" readonly>
+            </div>
+            <div class="disb-field">
+              <label>{{ isRtl() ? 'اسم الشركة / المؤسسة' : 'Company Name' }}</label>
+              <input class="disb-input" [ngModel]="createForm.contractor_company" readonly>
+            </div>
+            <div class="disb-field">
+              <label>{{ isRtl() ? 'اسم البنك' : 'Bank Name' }}</label>
+              <input class="disb-input" [ngModel]="selectedContractor()?.bankInfo?.bankName" readonly>
+            </div>
+            <div class="disb-field">
+              <label>{{ isRtl() ? 'اسم صاحب الحساب' : 'Account Holder' }}</label>
+              <input class="disb-input" [ngModel]="selectedContractor()?.bankInfo?.accountName" readonly>
+            </div>
+            <div class="disb-field">
+              <label>{{ isRtl() ? 'رقم الحساب' : 'Account Number' }}</label>
+              <input class="disb-input disb-input--mono" [ngModel]="selectedContractor()?.bankInfo?.accountNumber" readonly dir="ltr">
+            </div>
+            <div class="disb-field">
+              <label>IBAN</label>
+              <input class="disb-input disb-input--mono" [ngModel]="createForm.contractor_iban" readonly dir="ltr">
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Tranches -->
+      <div class="disb-form-section">
+        <div class="disb-section-label">
+          {{ isRtl() ? 'الدفعات' : 'Payment Tranches' }}
+          <span class="disb-pct-badge" [class.disb-pct-badge--ok]="totalPct === 100"
+                                       [class.disb-pct-badge--err]="totalPct !== 100">
+            {{ totalPct }}%
+          </span>
+        </div>
+
+        <div class="disb-tranches-builder">
+          @for (t of createForm.tranches; track $index) {
+            <div class="disb-tranche-row">
+              <span class="disb-tranche-num">{{ $index + 1 }}</span>
+              <input class="disb-input" [(ngModel)]="t.label_ar"
+                     [placeholder]="isRtl() ? 'اسم الدفعة بالعربية' : 'Arabic label'">
+              <input class="disb-input" [(ngModel)]="t.label_en" placeholder="English label">
+              <div class="disb-pct-field">
+                <input type="number" class="disb-input disb-input--pct"
+                       [(ngModel)]="t.percentage" min="0" max="100">
+                <span>%</span>
+              </div>
+              @if (createForm.tranches.length > 1) {
+                <button type="button" class="disb-remove-btn" (click)="removeTranche($index)">
+                  <span class="material-icons">remove_circle_outline</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <button type="button" class="disb-add-tranche-btn" (click)="addTranche()">
+          <span class="material-icons">add</span>
+          {{ isRtl() ? 'إضافة دفعة' : 'Add Tranche' }}
+        </button>
+      </div>
+
+      <!-- Actions -->
+      <div class="disb-form-actions">
+        @if (totalPct !== 100) {
+          <span class="disb-warning">
+            <span class="material-icons">warning</span>
+            {{ isRtl() ? 'مجموع النسب يجب أن يكون 100%' : 'Tranche percentages must total 100%' }}
+          </span>
+        }
+        <button mat-button class="admin-primary-btn"
+                (click)="submitCreate()"
+                [disabled]="creating() || !canSubmit">
+          <span class="material-icons">save</span>
+          {{ creating()
+              ? (isRtl() ? 'جاري الحفظ...' : 'Saving...')
+              : (isRtl() ? 'حفظ الخطة' : 'Save Plan') }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ── Plans Table ── -->
+  @if (loading()) {
+    <div class="admin-card">
+      <div class="admin-loading">{{ isRtl() ? 'جاري التحميل...' : 'Loading...' }}</div>
+    </div>
+  } @else if (plans().length === 0) {
+    <div class="admin-card disb-empty">
+      <span class="material-icons">account_balance_wallet</span>
+      <p>{{ isRtl() ? 'لا توجد خطط صرف بعد' : 'No disbursement plans yet' }}</p>
+      <p class="disb-empty-sub">
+        {{ isRtl()
+            ? 'أنشئ خطة صرف لأحد المشاريع التي تحتاج تمويلاً لبدء توزيع التبرعات على المقاولين'
+            : 'Create a disbursement plan for a project that needs funding to start releasing donations to contractors' }}
+      </p>
+    </div>
+  } @else {
+    <div class="admin-card">
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{{ isRtl() ? 'المشروع' : 'Project' }}</th>
+              <th>{{ isRtl() ? 'المقاول' : 'Contractor' }}</th>
+              <th>{{ isRtl() ? 'الإجمالي' : 'Total' }}</th>
+              <th>{{ isRtl() ? 'المصروف' : 'Disbursed' }}</th>
+              <th>{{ isRtl() ? 'المتبقي' : 'Remaining' }}</th>
+              <th>{{ isRtl() ? 'الحالة' : 'Status' }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (plan of plans(); track plan.id) {
+              <tr>
+                <td>
+                  <div class="donor-cell">{{ planTitle(plan) }}</div>
+                  <div class="date-cell">{{ plan.project_location }}</div>
+                </td>
+                <td>
+                  <div class="donor-cell">{{ plan.contractor_name }}</div>
+                  <div class="date-cell">{{ plan.contractor_company }}</div>
+                </td>
+                <td class="amount-cell">{{ fmt(plan.total_amount) }}</td>
+                <td class="amount-cell" style="color:#27AE60">{{ fmt(plan.total_disbursed) }}</td>
+                <td class="amount-cell" style="color:#94A3B8">
+                  {{ fmt(plan.total_amount - plan.total_disbursed) }}
+                </td>
+                <td>
+                  <span class="status-badge status-badge--{{ plan.status }}">
+                    {{ staLabel(plan.status) }}
+                  </span>
+                </td>
+                <td>
+                  <div class="action-btns">
+                    <button class="action-btn action-btn--view" (click)="viewPlan(plan.id)"
+                            [title]="isRtl() ? 'إدارة الدفعات' : 'Manage tranches'">
+                      <span class="material-icons">open_in_new</span>
+                    </button>
+                    <a class="action-btn action-btn--view" [routerLink]="['/admin/projects', plan.project_id]"
+                       [title]="isRtl() ? 'عرض ملف المشروع الكامل' : 'View full project file'">
+                      <span class="material-icons">folder_open</span>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+</div>

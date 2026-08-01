@@ -20,27 +20,27 @@
       <div class="overview-stats">
         <div class="overview-stat">
           <span class="overview-stat__icon material-icons" style="color:#1B6B3A">savings</span>
-          <span class="overview-stat__value">{{ formatM(stats.totalReceived) }}</span>
+          <span class="overview-stat__value">{{ formatM(stats().total_received) }}</span>
           <span class="overview-stat__label">{{ 'TRANSPARENCY.STATS.TOTAL_RECEIVED' | translate }}</span>
         </div>
         <div class="overview-stat">
           <span class="overview-stat__icon material-icons" style="color:#C5952A">construction</span>
-          <span class="overview-stat__value">{{ formatM(stats.totalSpent) }}</span>
+          <span class="overview-stat__value">{{ formatM(stats().total_spent) }}</span>
           <span class="overview-stat__label">{{ 'TRANSPARENCY.STATS.TOTAL_SPENT' | translate }}</span>
         </div>
         <div class="overview-stat">
           <span class="overview-stat__icon material-icons" style="color:#1A2D5A">bar_chart</span>
-          <span class="overview-stat__value">{{ stats.activeProjects }}</span>
+          <span class="overview-stat__value">{{ stats().active_projects }}</span>
           <span class="overview-stat__label">{{ 'TRANSPARENCY.STATS.ACTIVE_PROJECTS' | translate }}</span>
         </div>
         <div class="overview-stat">
           <span class="overview-stat__icon material-icons" style="color:#27AE60">check_circle</span>
-          <span class="overview-stat__value">{{ stats.completedProjects }}</span>
+          <span class="overview-stat__value">{{ stats().completed_projects }}</span>
           <span class="overview-stat__label">{{ 'TRANSPARENCY.STATS.COMPLETED_PROJECTS' | translate }}</span>
         </div>
         <div class="overview-stat">
           <span class="overview-stat__icon material-icons" style="color:#1B6B3A">people</span>
-          <span class="overview-stat__value">{{ stats.beneficiaries | number }}</span>
+          <span class="overview-stat__value">{{ stats().beneficiaries | number }}</span>
           <span class="overview-stat__label">{{ 'TRANSPARENCY.STATS.BENEFICIARIES' | translate }}</span>
         </div>
       </div>
@@ -53,7 +53,7 @@
       <section class="trans-card">
         <h2 class="trans-card__title">{{ 'TRANSPARENCY.CHARTS.BREAKDOWN' | translate }}</h2>
         <div class="breakdown-chart">
-          @for (item of breakdown; track $index) {
+          @for (item of breakdown(); track $index) {
             <div class="breakdown-row">
               <span class="breakdown-label">{{ getLabel(item) }}</span>
               <div class="breakdown-bar-wrap">
@@ -66,24 +66,26 @@
       </section>
 
       <!-- Reports download -->
-      <section class="trans-card">
-        <h2 class="trans-card__title">{{ 'TRANSPARENCY.REPORTS.TITLE' | translate }}</h2>
-        <div class="reports-list">
-          @for (r of reports; track $index) {
-            <div class="report-row">
-              <div class="report-row__icon"><span class="material-icons">description</span></div>
-              <div class="report-row__info">
-                <span class="report-row__title">{{ getTitle(r) }}</span>
-                <span class="report-row__meta">{{ r.date }} · PDF · {{ r.size }}</span>
+      @if (reports().length) {
+        <section class="trans-card">
+          <h2 class="trans-card__title">{{ 'TRANSPARENCY.REPORTS.TITLE' | translate }}</h2>
+          <div class="reports-list">
+            @for (r of reports(); track $index) {
+              <div class="report-row">
+                <div class="report-row__icon"><span class="material-icons">description</span></div>
+                <div class="report-row__info">
+                  <span class="report-row__title">{{ getTitle(r) }}</span>
+                  <span class="report-row__meta">{{ r.date }} · PDF · {{ r.size }}</span>
+                </div>
+                <button mat-stroked-button class="dl-btn">
+                  <span class="material-icons">download</span>
+                  {{ 'TRANSPARENCY.REPORTS.DOWNLOAD' | translate }}
+                </button>
               </div>
-              <button mat-stroked-button class="dl-btn">
-                <span class="material-icons">download</span>
-                {{ 'TRANSPARENCY.REPORTS.DOWNLOAD' | translate }}
-              </button>
-            </div>
-          }
-        </div>
-      </section>
+            }
+          </div>
+        </section>
+      }
 
     </div>
 
@@ -97,10 +99,10 @@
         </a>
       </div>
       <div class="completed-grid">
-        @for (p of completedProjects; track p.id) {
-          <app-project-card [project]="p" />
+        @for (p of completedProjects(); track p.id) {
+          <div class="completed-project-card"><h4>{{ getProjectTitle(p) }}</h4><p>{{ isRtl() ? p.location_ar : p.location_en }}</p><strong>{{ formatM(p.amount_raised) }}</strong></div>
         }
-        @if (completedProjects.length === 0) {
+        @if (completedProjects().length === 0) {
           <p class="no-data">{{ isRtl() ? 'لا توجد مشاريع مكتملة بعد' : 'No completed projects yet' }}</p>
         }
       </div>

@@ -1,0 +1,179 @@
+<div class="wallet-page" [class.rtl]="isRtl()">
+  <app-navbar />
+
+  <div class="wallet-layout">
+    <app-dash-sidebar />
+
+    <main class="wallet-main">
+      <div class="wallet-header">
+        <div>
+          <h1 class="wallet-title">{{ isRtl() ? 'محفظتي' : 'My Wallet' }}</h1>
+          <p class="wallet-subtitle">{{ isRtl() ? 'اشحن رصيدك وتبرع منه لأي مشروع أو حملة بدون إعادة إدخال معلومات الدفع' : 'Top up your balance and donate from it to any project or campaign without re-entering payment details' }}</p>
+        </div>
+      </div>
+
+      <!-- ── Balance card ── -->
+      <div class="balance-card">
+        <div class="balance-card__label">{{ isRtl() ? 'الرصيد الحالي' : 'Current Balance' }}</div>
+        @if (loadingBalance()) {
+          <div class="balance-card__amount">…</div>
+        } @else {
+          <div class="balance-card__amount">${{ (balance()?.balance ?? 0) | number:'1.2-2' }}</div>
+        }
+        <button mat-flat-button class="topup-btn" (click)="toggleTopupForm()">
+          <span class="material-icons">add_card</span>
+          {{ isRtl() ? 'شحن المحفظة' : 'Top Up Wallet' }}
+        </button>
+      </div>
+
+      <!-- ── Top-up form ── -->
+      @if (showTopupForm()) {
+        <div class="topup-form-card">
+
+          @if (!activeTopup()) {
+            <h3 class="topup-form-title">{{ isRtl() ? 'شحن المحفظة' : 'Top Up Wallet' }}</h3>
+
+            <div class="amount-field">
+              <label>{{ isRtl() ? 'المبلغ ($)' : 'Amount ($)' }}</label>
+              <input type="number" min="1" [ngModel]="topupAmount()" (ngModelChange)="topupAmount.set($event)" />
+            </div>
+
+            <div class="method-tabs">
+              @for (m of methods; track m) {
+                <button type="button" class="method-tab" [class.active]="selectedMethod() === m"
+                        (click)="selectMethod(m)">
+                  {{ methodLabel(m) }}
+                </button>
+              }
+            </div>
+
+            @if (createError()) {
+              <div class="auth-error-banner mt-md" role="alert">
+                <span class="material-icons">error_outline</span>
+                <span>{{ createError() }}</span>
+              </div>
+            }
+
+            <div class="topup-actions">
+              <button mat-stroked-button type="button" (click)="toggleTopupForm()" [disabled]="creating()">
+                {{ isRtl() ? 'إلغاء' : 'Cancel' }}
+              </button>
+              <button mat-flat-button type="button" class="submit-btn" [disabled]="creating()" (click)="submitTopup()">
+                @if (creating()) {
+                  <mat-spinner diameter="20" color="accent" />
+                } @else {
+                  {{ isRtl() ? 'تأكيد الشحن' : 'Confirm Top-up' }}
+                }
+              </button>
+            </div>
+          }
+
+          <!-- ── Bank proof sub-step ── -->
+          @if (activeTopup() && needsBankProof) {
+            <div class="bank-proof-step">
+              <h3 class="topup-form-title">{{ isRtl() ? 'أدخل بيانات التحويل' : 'Enter Transfer Details' }}</h3>
+
+              @if (activeTopup()!.wallet) {
+                <div class="wallet-card">
+                  <div class="wallet-card__row">
+                    <span class="wallet-card__label">{{ isRtl() ? 'اسم البنك' : 'Bank Name' }}</span>
+                    <span class="wallet-card__value">{{ activeTopup()!.wallet!.bank_name }}</span>
+                  </div>
+                  <div class="wallet-card__row">
+                    <span class="wallet-card__label">{{ isRtl() ? 'اسم صاحب الحساب' : 'Account Holder' }}</span>
+                    <span class="wallet-card__value">{{ activeTopup()!.wallet!.account_holder_name }}</span>
+                  </div>
+                  <div class="wallet-card__row">
+                    <span class="wallet-card__label">{{ isRtl() ? 'رقم الحساب' : 'Account Number' }}</span>
+                    <span class="wallet-card__value wallet-card__value--mono">{{ activeTopup()!.wallet!.account_number }}</span>
+                  </div>
+                  <div class="wallet-card__row">
+                    <span class="wallet-card__label">IBAN</span>
+                    <span class="wallet-card__value wallet-card__value--mono">{{ activeTopup()!.wallet!.iban }}</span>
+                  </div>
+                </div>
+              }
+
+              <form [formGroup]="confirmForm" class="proof-form" novalidate>
+                <div class="amount-field">
+                  <label>{{ isRtl() ? 'رقم مرجع الحوالة' : 'Transfer Reference' }}</label>
+                  <input type="text" formControlName="bank_transfer_reference" />
+                </div>
+
+                <div class="amount-field">
+                  <label>{{ isRtl() ? 'صورة الإيصال' : 'Receipt Image' }}</label>
+                  <input type="file" accept="image/*" (change)="onReceiptSelected($event)" />
+                  @if (receiptError()) {
+                    <p class="field-error">{{ receiptError() }}</p>
+                  }
+                </div>
+
+                @if (confirmError()) {
+                  <div class="auth-error-banner mt-md" role="alert">
+                    <span class="material-icons">error_outline</span>
+                    <span>{{ confirmError() }}</span>
+                  </div>
+                }
+
+                <div class="topup-actions">
+                  <button mat-flat-button type="button" class="submit-btn" [disabled]="confirming()" (click)="submitTransferProof()">
+                    @if (confirming()) {
+                      <mat-spinner diameter="20" color="accent" />
+                    } @else {
+                      {{ isRtl() ? 'إرسال الإثبات' : 'Submit Proof' }}
+                    }
+                  </button>
+                </div>
+              </form>
+            </div>
+          }
+
+          <!-- ── Confirmation messages ── -->
+          @if (activeTopup() && confirmed()) {
+            <div class="success-banner">
+              <span class="material-icons">check_circle</span>
+              {{ isRtl() ? 'تم استلام إثبات التحويل — سيتم تأكيد شحن محفظتك خلال يوم عمل' : 'Transfer proof received — your top-up will be confirmed within one business day' }}
+            </div>
+          }
+
+          @if (activeTopup() && selectedMethod() !== 'bank') {
+            <div class="success-banner">
+              <span class="material-icons">check_circle</span>
+              {{ activeTopup()!.message }}
+            </div>
+          }
+
+        </div>
+      }
+
+      <!-- ── Top-up history ── -->
+      <div class="history-table-wrap">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>{{ isRtl() ? 'التاريخ' : 'Date' }}</th>
+              <th>{{ isRtl() ? 'المبلغ' : 'Amount' }}</th>
+              <th>{{ isRtl() ? 'الطريقة' : 'Method' }}</th>
+              <th>{{ isRtl() ? 'الحالة' : 'Status' }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of topups(); track t.id) {
+              <tr>
+                <td>{{ t.createdAt }}</td>
+                <td class="amount-cell">${{ t.amount }}</td>
+                <td>{{ methodLabel(t.paymentMethod) }}</td>
+                <td><span class="status-badge status-badge--{{ t.status }}">{{ statusLabel(t.status) }}</span></td>
+              </tr>
+            } @empty {
+              <tr><td colspan="4" class="empty-row">{{ isRtl() ? 'لا يوجد سجل شحن بعد' : 'No top-up history yet' }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+  </div>
+
+  <app-site-footer />
+</div>

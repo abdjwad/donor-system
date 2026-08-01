@@ -81,35 +81,6 @@
       </form>
     </mat-tab>
 
-    <!-- ─── PayPal Tab ─── -->
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <span class="tab-label">
-          <span class="paypal-icon">P</span>
-          {{ 'DONATE.PAYMENT.PAYPAL' | translate }}
-        </span>
-      </ng-template>
-
-      <form [formGroup]="paypalForm" class="payment-tab-content paypal-content" novalidate>
-        <div class="paypal-logo">
-          <span class="paypal-p">Pay</span><span class="paypal-b">Pal</span>
-        </div>
-        <p class="paypal-desc">سيتم توجيهك لإتمام الدفع عبر PayPal بأمان تام</p>
-
-        <mat-checkbox formControlName="terms" color="primary">
-          <span class="terms-text">
-            {{ 'DONATE.PAYMENT.TERMS_PREFIX' | translate }}&nbsp;
-            <a href="#" class="terms-link" (click)="$event.preventDefault()">{{ 'DONATE.PAYMENT.TERMS_LINK' | translate }}</a>
-          </span>
-        </mat-checkbox>
-
-        <div class="secure-badge mt-md">
-          <span class="material-icons">lock</span>
-          <span>{{ 'DONATE.PAYMENT.SECURE_BADGE' | translate }}</span>
-        </div>
-      </form>
-    </mat-tab>
-
     <!-- ─── Bank Tab ─── -->
     <mat-tab>
       <ng-template mat-tab-label>
@@ -121,15 +92,40 @@
 
       <form [formGroup]="bankForm" class="payment-tab-content" novalidate>
 
-        <mat-form-field appearance="outline" class="full-width form-field-gap">
-          <mat-label>{{ 'DONATE.PAYMENT.BANK_IBAN' | translate }}</mat-label>
-          <input matInput type="text" formControlName="iban" dir="ltr"/>
-        </mat-form-field>
+        <div class="bank-instructions">
+          <div class="bank-instructions__title">
+            <span class="material-icons">info</span>
+            {{ 'DONATE.PAYMENT.BANK_INSTRUCTIONS_TITLE' | translate }}
+          </div>
+          <p class="bank-instructions__text">{{ 'DONATE.PAYMENT.BANK_ACCOUNT_INFO' | translate }}</p>
+        </div>
 
-        <mat-form-field appearance="outline" class="full-width form-field-gap">
-          <mat-label>{{ 'DONATE.PAYMENT.BANK_NAME' | translate }}</mat-label>
-          <input matInput type="text" formControlName="bankName"/>
-        </mat-form-field>
+        @if (walletLoading()) {
+          <div class="wallet-card wallet-card--loading">{{ isRtl() ? 'جاري تحميل بيانات الحساب...' : 'Loading account details...' }}</div>
+        } @else if (wallet()) {
+          <div class="wallet-card">
+            <div class="wallet-card__row">
+              <span class="wallet-card__label">{{ 'DONATE.PAYMENT.WALLET_BANK_NAME' | translate }}</span>
+              <span class="wallet-card__value">{{ wallet()!.bank_name }}</span>
+            </div>
+            <div class="wallet-card__row">
+              <span class="wallet-card__label">{{ 'DONATE.PAYMENT.WALLET_ACCOUNT_HOLDER' | translate }}</span>
+              <span class="wallet-card__value">{{ wallet()!.account_holder_name }}</span>
+            </div>
+            <div class="wallet-card__row">
+              <span class="wallet-card__label">{{ 'DONATE.PAYMENT.WALLET_ACCOUNT_NUMBER' | translate }}</span>
+              <span class="wallet-card__value wallet-card__value--mono">{{ wallet()!.account_number }}</span>
+            </div>
+            <div class="wallet-card__row">
+              <span class="wallet-card__label">IBAN</span>
+              <span class="wallet-card__value wallet-card__value--mono">{{ wallet()!.iban }}</span>
+            </div>
+          </div>
+          <p class="bank-next-step-hint">
+            <span class="material-icons">arrow_forward</span>
+            {{ 'DONATE.PAYMENT.BANK_NEXT_STEP_HINT' | translate }}
+          </p>
+        }
 
         <mat-checkbox formControlName="terms" color="primary">
           <span class="terms-text">
@@ -140,7 +136,66 @@
       </form>
     </mat-tab>
 
+    <!-- ─── Wallet Tab (متبرع مسجّل دخول فقط) ─── -->
+    @if (isAuthenticated()) {
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span class="tab-label">
+          <span class="material-icons tab-icon">account_balance_wallet</span>
+          {{ isRtl() ? 'المحفظة' : 'Wallet' }}
+        </span>
+      </ng-template>
+
+      <form [formGroup]="walletForm" class="payment-tab-content" novalidate>
+
+        @if (walletBalanceLoading()) {
+          <div class="wallet-card wallet-card--loading">{{ isRtl() ? 'جاري تحميل رصيد محفظتك...' : 'Loading your wallet balance...' }}</div>
+        } @else if (walletBalance()) {
+          <div class="wallet-card">
+            <div class="wallet-card__row">
+              <span class="wallet-card__label">{{ isRtl() ? 'رصيد محفظتك الحالي' : 'Your Current Balance' }}</span>
+              <span class="wallet-card__value">${{ walletBalance()!.balance | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          @if (insufficientWalletBalance) {
+            <div class="auth-error-banner mt-md" role="alert">
+              <span class="material-icons">error_outline</span>
+              <span>{{ isRtl() ? 'رصيد محفظتك غير كافٍ لهذا المبلغ' : 'Your wallet balance is insufficient for this amount' }}</span>
+            </div>
+          }
+        }
+
+        <mat-checkbox formControlName="terms" color="primary">
+          <span class="terms-text">
+            {{ 'DONATE.PAYMENT.TERMS_PREFIX' | translate }}&nbsp;
+            <a href="#" class="terms-link" (click)="$event.preventDefault()">{{ 'DONATE.PAYMENT.TERMS_LINK' | translate }}</a>
+          </span>
+        </mat-checkbox>
+      </form>
+    </mat-tab>
+    }
+
+    <!-- ─── Crypto Tab ─── -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span class="tab-label">
+          <svg class="tab-icon tab-icon--crypto" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 6.49l-1.06 4.95c-.07.37-.29.56-.56.56-.13 0-.28-.04-.43-.13l-2.58-1.3-1.24 1.19c-.14.14-.3.22-.5.22l.18-2.63 4.62-4.17c.2-.18-.04-.28-.31-.1L7.38 11.9 4.88 11.1c-.54-.17-.55-.54.12-.8l8.28-3.19c.45-.16.84.11.95.38z"/>
+          </svg>
+          {{ 'DONATE.PAYMENT.CRYPTO' | translate }}
+        </span>
+      </ng-template>
+
+      <div class="payment-tab-content">
+        <app-crypto-payment [projectId]="0" />
+      </div>
+    </mat-tab>
+
   </mat-tab-group>
+
+  <!-- ── Action Buttons (مخفية عند Crypto — هو يتحكم بنفسه) ── -->
+  @if (!isCrypto) {
 
   <!-- ── API Error ── -->
   @if (apiError()) {
@@ -158,7 +213,7 @@
       {{ 'DONATE.PAYMENT.BACK' | translate }}
     </button>
     <button mat-flat-button type="button" class="step-submit-btn"
-            [disabled]="isLoading() || !activeTermsCtrl.value"
+            [disabled]="isLoading() || !activeTermsCtrl.value || insufficientWalletBalance"
             (click)="onSubmit()">
       <span class="btn-content">
         @if (isLoading()) {
@@ -171,5 +226,7 @@
       </span>
     </button>
   </div>
+
+  } <!-- end @if (!isCrypto) -->
 
 </div>

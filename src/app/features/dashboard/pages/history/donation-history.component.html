@@ -45,15 +45,25 @@
             @for (d of donations(); track d.id) {
               <tr>
                 <td>{{ d.date }}</td>
-                <td class="project-cell">{{ getProject(d) }}</td>
+                <td class="project-cell">
+                  {{ getProject(d) }}
+                  @if (d.redirected_from_project) {
+                    <span class="redirected-note" [title]="isRtl() ? 'جزء من هذا التبرع أُعيد توجيهه لهذا المشروع/الصندوق العام لأن الوجهة الأصلية اكتمل تمويلها' : 'Part of this donation was redirected here because the original target was already fully funded'">
+                      <span class="material-icons">info_outline</span>
+                    </span>
+                  }
+                </td>
                 <td class="amount-cell">${{ d.amount }}</td>
-                <td>{{ d.method }}</td>
+                <td>{{ methodLabel(d) }}</td>
                 <td><span class="status-badge status-badge--{{ d.status }}">{{ ('HISTORY.STATUS.' + d.status.toUpperCase()) | translate }}</span></td>
                 <td>
-                  <button class="invoice-btn" (click)="downloadInvoice(d)">
-                    <span class="material-icons">receipt_long</span>
-                    {{ 'HISTORY.DOWNLOAD' | translate }}
-                  </button>
+                  @if (d.status === 'completed') {
+                    <button class="invoice-btn" (click)="downloadCertificate(d)"
+                            [disabled]="generating() === d.id">
+                      <span class="material-icons">{{ generating() === d.id ? 'hourglass_empty' : 'workspace_premium' }}</span>
+                      {{ generating() === d.id ? '...' : 'شهادة' }}
+                    </button>
+                  }
                 </td>
               </tr>
             } @empty {

@@ -1,0 +1,201 @@
+<div class="admin-page dossier-page">
+
+  @if (loading()) {
+    <div class="admin-card"><div class="admin-loading">{{ isRtl() ? 'جاري التحميل...' : 'Loading...' }}</div></div>
+  } @else if (error()) {
+    <div class="admin-card">
+      <div class="admin-loading">{{ isRtl() ? 'تعذّر تحميل ملف المشروع' : 'Failed to load project file' }}</div>
+      <a routerLink="/admin/disbursements" class="admin-btn admin-btn--ghost">{{ isRtl() ? 'العودة' : 'Back' }}</a>
+    </div>
+  } @else if (overview(); as o) {
+
+    <div class="admin-page__header">
+      <div>
+        <h1 class="admin-page__title">{{ title }}</h1>
+        <p class="dossier-subtitle">#{{ o.project.requestNumber }} — {{ o.project.location }}</p>
+      </div>
+      <a routerLink="/admin/disbursements" class="admin-btn admin-btn--ghost">
+        {{ isRtl() ? 'العودة لخطط الصرف' : 'Back to disbursements' }}
+      </a>
+    </div>
+
+    <!-- Summary strip -->
+    <div class="dossier-summary">
+      <div class="dossier-summary__item">
+        <span class="dossier-summary__value">{{ fmt(totalCollected()) }}</span>
+        <span class="dossier-summary__label">{{ isRtl() ? 'إجمالي التمويل المحصَّل' : 'Total Collected' }}</span>
+      </div>
+      <div class="dossier-summary__item">
+        <span class="dossier-summary__value">{{ fmt(o.project.totalEstimatedCost ?? 0) }}</span>
+        <span class="dossier-summary__label">{{ isRtl() ? 'التكلفة المقدَّرة' : 'Estimated Cost' }}</span>
+      </div>
+      <div class="dossier-summary__item">
+        <span class="dossier-summary__value">{{ donations().length }}</span>
+        <span class="dossier-summary__label">{{ isRtl() ? 'عدد التبرعات' : 'Donations' }}</span>
+      </div>
+      <div class="dossier-summary__item">
+        <span class="dossier-summary__value">{{ progress()?.totalCompletion ?? 0 }}%</span>
+        <span class="dossier-summary__label">{{ isRtl() ? 'نسبة الإنجاز' : 'Completion' }}</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="dossier-tabs">
+      <button class="dossier-tab" [class.active]="activeTab() === 'overview'" (click)="setTab('overview')">{{ isRtl() ? 'نظرة عامة' : 'Overview' }}</button>
+      <button class="dossier-tab" [class.active]="activeTab() === 'funding'" (click)="setTab('funding')">{{ isRtl() ? 'التمويل' : 'Funding' }}</button>
+      <button class="dossier-tab" [class.active]="activeTab() === 'execution'" (click)="setTab('execution')">{{ isRtl() ? 'التنفيذ' : 'Execution' }}</button>
+      <button class="dossier-tab" [class.active]="activeTab() === 'disbursement'" (click)="setTab('disbursement')">{{ isRtl() ? 'الصرف' : 'Disbursement' }}</button>
+    </div>
+
+    <!-- ── Overview tab ── -->
+    @if (activeTab() === 'overview') {
+      <div class="admin-card">
+        <div class="admin-card__title">{{ isRtl() ? 'بيانات المشروع' : 'Project Info' }}</div>
+        <div class="dossier-info-grid">
+          <div class="dossier-info-row"><span>{{ isRtl() ? 'نوع الضرر' : 'Damage Type' }}</span><span>{{ o.project.damageType }}</span></div>
+          <div class="dossier-info-row"><span>{{ isRtl() ? 'الحالة' : 'Status' }}</span><span>{{ o.project.status }}</span></div>
+          <div class="dossier-info-row"><span>{{ isRtl() ? 'الأولوية' : 'Priority' }}</span><span>{{ o.project.priority ?? '—' }}</span></div>
+          <div class="dossier-info-row"><span>{{ isRtl() ? 'تاريخ الإنشاء' : 'Created' }}</span><span>{{ o.project.createdAt }}</span></div>
+          <div class="dossier-info-row"><span>{{ isRtl() ? 'تاريخ الموافقة' : 'Approved' }}</span><span>{{ o.project.approvedAt ?? '—' }}</span></div>
+          @if (o.approvedBy) {
+            <div class="dossier-info-row"><span>{{ isRtl() ? 'اعتمد من' : 'Approved by' }}</span><span>{{ o.approvedBy.name }}</span></div>
+          }
+        </div>
+        @if (o.project.description) {
+          <p class="dossier-description">{{ o.project.description }}</p>
+        }
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card__title">{{ isRtl() ? 'المستفيد' : 'Beneficiary' }}</div>
+        <div class="dossier-info-grid">
+          <div class="dossier-info-row"><span>{{ isRtl() ? 'الاسم' : 'Name' }}</span><span>{{ o.beneficiary.name }}</span></div>
+          <div class="dossier-info-row"><span>{{ isRtl() ? 'الهاتف' : 'Phone' }}</span><span class="mono">{{ o.beneficiary.phone }}</span></div>
+          <div class="dossier-info-row"><span>{{ isRtl() ? 'البريد' : 'Email' }}</span><span>{{ o.beneficiary.email }}</span></div>
+          @if (o.beneficiary.occupation) {
+            <div class="dossier-info-row"><span>{{ isRtl() ? 'المهنة' : 'Occupation' }}</span><span>{{ o.beneficiary.occupation }}</span></div>
+          }
+        </div>
+      </div>
+
+      @if (o.items.length) {
+        <div class="admin-card">
+          <div class="admin-card__title">{{ isRtl() ? 'بنود التكلفة' : 'Cost Items' }}</div>
+          <table class="admin-table">
+            <thead><tr>
+              <th>{{ isRtl() ? 'البند' : 'Item' }}</th><th>{{ isRtl() ? 'الكمية' : 'Qty' }}</th>
+              <th>{{ isRtl() ? 'سعر الوحدة' : 'Unit Price' }}</th><th>{{ isRtl() ? 'الإجمالي' : 'Total' }}</th>
+            </tr></thead>
+            <tbody>
+              @for (item of o.items; track item.id) {
+                <tr><td>{{ item.itemName }}</td><td>{{ item.quantity }}</td><td class="mono">${{ item.unitPrice }}</td><td class="mono">${{ item.totalPrice }}</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+
+    <!-- ── Funding tab ── -->
+    @if (activeTab() === 'funding') {
+      <div class="admin-card">
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>{{ isRtl() ? 'المرجع' : 'Ref' }}</th>
+                <th>{{ isRtl() ? 'المتبرع' : 'Donor' }}</th>
+                <th>{{ isRtl() ? 'المبلغ' : 'Amount' }}</th>
+                <th>{{ isRtl() ? 'النوع' : 'Type' }}</th>
+                <th>{{ isRtl() ? 'الحالة' : 'Status' }}</th>
+                <th>{{ isRtl() ? 'التاريخ' : 'Date' }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (d of donations(); track d.id) {
+                <tr>
+                  <td class="ref-cell">{{ d.reference }}</td>
+                  <td><div class="donor-cell">{{ d.name }}
+                    @if (d.is_anonymous) { <span class="mini-badge"><span class="material-icons">visibility_off</span></span> }
+                    @if (d.redirected_from_project) { <span class="mini-badge" [title]="isRtl() ? 'معاد توجيهه' : 'Redirected'"><span class="material-icons">info_outline</span></span> }
+                  </div></td>
+                  <td class="amount-cell">${{ d.amount | number:'1.0-2' }}</td>
+                  <td>{{ donationTypeLabel(d) }}</td>
+                  <td><span class="status-badge status-badge--{{ d.status }}">{{ d.status }}</span></td>
+                  <td class="date-cell">{{ d.created_at }}</td>
+                </tr>
+              }
+              @if (!donations().length) {
+                <tr><td colspan="6" class="empty-cell">{{ isRtl() ? 'لا توجد تبرعات لهذا المشروع' : 'No donations for this project' }}</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- ── Execution tab ── -->
+    @if (activeTab() === 'execution') {
+      <div class="admin-card">
+        @if (progress(); as pr) {
+          <p class="dossier-description">
+            {{ isRtl() ? 'المقاول:' : 'Contractor:' }} {{ pr.contractorName ?? (isRtl() ? 'غير معيَّن' : 'Not assigned') }}
+          </p>
+          <div class="timeline">
+            @for (m of pr.roadmap; track m.id) {
+              <div class="timeline__item timeline__item--{{ milestoneStatus(m.status) }}">
+                <div class="timeline__dot">
+                  @if (milestoneStatus(m.status) === 'completed') { <span class="material-icons">check</span> }
+                  @else if (milestoneStatus(m.status) === 'ongoing') { <span class="material-icons">radio_button_checked</span> }
+                  @else { <span class="material-icons">radio_button_unchecked</span> }
+                </div>
+                <div class="timeline__content">
+                  <span class="timeline__title">{{ m.name }}</span>
+                  @if (m.latestUpdate?.notes) { <p class="timeline__desc">{{ m.latestUpdate?.notes }}</p> }
+                </div>
+              </div>
+            }
+            @if (!pr.roadmap.length) {
+              <p class="dossier-description">{{ isRtl() ? 'لا توجد مراحل تنفيذ مسجّلة بعد' : 'No execution milestones yet' }}</p>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ── Disbursement tab ── -->
+    @if (activeTab() === 'disbursement') {
+      <div class="admin-card">
+        @if (plan(); as p) {
+          <div class="dossier-info-grid">
+            <div class="dossier-info-row"><span>{{ isRtl() ? 'المقاول' : 'Contractor' }}</span><span>{{ p.contractor_name }} ({{ p.contractor_company }})</span></div>
+            <div class="dossier-info-row"><span>{{ isRtl() ? 'إجمالي الخطة' : 'Total Plan' }}</span><span class="mono">{{ fmt(p.total_amount) }}</span></div>
+            <div class="dossier-info-row"><span>{{ isRtl() ? 'المصروف' : 'Disbursed' }}</span><span class="mono">{{ fmt(p.total_disbursed) }}</span></div>
+            <div class="dossier-info-row"><span>{{ isRtl() ? 'الحالة' : 'Status' }}</span><span>{{ p.status }}</span></div>
+          </div>
+
+          <table class="admin-table dossier-tranches">
+            <thead><tr>
+              <th>{{ isRtl() ? 'الدفعة' : 'Tranche' }}</th><th>{{ isRtl() ? 'المبلغ' : 'Amount' }}</th>
+              <th>{{ isRtl() ? 'الحالة' : 'Status' }}</th>
+            </tr></thead>
+            <tbody>
+              @for (t of p.tranches; track t.id) {
+                <tr><td>{{ trancheLabel(t) }}</td><td class="mono">${{ t.amount }}</td><td>{{ staLabel(t.status) }}</td></tr>
+              }
+            </tbody>
+          </table>
+
+          <a [routerLink]="['/admin/disbursements', p.id]" class="admin-btn admin-primary-btn dossier-manage-btn">
+            {{ isRtl() ? 'إدارة الدفعات' : 'Manage Tranches' }}
+          </a>
+        } @else {
+          <p class="dossier-description">{{ isRtl() ? 'لا توجد خطة صرف لهذا المشروع بعد.' : 'No disbursement plan for this project yet.' }}</p>
+          <a routerLink="/admin/disbursements" class="admin-btn admin-primary-btn">{{ isRtl() ? 'إنشاء خطة صرف' : 'Create Disbursement Plan' }}</a>
+        }
+      </div>
+    }
+
+  }
+
+</div>

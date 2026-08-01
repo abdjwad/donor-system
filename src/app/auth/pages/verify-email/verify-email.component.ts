@@ -8,6 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
@@ -22,6 +23,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { OtpInputComponent } from '../../../shared/components/otp-input/otp-input.component';
+import { applyAuthError } from '../../../core/utils/auth-error.util';
 
 @Component({
   selector: 'app-verify-email',
@@ -38,13 +40,12 @@ import { OtpInputComponent } from '../../../shared/components/otp-input/otp-inpu
   styleUrl: './verify-email.component.scss',
 })
 export class VerifyEmailComponent implements OnInit {
-  @Input() id = '';
-  @Input() hash = '';
   @Input() email = '';
 
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly router = inject(Router);
 
   readonly isLoading = this.authService.isLoading;
   readonly apiError = signal<string | null>(null);
@@ -77,10 +78,12 @@ export class VerifyEmailComponent implements OnInit {
     }
 
     this.authService
-      .verifyEmail(this.id, this.hash, this.form.value.otp)
+      .verifyOtp({ email: this.email, otp_code: this.form.value.otp })
       .subscribe({
+        next: () => this.finalize(),
         error: (err: HttpErrorResponse) => {
-          this.apiError.set(err.error?.message ?? 'AUTH.ERRORS.GENERIC');
+          const bannerKey = applyAuthError(err);
+          if (bannerKey) this.apiError.set(bannerKey);
         },
       });
   }
@@ -90,10 +93,29 @@ export class VerifyEmailComponent implements OnInit {
     this.resendCooldown.set(60);
     this.startCooldown();
 
-    const emailToUse = this.email || '';
-    this.authService.resendVerification(emailToUse).subscribe({
-      error: (err: HttpErrorResponse) => {
-        this.apiError.set(err.error?.message ?? 'AUTH.ERRORS.GENERIC');
+    const draft = this.authService.getPendingRegistration();
+    const channel = draft?.channel ?? 'email';
+    this.authService
+      .sendOtp({ email: this.email, channel, phone: channel === 'whatsapp' ? draft?.phone : undefined })
+      .subscribe({
+        error: (err: HttpErrorResponse) => {
+          const bannerKey = applyAuthError(err);
+          if (bannerKey) this.apiError.set(bannerKey);
+        },
+      });
+  }
+
+  private finalize(): void {
+    this.authService.finalizeRegistration().subscribe({
+      error: (err: HttpErrorResponse | Error) => {
+        if (err instanceof HttpErrorResponse) {
+          const bannerKey = applyAuthError(err);
+          if (bannerKey) this.apiError.set(bannerKey);
+          return;
+        }
+
+        this.apiError.set(err.message || 'AUTH.ERRORS.SESSION_EXPIRED');
+        this.router.navigate(['/auth/register']);
       },
     });
   }

@@ -27,6 +27,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { LanguageService } from './core/services/language.service';
+import { AuthService } from './core/services/auth.service';
+import { TokenService } from './core/services/token.service';
 
 export function createTranslateLoader(httpBackend: HttpBackend): TranslateHttpLoader {
   return new TranslateHttpLoader(
@@ -57,6 +59,24 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: (langService: LanguageService) => () => langService.init(),
       deps: [LanguageService],
+      multi: true,
+    },
+    // تحميل بيانات المستخدم عند البداية إذا كان مسجّل دخول
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (authService: AuthService, tokenService: TokenService) => () => {
+        if (tokenService.token) {
+          return authService.loadCurrentUser().toPromise().catch((err) => {
+            // نمسح التوكن فقط إذا كان فعلاً غير صالح (401) — أي خطأ آخر (شبكة/سيرفر
+            // مؤقت) ما لازم يسجّل خروج المستخدم بالغلط عند كل ريفرش
+            if (err?.status === 401) {
+              tokenService.clearToken();
+            }
+          });
+        }
+        return Promise.resolve();
+      },
+      deps: [AuthService, TokenService],
       multi: true,
     },
   ],

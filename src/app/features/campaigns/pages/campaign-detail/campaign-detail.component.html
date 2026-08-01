@@ -1,4 +1,24 @@
-@if (campaign(); as c) {
+@if (loading()) {
+  <div class="page-loading" [class.rtl]="isRtl()">
+    <app-navbar />
+    <div class="skeleton-hero"></div>
+    <div class="skeleton-body">
+      <div class="skeleton-block skeleton-block--wide"></div>
+      <div class="skeleton-block"></div>
+    </div>
+  </div>
+} @else if (error()) {
+  <div class="page-error" [class.rtl]="isRtl()">
+    <app-navbar />
+    <div class="page-error__inner">
+      <span class="material-icons">error_outline</span>
+      <h2>{{ isRtl() ? 'تعذّر تحميل الحملة' : 'Failed to load campaign' }}</h2>
+      <a routerLink="/campaigns" mat-flat-button class="error-back-btn">
+        {{ isRtl() ? 'العودة للحملات' : 'Back to Campaigns' }}
+      </a>
+    </div>
+  </div>
+} @else if (campaign(); as c) {
 <div class="campaign-detail" [class.rtl]="isRtl()">
 
   <app-navbar />
@@ -32,16 +52,18 @@
     <div class="campaign-detail__main">
 
       <!-- Media gallery -->
-      <section class="detail-section">
-        <h2 class="detail-section__title">{{ 'CAMPAIGNS.DETAIL.GALLERY' | translate }}</h2>
-        <div class="media-gallery">
-          @for (img of GALLERY; track $index) {
-            <div class="media-gallery__item">
-              <img [src]="img" [alt]="'Image ' + ($index + 1)" loading="lazy"/>
-            </div>
-          }
-        </div>
-      </section>
+      @if (gallery.length) {
+        <section class="detail-section">
+          <h2 class="detail-section__title">{{ 'CAMPAIGNS.DETAIL.GALLERY' | translate }}</h2>
+          <div class="media-gallery">
+            @for (img of gallery; track img) {
+              <div class="media-gallery__item">
+                <img [src]="img" [alt]="'Image ' + ($index + 1)" loading="lazy"/>
+              </div>
+            }
+          </div>
+        </section>
+      }
 
       <!-- About -->
       <section class="detail-section">
@@ -56,7 +78,7 @@
       <section class="detail-section">
         <h2 class="detail-section__title">{{ 'CAMPAIGNS.DETAIL.RELATED_PROJECTS' | translate }}</h2>
         <div class="related-grid">
-          @for (p of relatedProjects; track p.id) {
+          @for (p of relatedProjects(); track p.id) {
             <app-project-card [project]="p" />
           }
         </div>

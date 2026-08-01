@@ -1,0 +1,107 @@
+<div class="admin-page">
+
+  <!-- Reject Modal -->
+  @if (showRejectModal()) {
+    <div class="admin-modal-backdrop" (click)="showRejectModal.set(false)">
+      <div class="admin-modal" (click)="$event.stopPropagation()">
+        <h3 class="admin-modal__title">{{ isRtl() ? 'سبب رفض شحن المحفظة' : 'Wallet Top-up Rejection Reason' }}</h3>
+        <textarea class="admin-modal__textarea"
+          [placeholder]="isRtl() ? 'اكتب سبب الرفض...' : 'Enter rejection reason...'"
+          (input)="rejectReason.set($any($event.target).value)">{{ rejectReason() }}</textarea>
+        <div class="admin-modal__actions">
+          <button class="admin-btn admin-btn--danger" [disabled]="rejectSubmitting() || !rejectReason().trim()" (click)="confirmReject()">
+            {{ rejectSubmitting() ? '...' : (isRtl() ? 'تأكيد الرفض' : 'Confirm Rejection') }}
+          </button>
+          <button class="admin-btn admin-btn--ghost" (click)="showRejectModal.set(false)">
+            {{ isRtl() ? 'إلغاء' : 'Cancel' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="admin-page__header">
+    <h1 class="admin-page__title">{{ isRtl() ? 'طلبات شحن المحفظة' : 'Wallet Top-up Requests' }}</h1>
+    <div class="admin-filters">
+      <select class="admin-select" [value]="filterStatus()" (change)="onFilterChange($any($event.target).value)">
+        <option value="pending">{{ isRtl() ? 'قيد الانتظار' : 'Pending' }}</option>
+        <option value="completed">{{ isRtl() ? 'مكتمل' : 'Completed' }}</option>
+        <option value="failed">{{ isRtl() ? 'مرفوض' : 'Rejected' }}</option>
+        <option value="all">{{ isRtl() ? 'الكل' : 'All' }}</option>
+      </select>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="admin-card"><div class="admin-loading">{{ isRtl() ? 'جاري التحميل...' : 'Loading...' }}</div></div>
+  } @else {
+    <div class="admin-card">
+      <div class="table-info">{{ isRtl() ? 'الإجمالي:' : 'Total:' }} {{ meta().total }}</div>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{{ isRtl() ? 'المرجع' : 'Ref' }}</th>
+              <th>{{ isRtl() ? 'المتبرع' : 'Donor' }}</th>
+              <th>{{ isRtl() ? 'المبلغ' : 'Amount' }}</th>
+              <th>{{ isRtl() ? 'الطريقة' : 'Method' }}</th>
+              <th>{{ isRtl() ? 'التاريخ' : 'Date' }}</th>
+              <th>{{ isRtl() ? 'الحالة' : 'Status' }}</th>
+              <th>{{ isRtl() ? 'إجراءات' : 'Actions' }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of topups(); track t.id) {
+              <tr>
+                <td class="ref-cell">{{ t.reference }}</td>
+                <td><div class="donor-cell">{{ t.user_name }}<span class="donor-email">{{ t.user_email }}</span></div></td>
+                <td class="amount-cell">${{ t.amount }}</td>
+                <td>
+                  {{ t.payment_method }}
+                  @if (t.payment_method === 'bank' && t.bank_transfer_reference) {
+                    <div class="bank-ref-cell">
+                      <span>{{ isRtl() ? 'مرجع:' : 'Ref:' }} {{ t.bank_transfer_reference }}</span>
+                      @if (t.bank_account_name) {
+                        <span>{{ isRtl() ? 'الحساب:' : 'Account:' }} {{ t.bank_account_name }}</span>
+                      }
+                      @if (t.receipt_url) {
+                        <a [href]="t.receipt_url" target="_blank" class="receipt-link">{{ isRtl() ? 'عرض الإيصال' : 'View receipt' }}</a>
+                      }
+                    </div>
+                  }
+                </td>
+                <td class="date-cell">{{ t.created_at }}</td>
+                <td>
+                  <span class="status-badge status-badge--{{ t.status === 'failed' ? 'failed' : t.status }}">{{ t.status }}</span>
+                  @if (t.status === 'pending' && t.payment_method === 'bank') {
+                    <span class="proof-badge" [class.proof-badge--submitted]="t.receipt_submitted_at">
+                      {{ t.receipt_submitted_at
+                          ? (isRtl() ? 'إثبات مُرسل' : 'Proof submitted')
+                          : (isRtl() ? 'بانتظار الإثبات' : 'Awaiting proof') }}
+                    </span>
+                  }
+                </td>
+                <td>
+                  <div class="action-btns">
+                    @if (t.status === 'pending') {
+                      <button class="action-btn action-btn--confirm" [disabled]="confirmingId() === t.id"
+                              [title]="isRtl() ? 'تأكيد الشحن' : 'Confirm top-up'" (click)="confirmTopup(t.id)">
+                        <span class="material-icons">check_circle</span>
+                      </button>
+                      <button class="action-btn action-btn--reject" [title]="isRtl() ? 'رفض الشحن' : 'Reject top-up'" (click)="openReject(t.id)">
+                        <span class="material-icons">cancel</span>
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+            @if (topups().length === 0) {
+              <tr><td colspan="7" class="empty-cell">{{ isRtl() ? 'لا توجد طلبات شحن' : 'No top-up requests found' }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

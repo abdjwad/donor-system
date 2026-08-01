@@ -22,7 +22,11 @@
       "PASSWORD": "Password",
       "PASSWORD_PLACEHOLDER": "At least 8 characters",
       "CONFIRM_PASSWORD": "Confirm Password",
-      "CONFIRM_PASSWORD_PLACEHOLDER": "Re-enter your password"
+      "CONFIRM_PASSWORD_PLACEHOLDER": "Re-enter your password",
+      "OTP_CHANNEL": "How should we send your verification code?",
+      "OTP_CHANNEL_EMAIL": "Email",
+      "OTP_CHANNEL_WHATSAPP": "WhatsApp",
+      "OTP_CHANNEL_WHATSAPP_HINT": "We'll send the verification code to the phone number above via WhatsApp"
     },
     "ERRORS": {
       "EMAIL_REQUIRED": "Email address is required",
@@ -39,7 +43,11 @@
       "TERMS_REQUIRED": "You must accept the terms and conditions to continue",
       "OTP_REQUIRED": "Verification code is required",
       "OTP_LENGTH": "Verification code must be exactly 6 digits",
-      "GENERIC": "An unexpected error occurred. Please try again"
+      "GENERIC": "An unexpected error occurred. Please try again",
+      "NETWORK": "Couldn't reach the server. Check your internet connection and try again",
+      "RATE_LIMIT": "Too many attempts. Please wait a moment before trying again",
+      "WHATSAPP_FAILED": "Couldn't send the code via WhatsApp. Try email instead, or try again later",
+      "SESSION_EXPIRED": "Your registration session expired. Please fill in your details again"
     },
     "LOGIN": {
       "TITLE": "Sign In",
@@ -56,11 +64,11 @@
       "SUBTITLE": "Join thousands of donors and be part of real, lasting change",
       "TERMS_PREFIX": "I agree to the",
       "TERMS_LINK": "Terms of Service and Privacy Policy",
-      "SUBMIT": "Create Account",
+      "SUBMIT": "Send Verification Code",
       "HAVE_ACCOUNT": "Already have an account?",
       "LOGIN": "Sign In",
-      "LOADING": "Creating your account...",
-      "SUCCESS": "Account created successfully! Please verify your email to continue"
+      "LOADING": "Sending verification code...",
+      "SUCCESS": "Account created successfully!"
     },
     "FORGOT_PASSWORD": {
       "TITLE": "Reset Your Password",
@@ -81,14 +89,14 @@
       "BACK_TO_LOGIN": "Back to Sign In"
     },
     "VERIFY_EMAIL": {
-      "TITLE": "Verify Your Email",
-      "SUBTITLE": "Enter the 6-digit code we sent to your email address",
+      "TITLE": "Verify Your Account",
+      "SUBTITLE": "Enter the 6-digit code we sent you",
       "SUBMIT": "Verify Now",
       "RESEND": "Resend Code",
       "RESEND_TIMER": "Resend available in {{seconds}} seconds",
       "LOADING": "Verifying...",
-      "SUCCESS": "Email verified successfully!",
-      "HINT": "Didn't receive the code? Check your spam or junk folder"
+      "SUCCESS": "Verified successfully!",
+      "HINT": "Didn't receive the code? Check your spam folder (or WhatsApp)"
     },
     "GUEST_DONATE": "Donate as a guest without creating an account"
   },
@@ -128,6 +136,9 @@
       "TYPE_MONTHLY": "Monthly donation",
       "PROJECT_LABEL": "Project",
       "GENERAL_FUND": "General Fund",
+      "DONATING_TO": "You are donating to",
+      "SWITCH_GENERAL_FUND": "Donate to the General Fund instead",
+      "LOADING_PROJECT": "Loading project details...",
       "DEDICATION_LABEL": "Dedication message (optional)",
       "DEDICATION_PLACEHOLDER": "I dedicate this donation to...",
       "DEDICATION_HINT": "{{remaining}} characters remaining",
@@ -137,7 +148,7 @@
     "PAYMENT": {
       "TITLE": "Payment Method",
       "CARD": "Credit or Debit Card",
-      "PAYPAL": "PayPal",
+      "CRYPTO": "Crypto",
       "BANK": "Bank Transfer",
       "CARD_NUMBER": "Card Number",
       "CARD_NUMBER_PLACEHOLDER": "0000 0000 0000 0000",
@@ -146,9 +157,12 @@
       "CARD_CVV": "Security Code (CVV)",
       "CARD_CVV_PLACEHOLDER": "123",
       "CARD_NAME": "Name on Card",
-      "PAYPAL_BTN": "Continue with PayPal",
-      "BANK_IBAN": "IBAN Number",
-      "BANK_NAME": "Bank Name",
+      "BANK_INSTRUCTIONS_TITLE": "Platform Bank Account Details",
+      "BANK_ACCOUNT_INFO": "Transfer the amount to the bank account below, then click \"Complete Donation\" — you'll land on a page to confirm your transfer with a reference number and receipt photo right after.",
+      "WALLET_BANK_NAME": "Bank Name",
+      "WALLET_ACCOUNT_HOLDER": "Account Holder Name",
+      "WALLET_ACCOUNT_NUMBER": "Account Number",
+      "BANK_NEXT_STEP_HINT": "After completing the donation, you'll land on a page to confirm your transfer with a reference number and receipt photo.",
       "TERMS_PREFIX": "I agree to the",
       "TERMS_LINK": "Terms of Service and Privacy Policy",
       "TERMS_REQUIRED": "You must accept the terms to continue",
@@ -264,7 +278,13 @@
       "CATEGORY": "Category",
       "LOCATION": "Location",
       "STATUS": "Project Status",
+      "FUNDING_STATUS": "Funding Status",
+      "NEEDS_FUNDING": "Needs Funding",
+      "FUNDING_COMPLETE": "Fully Funded",
       "URGENCY": "Urgency Level",
+      "DAMAGE_TYPE": "Damage Type",
+      "CITY": "City",
+      "LOADING": "Loading filter options...",
       "RESET": "Clear All Filters"
     },
     "SORT": {
@@ -272,7 +292,10 @@
       "NEWEST": "Newest First",
       "MOST_FUNDED": "Most Funded",
       "MOST_URGENT": "Most Urgent",
-      "NEAR_COMPLETE": "Near Completion"
+      "NEAR_COMPLETE": "Near Completion",
+      "DIRECTION": "Sort Direction",
+      "ASC": "Ascending",
+      "DESC": "Descending"
     },
     "CARD": {
       "DONATE": "Donate to This Project",
@@ -319,6 +342,39 @@
       "MILESTONE_COMPLETED": "Completed",
       "MILESTONE_ONGOING": "In Progress",
       "MILESTONE_PENDING": "Upcoming"
+    },
+    "REPAIR": {
+      "DAMAGE_TYPE": {
+        "PARTIAL": "Partial",
+        "TOTAL": "Total",
+        "MINOR": "Minor"
+      },
+      "STATUS": {
+        "NEW": "New Request",
+        "UNDER_REVIEW": "Under Review",
+        "APPROVED": "Approved - Seeking Funding",
+        "AWAITING_CONTRACTOR": "Awaiting Contractor",
+        "IN_PROGRESS": "In Progress",
+        "COMPLETED": "Completed"
+      },
+      "SORT": {
+        "CREATED_AT": "Date Created",
+        "PRIORITY": "Priority",
+        "BUDGET": "Budget",
+        "COMPLETION": "Completion",
+        "FAMILY_SIZE": "Family Size"
+      },
+      "CARD": {
+        "DONATE": "Donate to This Project",
+        "FUNDED": "Funded",
+        "COLLECTED": "Collected",
+        "ESTIMATED_COST": "Estimated Cost",
+        "COMPLETION": "Completion",
+        "FAMILY_MEMBERS": "Family Members",
+        "PRIORITY": "Priority",
+        "REQUEST_NUMBER": "Request Number",
+        "CONTRACTOR": "Contractor"
+      }
     }
   },
 
@@ -617,6 +673,38 @@
       "ANNUAL": "Annual",
       "MONTHLY": "Monthly",
       "GENERATE": "Generate Report"
+    },
+    "PROJECTS": {
+      "TITLE": "Approved Projects",
+      "SUBTITLE": "Approved projects awaiting funding and execution",
+      "STATS": {
+        "TOTAL": "Total Projects",
+        "TOTAL_COST": "Total Estimated Cost",
+        "HIGH_PRIORITY": "High Priority",
+        "MEDIUM_PRIORITY": "Medium Priority",
+        "LOW_PRIORITY": "Low Priority"
+      },
+      "TABLE": {
+        "REQUEST_NUMBER": "Request Number",
+        "BENEFICIARY": "Beneficiary",
+        "LOCATION": "Location",
+        "DAMAGE_TYPE": "Damage Type",
+        "PRIORITY": "Priority",
+        "ESTIMATED_COST": "Estimated Cost",
+        "STATUS": "Status",
+        "CREATED_AT": "Created At",
+        "ACTIONS": "Actions"
+      },
+      "NOT_SPECIFIED": "Not specified",
+      "NO_RESULTS": "No approved projects found",
+      "EDIT_DISPLAY": "Edit Display Info",
+      "DISPLAY_MODAL_TITLE": "Edit Donor Display Info",
+      "DISPLAY_TITLE_AR": "Title (Arabic)",
+      "DISPLAY_TITLE_EN": "Title (English)",
+      "DISPLAY_CATEGORY": "Category",
+      "DISPLAY_DESCRIPTION_EN": "Description (English)",
+      "SAVE": "Save",
+      "CANCEL": "Cancel"
     }
   },
 

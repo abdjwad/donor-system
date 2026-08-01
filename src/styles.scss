@@ -1,12 +1,14 @@
 // ============================================================
 // Global Styles — Syrian Donor Platform
 // ============================================================
+@use 'sass:color';
 @use 'app/styles/variables' as *;
 @use 'app/styles/material-theme';
 @use 'app/styles/typography';
 @use 'app/styles/auth';
 @use 'app/styles/donate';
 @use 'app/styles/home';
+@use 'app/styles/admin';
 
 // ── CSS Custom Properties ────────────────────────────────────
 :root {
@@ -98,6 +100,153 @@ button {
 .mt-xl  { margin-top: $space-xl; }
 .mb-md  { margin-bottom: $space-md; }
 .mb-lg  { margin-bottom: $space-lg; }
+
+// ── Admin shared styles ──────────────────────────────────────
+.admin-modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  z-index: 1000; display: flex; align-items: center; justify-content: center;
+  padding: $space-lg;
+}
+.admin-modal {
+  background: $color-card-bg; border-radius: $radius-xl;
+  padding: $space-xl; width: 100%; max-width: 480px;
+  max-height: 90vh; overflow-y: auto; box-shadow: $shadow-card;
+  &--wide { max-width: 720px; }
+  &__title { font-size: 1.125rem; font-weight: 700; color: $color-text-primary; margin: 0 0 $space-lg; }
+  &__textarea {
+    width: 100%; min-height: 100px; border: 1px solid $color-border;
+    border-radius: $radius-md; padding: $space-sm; font-size: 0.875rem;
+    resize: vertical; font-family: inherit; margin-bottom: $space-md;
+    &:focus { outline: 2px solid $color-primary; }
+  }
+  &__actions { display: flex; gap: $space-sm; flex-wrap: wrap; }
+}
+.admin-form {
+  display: flex; flex-direction: column; gap: $space-md;
+  &__row { display: flex; gap: $space-md; flex-wrap: wrap; }
+  &__group { flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 4px;
+    label { font-size: 0.8125rem; font-weight: 600; color: $color-text-secondary; }
+    &--check { justify-content: flex-end; padding-bottom: 2px; }
+  }
+}
+.admin-input {
+  width: 100%; padding: 8px 10px; border: 1px solid $color-border;
+  border-radius: $radius-md; font-size: 0.875rem; font-family: inherit;
+  background: $color-card-bg; color: $color-text-primary;
+  &:focus { outline: 2px solid $color-primary; border-color: $color-primary; }
+}
+.admin-check { display: flex; align-items: center; gap: $space-sm; cursor: pointer; font-size: 0.875rem; font-weight: 500; }
+.admin-btn {
+  padding: 8px 20px; border-radius: $radius-md; font-weight: 700;
+  font-size: 0.875rem; cursor: pointer; border: none; transition: opacity 0.15s;
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &--primary { background: $color-primary; color: #fff; &:hover:not(:disabled) { opacity: 0.9; } }
+  &--danger  { background: $color-error;   color: #fff; &:hover:not(:disabled) { opacity: 0.9; } }
+  &--ghost   { background: transparent; border: 1px solid $color-border; color: $color-text-secondary; &:hover { background: $color-background; } }
+}
+.admin-badge {
+  display: inline-flex; align-items: center; padding: 3px 10px;
+  background: rgba($color-primary, 0.1); color: $color-primary;
+  border-radius: $radius-full; font-size: 0.8125rem; font-weight: 600;
+}
+.admin-loading { padding: $space-2xl; text-align: center; color: $color-text-muted; font-size: 0.9rem; }
+.admin-empty   { padding: $space-2xl; text-align: center; color: $color-text-muted; }
+.empty-cell    { text-align: center; padding: $space-2xl !important; color: $color-text-muted; }
+.ref-cell      { font-family: var(--font-latin); font-size: 0.75rem; color: $color-text-muted; }
+.donor-email   { display: block; font-size: 0.7rem; color: $color-text-muted; }
+.table-info    { font-size: 0.8125rem; color: $color-text-muted; padding: $space-sm $space-sm 0; }
+.header-actions { display: flex; align-items: center; gap: $space-sm; }
+.urgent-pill {
+  font-size: 0.625rem; font-weight: 700; padding: 1px 6px;
+  background: rgba($color-error, 0.1); color: $color-error;
+  border-radius: $radius-full; border: 1px solid rgba($color-error, 0.3);
+}
+.camp-btn--delete {
+  min-width: unset !important; padding: 0 8px !important;
+  color: $color-error !important; border-color: rgba($color-error, 0.3) !important;
+}
+.action-btn--delete {
+  background: transparent; border: 1px solid rgba($color-error, 0.3);
+  color: $color-error; border-radius: $radius-md; padding: 4px 8px;
+  cursor: pointer; display: flex; align-items: center;
+  &:hover { background: rgba($color-error, 0.08); }
+  .material-icons { font-size: 1rem; }
+}
+
+// ── Page loading skeleton ────────────────────────────────────
+.page-loading {
+  min-height: 100vh;
+  background: $color-background;
+  &.rtl { direction: rtl; }
+}
+
+.skeleton-hero {
+  height: 420px;
+  background: linear-gradient(90deg, $color-border 25%, color.adjust($color-border, $lightness: 5%) 50%, $color-border 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.skeleton-body {
+  max-width: 1100px;
+  margin: $space-2xl auto;
+  padding: 0 $space-2xl;
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.skeleton-block {
+  height: 18px;
+  border-radius: $radius-md;
+  background: linear-gradient(90deg, $color-border 25%, color.adjust($color-border, $lightness: 5%) 50%, $color-border 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  width: 60%;
+  &--wide  { width: 90%; height: 24px; }
+  &--short { width: 40%; }
+}
+
+.skeleton { border-radius: $radius-md; background: linear-gradient(90deg, $color-border 25%, color.adjust($color-border, $lightness: 5%) 50%, $color-border 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+.skeleton--image { height: 220px; width: 100%; border-radius: $radius-xl $radius-xl 0 0; }
+.skeleton--title { height: 20px; width: 75%; margin-bottom: $space-sm; }
+.skeleton--text  { height: 14px; width: 90%; margin-bottom: $space-sm; }
+.skeleton--bar   { height: 10px; width: 100%; border-radius: $radius-full; margin-top: $space-sm; }
+.skeleton-card   { overflow: hidden; }
+.skeleton-card__body { padding: $space-md; display: flex; flex-direction: column; gap: $space-xs; }
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ── Page error state ─────────────────────────────────────────
+.page-error {
+  min-height: 100vh;
+  background: $color-background;
+  &.rtl { direction: rtl; }
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: $space-md;
+    text-align: center;
+    padding: $space-2xl;
+    .material-icons { font-size: 3rem; color: $color-text-muted; }
+    h2 { font-size: 1.25rem; font-weight: 700; color: $color-text-primary; margin: 0; }
+    p  { color: $color-text-secondary; margin: 0; }
+  }
+}
+
+.error-back-btn {
+  background: $color-primary !important;
+  color: #fff !important;
+  border-radius: $radius-md !important;
+  font-weight: 700 !important;
+  margin-top: $space-sm;
+}
 
 // ── Material Icons font ──────────────────────────────────────
 .material-icons {

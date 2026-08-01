@@ -4,7 +4,7 @@
 
   <!-- Stats cards -->
   <div class="stats-grid">
-    @for (s of stats; track s.key) {
+    @for (s of stats(); track s.key) {
       <div class="stat-card">
         <div class="stat-card__icon"><span class="material-icons">{{ s.icon }}</span></div>
         <div class="stat-card__body">
@@ -32,7 +32,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (r of recent; track r.donor) {
+            @for (r of recent(); track r.id) {
               <tr>
                 <td>{{ donorName(r) }}</td>
                 <td class="amount-cell">${{ r.amount }}</td>
@@ -49,7 +49,7 @@
     <div class="admin-card">
       <h2 class="admin-card__title">{{ 'ADMIN.OVERVIEW.CHART_TITLE' | translate }}</h2>
       <div class="chart-list">
-        @for (c of categories; track c.labelEn) {
+        @for (c of categories(); track c.category) {
           <div class="chart-row">
             <div class="chart-row__label">{{ catLabel(c) }}</div>
             <div class="chart-row__bar-wrap">

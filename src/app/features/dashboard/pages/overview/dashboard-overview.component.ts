@@ -1,45 +1,67 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { LanguageService } from '../../../../core/services/language.service';
+import { AuthService }     from '../../../../core/services/auth.service';
 import { NavbarComponent } from '../../../../shared/components/navbar/navbar.component';
 import { SiteFooterComponent } from '../../../home/components/site-footer/site-footer.component';
-import { ProjectCardComponent } from '../../../projects/components/project-card/project-card.component';
 import { DashSidebarComponent } from '../../../../shared/components/dash-sidebar/dash-sidebar.component';
-import { MOCK_PROJECTS } from '../../../home/data/mock-data';
-
-const MOCK_RECENT = [
-  { id: 1, date: '2025-05-01', projectAr: 'إعادة بناء منازل في حلب', projectEn: 'Homes in Aleppo', amount: 50, method: 'Stripe', status: 'completed' },
-  { id: 2, date: '2025-04-15', projectAr: 'الصندوق العام', projectEn: 'General Fund', amount: 25, method: 'PayPal', status: 'completed' },
-  { id: 3, date: '2025-03-22', projectAr: 'مدرسة الأمل في حمص', projectEn: 'Hope School — Homs', amount: 100, method: 'Stripe', status: 'completed' },
-];
-
-const MOCK_NOTIFICATIONS = [
-  { id: 1, typeIcon: 'check_circle', color: '#27AE60', textAr: 'تم قبول تبرعك لمشروع حلب', textEn: 'Your donation to Aleppo project was accepted', time: '2h' },
-  { id: 2, typeIcon: 'trending_up', color: '#C5952A', textAr: 'مشروع حلب وصل 80% من هدفه', textEn: 'Aleppo project reached 80% of its goal', time: '1d' },
-  { id: 3, typeIcon: 'celebration', color: '#1B6B3A', textAr: 'مشروع حمص اكتمل!', textEn: 'Homs project completed!', time: '3d' },
-];
+import { DonationService } from '../../../donate/services/donation.service';
+import { NotificationsApiService } from '../../../../core/services/notifications-api.service';
+import { AppNotification, notificationIcon } from '../../../../core/models/notification.model';
 
 @Component({
   selector: 'app-dashboard-overview',
   standalone: true,
-  imports: [RouterLink, TranslateModule, MatButtonModule, MatIconModule,
-            NavbarComponent, SiteFooterComponent, ProjectCardComponent, DashSidebarComponent],
+  imports: [RouterLink, DatePipe, TranslateModule, MatButtonModule, MatIconModule,
+            NavbarComponent, SiteFooterComponent, DashSidebarComponent],
   templateUrl: './dashboard-overview.component.html',
   styleUrl: './dashboard-overview.component.scss',
 })
-export class DashboardOverviewComponent {
-  private readonly langService = inject(LanguageService);
-  readonly isRtl = computed(() => this.langService.currentLang() === 'ar');
+export class DashboardOverviewComponent implements OnInit {
+  private readonly langService     = inject(LanguageService);
+  private readonly authService     = inject(AuthService);
+  private readonly donationService = inject(DonationService);
+  private readonly notificationsApi = inject(NotificationsApiService);
 
-  readonly recentDonations = MOCK_RECENT;
-  readonly notifications = MOCK_NOTIFICATIONS;
-  readonly savedProjects = MOCK_PROJECTS.slice(0, 3);
+  readonly isRtl    = computed(() => this.langService.currentLang() === 'ar');
+  readonly userName = computed(() => this.authService.currentUser()?.name ?? '');
+  readonly loading  = signal(true);
 
-  readonly stats = { totalDonated: 175, projectsSupported: 3, familiesHelped: 42, donationsCount: 3 };
+  readonly stats = signal({
+    total_donated:       0,
+    donations_count:     0,
+    projects_supported:  0,
+    families_helped:     0,
+  });
 
-  getProject(d: typeof MOCK_RECENT[0]): string { return this.isRtl() ? d.projectAr : d.projectEn; }
-  getNotifText(n: typeof MOCK_NOTIFICATIONS[0]): string { return this.isRtl() ? n.textAr : n.textEn; }
+  readonly recentDonations  = signal<any[]>([]);
+  readonly notifications    = signal<AppNotification[]>([]);
+
+  ngOnInit(): void {
+    this.donationService.getDashboardStats().subscribe({
+      next: (data) => { this.stats.set(data); this.loading.set(false); },
+      error: () => this.loading.set(false),
+    });
+
+    this.donationService.getHistory(1).subscribe({
+      next: (data) => this.recentDonations.set(data.data?.slice(0, 3) ?? []),
+      error: () => {},
+    });
+
+    this.notificationsApi.getNotifications().subscribe({
+      next: (page) => this.notifications.set(page.notifications.slice(0, 5)),
+      error: () => {},
+    });
+  }
+
+  getProject(d: any): string {
+    return this.isRtl() ? (d.project?.title_ar ?? 'الصندوق العام') : (d.project?.title_en ?? 'General Fund');
+  }
+
+  getNotifText(n: AppNotification): string { return n.messageAr; }
+  notifIcon(n: AppNotification): string { return notificationIcon(n); }
 }

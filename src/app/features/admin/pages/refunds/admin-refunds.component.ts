@@ -1,20 +1,8 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { LanguageService } from '../../../../core/services/language.service';
-
-interface Refund {
-  id: number; donor: string; donorAr: string;
-  amount: number; reason: string; reasonAr: string;
-  status: 'pending'|'approved'|'rejected'; date: string;
-}
-
-const MOCK: Refund[] = [
-  { id:1, donor:'Lina Ramadan', donorAr:'لينا رمضان', amount:25,  reason:'Duplicate payment',       reasonAr:'دفع مكرر',              status:'pending',  date:'2025-05-07' },
-  { id:2, donor:'Omar Khalil',  donorAr:'عمر خليل',   amount:200, reason:'Project cancelled',       reasonAr:'المشروع ألغي',           status:'pending',  date:'2025-05-06' },
-  { id:3, donor:'Hana Saleh',   donorAr:'هناء صالح',  amount:50,  reason:'Wrong project selected',  reasonAr:'اختيار مشروع خاطئ',     status:'approved', date:'2025-05-05' },
-  { id:4, donor:'Bilal Qasim',  donorAr:'بلال قاسم',  amount:100, reason:'Technical error',         reasonAr:'خطأ تقني',               status:'rejected', date:'2025-05-04' },
-];
+import { AdminApiService, AdminRefund } from '../../../../core/services/admin-api.service';
 
 @Component({
   selector: 'app-admin-refunds',
@@ -23,14 +11,33 @@ const MOCK: Refund[] = [
   templateUrl: './admin-refunds.component.html',
   styleUrl:    './admin-refunds.component.scss',
 })
-export class AdminRefundsComponent {
+export class AdminRefundsComponent implements OnInit {
   private readonly langService = inject(LanguageService);
-  readonly isRtl = computed(() => this.langService.currentLang() === 'ar');
-  readonly refunds = signal(MOCK);
+  private readonly adminApi    = inject(AdminApiService);
 
-  donorName(r: Refund): string  { return this.isRtl() ? r.donorAr : r.donor;   }
-  reasonText(r: Refund): string { return this.isRtl() ? r.reasonAr : r.reason; }
+  readonly isRtl  = computed(() => this.langService.currentLang() === 'ar');
+  readonly refunds = signal<AdminRefund[]>([]);
+  readonly loading = signal(true);
+  readonly total   = signal(0);
 
-  approve(id: number): void { this.refunds.update(list => list.map(r => r.id === id ? { ...r, status: 'approved' as const } : r)); }
-  reject(id: number): void  { this.refunds.update(list => list.map(r => r.id === id ? { ...r, status: 'rejected' as const } : r)); }
+  ngOnInit(): void { this.load(); }
+
+  load(): void {
+    this.loading.set(true);
+    this.adminApi.getRefunds().subscribe({
+      next: (res) => { this.refunds.set(res.data); this.total.set(res.meta.total); this.loading.set(false); },
+      error: () => this.loading.set(false),
+    });
+  }
+
+  approve(id: number): void {
+    this.adminApi.approveRefund(id).subscribe({ next: () => this.load() });
+  }
+
+  reject(id: number): void {
+    this.adminApi.rejectRefund(id).subscribe({ next: () => this.load() });
+  }
+
+  donorName(r: AdminRefund): string  { return r.donor_name; }
+  reasonText(r: AdminRefund): string { return r.reason; }
 }

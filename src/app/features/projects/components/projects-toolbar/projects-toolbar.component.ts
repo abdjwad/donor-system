@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
-import { ProjectsFilterService, SortOption } from '../../services/projects-filter.service';
+import { ProjectsFilterService } from '../../services/projects-filter.service';
 
 @Component({
   selector: 'app-projects-toolbar',
@@ -14,13 +14,12 @@ import { ProjectsFilterService, SortOption } from '../../services/projects-filte
 })
 export class ProjectsToolbarComponent {
   readonly filterService = inject(ProjectsFilterService);
+  private readonly translate = inject(TranslateService);
 
-  readonly sortOptions: { value: SortOption; labelKey: string }[] = [
-    { value: 'newest',        labelKey: 'PROJECTS.SORT.NEWEST'       },
-    { value: 'most_funded',   labelKey: 'PROJECTS.SORT.MOST_FUNDED'  },
-    { value: 'most_urgent',   labelKey: 'PROJECTS.SORT.MOST_URGENT'  },
-    { value: 'near_complete', labelKey: 'PROJECTS.SORT.NEAR_COMPLETE'},
-  ];
+  get sortOptions(): { value: string; labelKey: string }[] {
+    const options = this.filterService.filterOptions()?.sortOptions ?? [];
+    return options.map((o) => ({ value: o.value, labelKey: 'PROJECTS.REPAIR.SORT.' + o.value.toUpperCase() }));
+  }
 
   get shownCount(): number {
     return this.filterService.paginated().length;
@@ -30,11 +29,24 @@ export class ProjectsToolbarComponent {
     return this.filterService.totalCount();
   }
 
-  get sortValue(): SortOption {
+  get sortValue(): string {
     return this.filterService.sortBy();
   }
 
-  onSortChange(val: SortOption): void {
+  get sortDirection(): 'asc' | 'desc' {
+    return this.filterService.sortDirection();
+  }
+
+  get sortDirectionTitle(): string {
+    const key = this.sortDirection === 'asc' ? 'PROJECTS.SORT.ASC' : 'PROJECTS.SORT.DESC';
+    return this.translate.instant(key);
+  }
+
+  onSortChange(val: string): void {
     this.filterService.setSort(val);
+  }
+
+  toggleSortDirection(): void {
+    this.filterService.toggleSortDirection();
   }
 }

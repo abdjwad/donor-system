@@ -11,6 +11,7 @@ export interface Project {
   location: string;
   locationAr?: string;
   imageUrl: string;
+  images: string[];
   fundingGoal: number;
   amountRaised: number;
   donors: number;
@@ -19,6 +20,19 @@ export interface Project {
   urgency: ProjectUrgency;
   daysActive: number;
   featured?: boolean;
+  requestNumber?: string;
+  damageType?: string;
+  priority?: number | null;
+  beneficiaryName?: string;
+  beneficiaryFamilySize?: number;
+  costBreakdown?: ProjectCostItem[];
+}
+
+export interface ProjectCostItem {
+  itemName: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
 }
 
 export interface Campaign {
@@ -32,7 +46,9 @@ export interface Campaign {
   raisedAmount: number;
   daysLeft: number;
   donorCount: number;
+  isUrgent: boolean;
   featured: boolean;
+  projects?: Project[];
 }
 
 export interface Testimonial {

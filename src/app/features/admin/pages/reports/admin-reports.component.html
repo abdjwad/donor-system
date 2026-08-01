@@ -1,31 +1,201 @@
 <div class="admin-page">
+
+  <!-- Page Header -->
   <div class="admin-page__header">
-    <h1 class="admin-page__title">{{ 'ADMIN.REPORTS.TITLE' | translate }}</h1>
-    <button mat-flat-button class="admin-primary-btn">
-      <span class="material-icons">add_chart</span>
-      {{ 'ADMIN.REPORTS.GENERATE' | translate }}
-    </button>
+    <div>
+      <h1 class="admin-page__title">
+        {{ isRtl() ? 'التقارير والإحصاءات' : 'Reports & Statistics' }}
+      </h1>
+      <p class="page-subtitle">
+        {{ isRtl() ? 'تصدير بيانات التبرعات بصيغ متعددة' : 'Export donation data in multiple formats' }}
+      </p>
+    </div>
   </div>
 
-  <div class="admin-card">
-    @for (r of reports; track r.id) {
-      <div class="report-row">
-        <div class="report-row__icon">
-          <span class="material-icons">description</span>
+  <!-- Summary Stats -->
+  @if (!loading() && !error()) {
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-icon material-icons">receipt_long</span>
+        <div class="stat-body">
+          <div class="stat-value">{{ summary().total_count | number }}</div>
+          <div class="stat-label">{{ isRtl() ? 'إجمالي التبرعات' : 'Total Donations' }}</div>
         </div>
-        <div class="report-row__info">
-          <div class="report-row__title">{{ title(r) }}</div>
-          <div class="report-row__meta">
-            <span class="report-badge report-badge--{{ r.type }}">{{ typeKey(r) | translate }}</span>
-            <span class="report-period">{{ r.period }}</span>
-            <span class="report-size">{{ r.size }}</span>
+      </div>
+      <div class="stat-card stat-card--green">
+        <span class="stat-icon material-icons">attach_money</span>
+        <div class="stat-body">
+          <div class="stat-value">${{ summary().total_amount | number:'1.0-0' }}</div>
+          <div class="stat-label">{{ isRtl() ? 'إجمالي المبالغ' : 'Total Amount' }}</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon material-icons">people</span>
+        <div class="stat-body">
+          <div class="stat-value">{{ summary().total_donors | number }}</div>
+          <div class="stat-label">{{ isRtl() ? 'عدد المتبرعين' : 'Donors' }}</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon material-icons">insert_chart</span>
+        <div class="stat-body">
+          <div class="stat-value">{{ reports().length }}</div>
+          <div class="stat-label">{{ isRtl() ? 'عدد التقارير' : 'Reports' }}</div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Filter Bar -->
+  <div class="filter-card">
+    <div class="filter-card__head">
+      <span class="material-icons">filter_list</span>
+      {{ isRtl() ? 'تصفية التقارير' : 'Filter Reports' }}
+      @if (hasActiveFilters) {
+        <span class="filter-active-badge">{{ filterLabel }}</span>
+      }
+    </div>
+    <div class="filter-card__body">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>{{ isRtl() ? 'نوع التقرير' : 'Report Type' }}</mat-label>
+        <mat-select [(ngModel)]="typeFilter">
+          <mat-option value="all">{{ isRtl() ? 'الكل' : 'All' }}</mat-option>
+          <mat-option value="monthly">{{ isRtl() ? 'شهري' : 'Monthly' }}</mat-option>
+          <mat-option value="quarterly">{{ isRtl() ? 'ربعي' : 'Quarterly' }}</mat-option>
+          <mat-option value="annual">{{ isRtl() ? 'سنوي' : 'Annual' }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>{{ isRtl() ? 'من تاريخ' : 'From Date' }}</mat-label>
+        <input matInput type="date" [(ngModel)]="dateFrom">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>{{ isRtl() ? 'إلى تاريخ' : 'To Date' }}</mat-label>
+        <input matInput type="date" [(ngModel)]="dateTo">
+      </mat-form-field>
+
+      <div class="filter-btns">
+        <button mat-flat-button color="primary" (click)="applyFilters()" [disabled]="loading()">
+          <span class="material-icons">search</span>
+          {{ isRtl() ? 'تطبيق' : 'Apply' }}
+        </button>
+        @if (hasActiveFilters) {
+          <button mat-stroked-button (click)="resetFilters()">
+            <span class="material-icons">refresh</span>
+            {{ isRtl() ? 'إعادة تعيين' : 'Reset' }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Download error banner -->
+  @if (downloadError()) {
+    <div class="state-card state-card--error" style="margin-bottom: 16px;">
+      <span class="material-icons">error_outline</span>
+      <p>{{ downloadError() }}</p>
+      <button mat-stroked-button (click)="downloadError.set(null)">
+        {{ isRtl() ? 'إغلاق' : 'Dismiss' }}
+      </button>
+    </div>
+  }
+
+  <!-- Loading skeleton -->
+  @if (loading()) {
+    <div class="reports-card">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="report-row report-row--skeleton">
+          <div class="skeleton skeleton--circle"></div>
+          <div class="skeleton-lines">
+            <div class="skeleton skeleton--line skeleton--w60"></div>
+            <div class="skeleton skeleton--line skeleton--w40"></div>
+          </div>
+          <div class="skeleton skeleton--btn"></div>
+        </div>
+      }
+    </div>
+
+  <!-- Error -->
+  } @else if (error()) {
+    <div class="state-card state-card--error">
+      <span class="material-icons">wifi_off</span>
+      <p>{{ isRtl() ? 'تعذّر تحميل التقارير، تحقق من الاتصال' : 'Failed to load reports, check connection' }}</p>
+      <button mat-stroked-button (click)="load()">
+        {{ isRtl() ? 'إعادة المحاولة' : 'Retry' }}
+      </button>
+    </div>
+
+  <!-- Empty -->
+  } @else if (reports().length === 0) {
+    <div class="state-card">
+      <span class="material-icons">insert_chart_outlined</span>
+      <p>{{ isRtl() ? 'لا توجد تقارير للفترة المحددة' : 'No reports found for the selected period' }}</p>
+      @if (hasActiveFilters) {
+        <button mat-stroked-button (click)="resetFilters()">
+          {{ isRtl() ? 'مسح الفلتر' : 'Clear Filter' }}
+        </button>
+      }
+    </div>
+
+  <!-- Reports List -->
+  } @else {
+    <div class="reports-card">
+      <div class="reports-card__head">
+        <span>{{ isRtl() ? 'التقارير المتاحة' : 'Available Reports' }}</span>
+        <span class="count-badge">{{ reports().length }}</span>
+      </div>
+
+      @for (r of reports(); track r.id) {
+        <div class="report-row">
+          <!-- Icon -->
+          <div class="report-icon report-icon--{{ r.type }}">
+            <span class="material-icons">
+              {{ r.type === 'annual' ? 'bar_chart' : r.type === 'quarterly' ? 'pie_chart' : 'show_chart' }}
+            </span>
+          </div>
+
+          <!-- Info -->
+          <div class="report-info">
+            <div class="report-title">{{ title(r) }}</div>
+            <div class="report-meta">
+              <span class="type-badge type-badge--{{ r.type }}">{{ typeLabel(r) }}</span>
+              <span class="meta-sep">·</span>
+              <span class="material-icons meta-icon">event</span>
+              <span>{{ r.period }}</span>
+              <span class="meta-sep">·</span>
+              <span class="material-icons meta-icon">volunteer_activism</span>
+              <span>{{ r.count }} {{ isRtl() ? 'تبرع' : 'donations' }}</span>
+              <span class="meta-sep">·</span>
+              <span class="report-amount">${{ r.total | number:'1.0-0' }}</span>
+            </div>
+          </div>
+
+          <!-- Download Buttons -->
+          <div class="dl-group">
+            <button class="dl-btn dl-btn--pdf"
+                    (click)="download(r, 'pdf')" [disabled]="isDownloading(r, 'pdf')"
+                    [matTooltip]="isRtl() ? 'تحميل PDF' : 'Download PDF'">
+              <span class="material-icons">{{ isDownloading(r, 'pdf') ? 'hourglass_empty' : 'picture_as_pdf' }}</span>
+              <span class="dl-label">PDF</span>
+            </button>
+            <button class="dl-btn dl-btn--excel"
+                    (click)="download(r, 'excel')" [disabled]="isDownloading(r, 'excel')"
+                    [matTooltip]="isRtl() ? 'تحميل Excel' : 'Download Excel'">
+              <span class="material-icons">{{ isDownloading(r, 'excel') ? 'hourglass_empty' : 'table_chart' }}</span>
+              <span class="dl-label">Excel</span>
+            </button>
+            <button class="dl-btn dl-btn--csv"
+                    (click)="download(r, 'csv')" [disabled]="isDownloading(r, 'csv')"
+                    [matTooltip]="isRtl() ? 'تحميل CSV' : 'Download CSV'">
+              <span class="material-icons">{{ isDownloading(r, 'csv') ? 'hourglass_empty' : 'download' }}</span>
+              <span class="dl-label">CSV</span>
+            </button>
           </div>
         </div>
-        <button mat-stroked-button class="download-btn">
-          <span class="material-icons">download</span>
-          {{ 'ADMIN.REPORTS.DOWNLOAD' | translate }}
-        </button>
-      </div>
-    }
-  </div>
+      }
+    </div>
+  }
+
 </div>

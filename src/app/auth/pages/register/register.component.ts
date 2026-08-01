@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   AbstractControl,
   FormBuilder,
@@ -16,9 +16,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { SocialLoginButtonsComponent } from '../../../shared/components/social-login-buttons/social-login-buttons.component';
+import { applyAuthError } from '../../../core/utils/auth-error.util';
+import { OtpChannel } from '../../../core/models/auth-request.models';
 
 function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
   const password = group.get('password')?.value;
@@ -39,6 +42,7 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
     MatCheckboxModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatRadioModule,
     SocialLoginButtonsComponent,
   ],
   templateUrl: './register.component.html',
@@ -47,6 +51,7 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
 export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly isLoading = this.authService.isLoading;
   readonly showPassword = signal(false);
@@ -82,6 +87,7 @@ export class RegisterComponent {
       ],
       confirmPassword: ['', Validators.required],
       terms: [false, Validators.requiredTrue],
+      otpChannel: ['email' as OtpChannel, Validators.required],
     },
     { validators: passwordMatchValidator }
   );
@@ -92,6 +98,7 @@ export class RegisterComponent {
   get passwordCtrl(){ return this.registerForm.get('password')!; }
   get confirmCtrl() { return this.registerForm.get('confirmPassword')!; }
   get termsCtrl()   { return this.registerForm.get('terms')!; }
+  get otpChannelCtrl() { return this.registerForm.get('otpChannel')!; }
 
   getNameError(): string {
     if (this.nameCtrl.hasError('required'))  return 'AUTH.ERRORS.NAME_REQUIRED';
@@ -136,17 +143,23 @@ export class RegisterComponent {
       return;
     }
 
-    const { name, email, phone, password, confirmPassword } = this.registerForm.value;
+    const { name, email, phone, password, confirmPassword, otpChannel } = this.registerForm.value;
+    const channel: OtpChannel = otpChannel;
+
+    this.authService.stagePendingRegistration({
+      name,
+      email,
+      phone,
+      password,
+      password_confirmation: confirmPassword,
+      terms: true,
+      channel,
+    });
+
     this.authService
-      .register({
-        name,
-        email,
-        phone,
-        password,
-        password_confirmation: confirmPassword,
-        terms: true,
-      })
+      .sendOtp({ email, channel, phone: channel === 'whatsapp' ? phone : undefined })
       .subscribe({
+        next: () => this.router.navigate(['/auth/verify-email'], { queryParams: { email } }),
         error: (err: HttpErrorResponse) => this.handleError(err),
       });
   }
@@ -156,14 +169,7 @@ export class RegisterComponent {
   }
 
   private handleError(err: HttpErrorResponse): void {
-    if (err.status === 422 && err.error?.errors) {
-      const errors: Record<string, string[]> = err.error.errors;
-      Object.entries(errors).forEach(([field, messages]) => {
-        const ctrl = this.registerForm.get(field);
-        if (ctrl) ctrl.setErrors({ serverError: messages[0] });
-      });
-    } else {
-      this.apiError.set(err.error?.message ?? 'AUTH.ERRORS.GENERIC');
-    }
+    const bannerKey = applyAuthError(err, this.registerForm);
+    if (bannerKey) this.apiError.set(bannerKey);
   }
 }

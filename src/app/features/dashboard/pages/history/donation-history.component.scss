@@ -27,6 +27,14 @@
 }
 
 .project-cell { font-weight: 600; color: $color-text-primary; max-width: 200px; }
+.redirected-note {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-inline-start: 4px;
+  color: $color-text-muted;
+  cursor: help;
+  .material-icons { font-size: 1rem; }
+}
 .amount-cell { font-weight: 700; color: $color-primary; font-family: var(--font-latin); }
 .empty-row { text-align: center; color: $color-text-muted; padding: $space-2xl !important; }
 

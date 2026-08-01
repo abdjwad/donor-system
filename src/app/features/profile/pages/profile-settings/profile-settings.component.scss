@@ -47,6 +47,15 @@
   .material-icons { font-size: 1.125rem; }
 }
 
+.error-msg {
+  display: flex; align-items: center; gap: $space-sm;
+  background: rgba($color-error, 0.08); border: 1px solid rgba($color-error, 0.3);
+  border-radius: $radius-md; padding: $space-sm $space-md;
+  font-size: 0.875rem; font-weight: 600; color: $color-error;
+  margin-bottom: $space-lg;
+  .material-icons { font-size: 1.125rem; }
+}
+
 .save-btn {
   height: 44px !important; padding: 0 $space-xl !important;
   font-weight: 700 !important; border-radius: $radius-md !important;

@@ -1,31 +1,39 @@
 <section class="stats-section">
   <div class="stats-section__gold-top"></div>
 
-  <div class="stats-section__inner">
+  <div class="stats-live-bar">
+    <span class="live-dot"></span>
+    <span class="live-label">مباشر</span>
+    @if (isLoaded()) {
+      <span class="live-updated">{{ lastUpdatedLabel() }}</span>
+    }
+  </div>
+
+  <div class="stats-section__inner" [class.stats-flash]="flashing()">
 
     <div class="stat-block">
-      <span class="stat-number">{{ stats.donors | number }}+</span>
+      <span class="stat-number">{{ display().donors | number }}+</span>
       <span class="stat-label">{{ 'HOME.STATS.DONORS' | translate }}</span>
     </div>
 
     <div class="stats-section__separator"></div>
 
     <div class="stat-block">
-      <span class="stat-number">{{ stats.families | number }}+</span>
+      <span class="stat-number">{{ display().families | number }}+</span>
       <span class="stat-label">{{ 'HOME.STATS.FAMILIES' | translate }}</span>
     </div>
 
     <div class="stats-section__separator"></div>
 
     <div class="stat-block">
-      <span class="stat-number">{{ stats.projects | number }}+</span>
+      <span class="stat-number">{{ display().projects | number }}+</span>
       <span class="stat-label">{{ 'HOME.STATS.PROJECTS' | translate }}</span>
     </div>
 
     <div class="stats-section__separator"></div>
 
     <div class="stat-block">
-      <span class="stat-number">$2.4M+</span>
+      <span class="stat-number">{{ formatAmount(display().amount) }}+</span>
       <span class="stat-label">{{ 'HOME.STATS.AMOUNT' | translate }}</span>
     </div>
 

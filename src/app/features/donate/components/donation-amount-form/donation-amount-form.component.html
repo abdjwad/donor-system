@@ -50,16 +50,33 @@
 
     <!-- ── Project Selector ── -->
     <div class="section-group">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>{{ 'DONATE.AMOUNT.PROJECT_LABEL' | translate }}</mat-label>
-        <mat-icon matPrefix class="field-prefix-icon">handshake</mat-icon>
-        <mat-select formControlName="project_id">
-          <mat-option [value]="null">{{ 'DONATE.AMOUNT.GENERAL_FUND' | translate }}</mat-option>
-          @for (project of projects(); track project.id) {
-            <mat-option [value]="project.id">{{ project.titleAr }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+      @if (lockedProject(); as p) {
+        <div class="locked-project-banner">
+          <span class="material-icons locked-project-banner__icon">handshake</span>
+          <div class="locked-project-banner__text">
+            <span class="locked-project-banner__label">{{ 'DONATE.AMOUNT.DONATING_TO' | translate }}</span>
+            <span class="locked-project-banner__title">{{ p.titleAr }}</span>
+          </div>
+          <button type="button" class="locked-project-banner__switch" (click)="switchToGeneralFund()">
+            {{ 'DONATE.AMOUNT.SWITCH_GENERAL_FUND' | translate }}
+          </button>
+        </div>
+      } @else if (lockedProjectLoading()) {
+        <div class="locked-project-banner locked-project-banner--loading">
+          {{ 'DONATE.AMOUNT.LOADING_PROJECT' | translate }}
+        </div>
+      } @else {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'DONATE.AMOUNT.PROJECT_LABEL' | translate }}</mat-label>
+          <mat-icon matPrefix class="field-prefix-icon">handshake</mat-icon>
+          <mat-select formControlName="project_id">
+            <mat-option [value]="null">{{ 'DONATE.AMOUNT.GENERAL_FUND' | translate }}</mat-option>
+            @for (project of projects(); track project.id) {
+              <mat-option [value]="project.id">{{ project.titleAr }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
     </div>
 
     <!-- ── Dedication Message ── -->

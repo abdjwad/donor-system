@@ -1,5 +1,5 @@
-import { Component, computed, inject, ViewChild } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, computed, inject, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatStepperModule, MatStepper } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,13 +29,24 @@ import { DonationSummaryComponent } from '../../components/donation-summary/dona
   templateUrl: './guest-checkout.component.html',
   styleUrl: './guest-checkout.component.scss',
 })
-export class GuestCheckoutComponent {
+export class GuestCheckoutComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
 
   private readonly langService = inject(LanguageService);
+  private readonly route = inject(ActivatedRoute);
   readonly donationService = inject(DonationService);
 
   readonly isRtl = computed(() => this.langService.currentLang() === 'ar');
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      if (params['project']) {
+        this.donationService.updateState({ project_id: +params['project'] });
+      } else if (params['campaign']) {
+        this.donationService.updateState({ campaign_id: +params['campaign'] });
+      }
+    });
+  }
 
   onStep1Next(): void {
     this.stepper.next();

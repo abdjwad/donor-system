@@ -28,12 +28,4 @@
 }
 .ba-divider { display: flex; align-items: center; justify-content: center; .material-icons { font-size: 1.5rem; color: $color-text-muted; } }
 
-.reports-list { display: flex; flex-direction: column; gap: $space-md; }
-.report-item { background: $color-card-bg; border: 1px solid $color-border; border-radius: $radius-lg; padding: $space-md $space-lg; display: flex; align-items: center; gap: $space-md; box-shadow: $shadow-card;
-  &__icon { width: 40px; height: 40px; border-radius: $radius-md; background: rgba($color-primary,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; .material-icons { font-size: 1.25rem; color: $color-primary; } }
-  &__info { flex: 1; }
-  &__title { display: block; font-size: 0.9rem; font-weight: 700; color: $color-text-primary; }
-  &__date { font-size: 0.8125rem; color: $color-text-muted; }
-}
-
-.report-dl-btn { height: 36px !important; font-size: 0.8125rem !important; font-weight: 600 !important; border-radius: $radius-md !important; border-color: $color-border !important; display: flex !important; align-items: center; gap: 4px; .material-icons { font-size: 0.9375rem; } }
+.impact-empty { font-size: 0.875rem; color: $color-text-muted; text-align: center; padding: $space-lg 0; }

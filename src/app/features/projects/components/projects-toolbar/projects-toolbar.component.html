@@ -12,5 +12,9 @@
         <option [value]="opt.value">{{ opt.labelKey | translate }}</option>
       }
     </select>
+    <button type="button" class="toolbar__sort-direction" [title]="sortDirectionTitle"
+            (click)="toggleSortDirection()">
+      <span class="material-icons">{{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
+    </button>
   </div>
 </div>

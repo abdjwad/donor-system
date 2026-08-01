@@ -17,6 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { SocialLoginButtonsComponent } from '../../../shared/components/social-login-buttons/social-login-buttons.component';
+import { applyAuthError } from '../../../core/utils/auth-error.util';
 
 @Component({
   selector: 'app-login',
@@ -91,13 +92,7 @@ export class LoginComponent {
   }
 
   private handleError(err: HttpErrorResponse): void {
-    if (err.status === 422 && err.error?.errors) {
-      const errors: Record<string, string[]> = err.error.errors;
-      Object.entries(errors).forEach(([field, messages]) => {
-        this.loginForm.get(field)?.setErrors({ serverError: messages[0] });
-      });
-    } else {
-      this.apiError.set(err.error?.message ?? 'AUTH.ERRORS.GENERIC');
-    }
+    const bannerKey = applyAuthError(err, this.loginForm);
+    if (bannerKey) this.apiError.set(bannerKey);
   }
 }

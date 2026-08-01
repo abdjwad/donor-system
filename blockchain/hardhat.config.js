@@ -1,0 +1,49 @@
+require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
+
+// مفتاح المحفظة (0) من Ganache الحتمي (deterministic)
+// هذا مفتاح للاختبار المحلي فقط — لا تستخدمه في mainnet أبداً
+const GANACHE_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY
+  || "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d";
+
+const ALCHEMY_API_KEY     = process.env.ALCHEMY_API_KEY         || "";
+const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY     || "";
+
+module.exports = {
+  solidity: {
+    version: "0.8.24",
+    settings: { optimizer: { enabled: true, runs: 200 } },
+  },
+
+  networks: {
+    hardhat: { chainId: 31337 },
+
+    // ── Ganache CLI — 10 محافظ حتمية ─────────────────────────────
+    ganache: {
+      url:     "http://127.0.0.1:8545",
+      chainId: 1337,
+      accounts: [
+        "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d",
+        "0x6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1",
+        "0x6370fd033278c143179d81c5526140625662b8daa446c22ee2d73db3707e620c",
+        "0x646f1ce2fdad0e6deeeb5c7e8e5543bdde65e86029e2fd9fc169899c440a7913",
+        "0xadd53f9a7e588d003326d1cbf9e4a43c061aadd9bc938c843a79e7b4fd2ad743",
+        "0x395df67f0c2d2d9fe1ad08d1bc8b6627011959b79c53d7dd6a3536a33ab8a4fd",
+      ],
+    },
+
+    amoy: {
+      url:      `https://polygon-amoy.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+      accounts: [GANACHE_PRIVATE_KEY],
+      chainId:  80002,
+    },
+
+    polygon: {
+      url:      `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+      accounts: [GANACHE_PRIVATE_KEY],
+      chainId:  137,
+    },
+  },
+
+  paths: { sources: "./contracts", tests: "./test", cache: "./cache", artifacts: "./artifacts" },
+};

@@ -1,0 +1,74 @@
+@use '../../../../styles/variables' as *;
+
+.wallet-page { min-height: 100vh; background: $color-background; &.rtl { direction: rtl; } }
+.wallet-layout { display: grid; grid-template-columns: 220px 1fr; gap: $space-xl; max-width: 1200px; margin: $space-xl auto; padding: 0 $space-xl; @media (max-width: $bp-tablet) { grid-template-columns: 1fr; } }
+
+.wallet-header { margin-bottom: $space-xl; }
+.wallet-title { font-size: 1.375rem; font-weight: 800; color: $color-text-primary; margin: 0 0 4px; letter-spacing: -0.02em; }
+.wallet-subtitle { font-size: 0.875rem; color: $color-text-muted; margin: 0; max-width: 520px; }
+
+.balance-card {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  border-radius: $radius-xl; padding: $space-xl; margin-bottom: $space-lg;
+  color: #fff; box-shadow: $shadow-card;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: $space-md;
+}
+.balance-card__label { font-size: 0.8125rem; opacity: 0.75; margin-bottom: 4px; }
+.balance-card__amount { font-size: 2rem; font-weight: 800; font-family: var(--font-latin); }
+.topup-btn { background: #fff !important; color: $color-primary !important; font-weight: 700 !important; border-radius: $radius-md !important; display: flex !important; align-items: center; gap: 6px; }
+
+.topup-form-card { background: $color-card-bg; border: 1px solid $color-border; border-radius: $radius-xl; padding: $space-xl; margin-bottom: $space-lg; box-shadow: $shadow-card; }
+.topup-form-title { font-size: 1rem; font-weight: 700; color: $color-text-primary; margin: 0 0 $space-md; }
+
+.amount-field { margin-bottom: $space-md;
+  label { display: block; font-size: 0.8125rem; font-weight: 600; color: $color-text-secondary; margin-bottom: 6px; }
+  input { width: 100%; padding: 10px 14px; border: 1.5px solid $color-border; border-radius: $radius-md; font-size: 0.9375rem; font-family: inherit; }
+}
+
+.method-tabs { display: flex; flex-wrap: wrap; gap: $space-xs; margin-bottom: $space-md; }
+.method-tab {
+  height: 38px; padding: 0 $space-md; border: 1.5px solid $color-border; border-radius: $radius-full;
+  background: $color-card-bg; font-size: 0.8125rem; font-weight: 600; cursor: pointer; font-family: inherit;
+  color: $color-text-secondary; transition: $transition-fast;
+  &.active { border-color: $color-primary; background: rgba($color-primary,0.08); color: $color-primary; }
+  &:hover:not(.active) { border-color: $color-primary; }
+}
+
+.topup-actions { display: flex; justify-content: flex-end; gap: $space-sm; margin-top: $space-md; }
+.submit-btn { background: $color-primary !important; color: #fff !important; font-weight: 700 !important; border-radius: $radius-md !important; }
+
+.bank-proof-step { margin-top: $space-lg; padding-top: $space-lg; border-top: 1px solid $color-border; }
+.wallet-card { background: $color-background; border: 1px solid $color-border; border-radius: $radius-md; padding: $space-md; margin-bottom: $space-md; }
+.wallet-card__row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid $color-border; font-size: 0.875rem;
+  &:last-child { border-bottom: none; }
+}
+.wallet-card__label { color: $color-text-muted; }
+.wallet-card__value { font-weight: 700; color: $color-text-primary; &--mono { font-family: monospace; direction: ltr; } }
+
+.proof-form input[type="file"] { font-size: 0.875rem; }
+.field-error { color: $color-error; font-size: 0.8125rem; margin: 4px 0 0; }
+
+.success-banner {
+  display: flex; align-items: center; gap: $space-sm; margin-top: $space-md;
+  background: rgba($color-success,0.08); color: $color-success; border-radius: $radius-md;
+  padding: $space-md; font-size: 0.875rem; font-weight: 600;
+}
+
+.history-table-wrap { background: $color-card-bg; border: 1px solid $color-border; border-radius: $radius-xl; overflow-x: auto; box-shadow: $shadow-card; }
+.history-table { width: 100%; border-collapse: collapse;
+  th, td { padding: $space-md $space-lg; text-align: start; font-size: 0.875rem; border-bottom: 1px solid $color-background; }
+  th { font-weight: 700; color: $color-text-secondary; font-size: 0.8125rem; letter-spacing: 0.03em; text-transform: uppercase; background: $color-background; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: rgba($color-primary,0.02); }
+}
+.amount-cell { font-weight: 700; color: $color-primary; font-family: var(--font-latin); }
+.empty-row { text-align: center; color: $color-text-muted; padding: $space-2xl !important; }
+
+.status-badge { border-radius: $radius-full; padding: 3px 10px; font-size: 0.75rem; font-weight: 600;
+  &--completed { background: rgba($color-success,0.1); color: $color-success; }
+  &--pending   { background: rgba($color-warning,0.1); color: $color-warning; }
+  &--failed    { background: rgba($color-error,0.1); color: $color-error; }
+}
+
+.auth-error-banner { display: flex; align-items: center; gap: $space-sm; background: rgba($color-error,0.08); color: $color-error; border-radius: $radius-md; padding: $space-md; font-size: 0.875rem; }
+.mt-md { margin-top: $space-md; }

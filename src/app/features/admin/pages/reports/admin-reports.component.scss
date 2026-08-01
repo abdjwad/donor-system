@@ -1,1 +1,309 @@
-@use '../../../../styles/admin';
+$green:  #1B6B3A;
+$gold:   #C5952A;
+$blue:   #1565c0;
+$radius: 14px;
+
+// ── Page subtitle ────────────────────────────────────────────────
+.page-subtitle {
+  font-size: 13px;
+  color: #888;
+  margin-top: 2px;
+}
+
+// ── Summary stats ────────────────────────────────────────────────
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 500px) { grid-template-columns: 1fr; }
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: $radius;
+  border: 1px solid #eef2ee;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+
+  &--green .stat-icon { background: #e8f5ee; color: $green; }
+
+  .stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #f4f4f4;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: #999;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+}
+
+// ── Filter Card ──────────────────────────────────────────────────
+.filter-card {
+  background: #fff;
+  border-radius: $radius;
+  border: 1px solid #eef2ee;
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: #f8fdf9;
+    border-bottom: 1px solid #eef2ee;
+    font-size: 13px;
+    font-weight: 600;
+    color: $green;
+
+    .material-icons { font-size: 18px; }
+  }
+
+  &__body {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 20px;
+  }
+}
+
+.filter-active-badge {
+  margin-inline-start: auto;
+  background: #e8f5ee;
+  color: $green;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.filter-field {
+  flex: 1;
+  min-width: 150px;
+  max-width: 220px;
+}
+
+.filter-btns {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-top: 2px;
+
+  button {
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    .material-icons { font-size: 17px; }
+  }
+}
+
+// ── Reports Card ─────────────────────────────────────────────────
+.reports-card {
+  background: #fff;
+  border-radius: $radius;
+  border: 1px solid #eef2ee;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: #f8fdf9;
+    border-bottom: 1px solid #eef2ee;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.count-badge {
+  background: $green;
+  color: #fff;
+  border-radius: 20px;
+  padding: 1px 9px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+// ── Report Row ───────────────────────────────────────────────────
+.report-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f5f5f5;
+  transition: background .12s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #fafdf9; }
+  &--skeleton { pointer-events: none; }
+}
+
+// ── Report Icon ──────────────────────────────────────────────────
+.report-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .material-icons { font-size: 22px; }
+
+  &--monthly   { background: #e8f5ee; .material-icons { color: $green; } }
+  &--quarterly { background: #fff8e1; .material-icons { color: $gold; } }
+  &--annual    { background: #e3f2fd; .material-icons { color: $blue; } }
+}
+
+// ── Report Info ──────────────────────────────────────────────────
+.report-info { flex: 1; min-width: 0; }
+
+.report-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 5px;
+}
+
+.report-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-size: 12px;
+  color: #777;
+
+  .meta-icon { font-size: 13px; color: #aaa; }
+  .meta-sep  { color: #ccc; }
+}
+
+.type-badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &--monthly   { background: #e8f5ee; color: $green; }
+  &--quarterly { background: #fff8e1; color: $gold; }
+  &--annual    { background: #e3f2fd; color: $blue; }
+}
+
+.report-amount {
+  font-weight: 700;
+  color: $green;
+}
+
+// ── Download Buttons ─────────────────────────────────────────────
+.dl-group {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dl-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 52px;
+  height: 48px;
+  border-radius: 10px;
+  border: 1.5px solid;
+  background: transparent;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: inherit;
+  padding: 0;
+
+  .material-icons { font-size: 16px; }
+  .dl-label       { font-size: 9px; font-weight: 700; letter-spacing: .3px; }
+
+  &--pdf {
+    border-color: #ffd5d5;
+    color: #c62828;
+    &:hover { background: #fce4e4; border-color: #c62828; }
+  }
+  &--excel {
+    border-color: #c8e6c9;
+    color: $green;
+    &:hover { background: #e8f5ee; border-color: $green; }
+  }
+  &--csv {
+    border-color: #c5cae9;
+    color: $blue;
+    &:hover { background: #e8eaf6; border-color: $blue; }
+  }
+}
+
+// ── State Cards ──────────────────────────────────────────────────
+.state-card {
+  background: #fff;
+  border-radius: $radius;
+  border: 1px solid #eef2ee;
+  padding: 48px 24px;
+  text-align: center;
+  color: #aaa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  .material-icons { font-size: 52px; color: #ddd; }
+  p { margin: 0; font-size: 14px; }
+
+  &--error .material-icons { color: #ffcdd2; }
+}
+
+// ── Skeleton ─────────────────────────────────────────────────────
+.skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 6px;
+
+  &--circle { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; }
+  &--line   { height: 11px; }
+  &--w60    { width: 60%; }
+  &--w40    { width: 35%; }
+  &--btn    { width: 160px; height: 48px; border-radius: 10px; flex-shrink: 0; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

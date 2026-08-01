@@ -1,4 +1,46 @@
+@use 'sass:color';
 @use '../../../styles/variables' as *;
+
+// ── User card at top ─────────────────────────────────────────────
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-sm $space-sm $space-md;
+  margin-bottom: $space-xs;
+  border-bottom: 1px solid $color-border;
+
+  &__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba($color-primary, 0.1);
+    border: 1.5px solid rgba($color-primary, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    .material-icons { font-size: 1.375rem; color: $color-primary; }
+  }
+
+  &__name {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $color-text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__role {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: $color-text-muted;
+    margin-top: 1px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+}
 
 .dash-sidebar-comp {
   background: $color-card-bg;
@@ -94,8 +136,8 @@
 
     &:hover {
       background: rgba($color-gold, 0.1);
-      color: darken(#C5952A, 10%);
-      .sidebar-link__icon { color: darken(#C5952A, 10%); }
+      color: color.adjust(#C5952A, $lightness: -10%);
+      .sidebar-link__icon { color: color.adjust(#C5952A, $lightness: -10%); }
     }
 
     &.active {
@@ -122,6 +164,45 @@
   padding: 0 5px;
   font-family: var(--font-latin);
   flex-shrink: 0;
+}
+
+// ── Logout ────────────────────────────────────────────────────────
+.sidebar-section--logout {
+  border-top: 1px solid $color-border;
+  padding-top: $space-sm;
+  margin-top: $space-xs;
+}
+
+.sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  width: 100%;
+  padding: 9px $space-sm;
+  border-radius: $radius-md;
+  border: none;
+  background: none;
+  color: $color-text-muted;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: start;
+  transition: $transition-fast;
+
+  &__icon {
+    font-size: 1.125rem !important;
+    color: $color-text-muted;
+    transition: $transition-fast;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: rgba($color-error, 0.07);
+    color: $color-error;
+
+    .sidebar-logout__icon { color: $color-error; }
+  }
 }
 
 // ── Admin chip ────────────────────────────────────────────────────

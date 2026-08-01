@@ -1,133 +1,139 @@
-import { computed, Injectable, signal } from '@angular/core';
-import { Project, ProjectCategory, ProjectStatus, ProjectUrgency } from '../../../core/models/project.model';
-import { MOCK_PROJECTS } from '../../home/data/mock-data';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { RepairProjectsApiService } from '../../../core/services/repair-projects-api.service';
+import {
+  AdvancedSearchParams,
+  ProjectsFilterOptions,
+  ProjectsStatistics,
+  RepairProject,
+} from '../../../core/models/repair-project.model';
 
-export type SortOption = 'newest' | 'most_funded' | 'most_urgent' | 'near_complete';
+export type FundingStatusFilter = 'all' | 'needs_funding' | 'completed';
 
-export interface FilterState {
-  status: ProjectStatus | 'all';
-  categories: ProjectCategory[];
-  locations: string[];
-  urgencies: ProjectUrgency[];
+export interface RepairFilterState {
+  fundingStatus: FundingStatusFilter;
+  damageType: string;
+  city: string;
 }
 
-const DEFAULT_FILTERS: FilterState = {
-  status: 'all',
-  categories: [],
-  locations: [],
-  urgencies: [],
-};
+const DEFAULT_FILTERS: RepairFilterState = { fundingStatus: 'needs_funding', damageType: '', city: '' };
+const DEFAULT_SORT_BY = 'created_at';
+const DEFAULT_SORT_DIRECTION: 'asc' | 'desc' = 'desc';
+const DEFAULT_PAGE_SIZE = 10;
 
 @Injectable({ providedIn: 'root' })
 export class ProjectsFilterService {
-  readonly allProjects = MOCK_PROJECTS;
-  readonly filters   = signal<FilterState>({ ...DEFAULT_FILTERS });
-  readonly search    = signal('');
-  readonly sortBy    = signal<SortOption>('newest');
-  readonly page      = signal(1);
-  readonly pageSize  = signal(12);
+  private readonly api = inject(RepairProjectsApiService);
 
-  readonly filtered = computed(() => {
-    const f = this.filters();
-    const q = this.search().toLowerCase().trim();
+  // ── State ──────────────────────────────────────────────────────
+  readonly filters = signal<RepairFilterState>({ ...DEFAULT_FILTERS });
+  readonly search = signal('');
+  readonly sortBy = signal(DEFAULT_SORT_BY);
+  readonly sortDirection = signal<'asc' | 'desc'>(DEFAULT_SORT_DIRECTION);
+  readonly page = signal(1);
+  readonly pageSize = signal(DEFAULT_PAGE_SIZE);
+  readonly loading = signal(false);
+  readonly filterOptionsLoading = signal(false);
 
-    return this.allProjects.filter((p) => {
-      if (f.status !== 'all' && p.status !== f.status) return false;
-      if (f.categories.length && !f.categories.includes(p.category)) return false;
-      if (f.locations.length && !f.locations.includes(p.location)) return false;
-      if (f.urgencies.length && !f.urgencies.includes(p.urgency)) return false;
-      if (q) {
-        const inTitle = p.titleAr.includes(q) || p.title.toLowerCase().includes(q);
-        const inLocation = p.location.toLowerCase().includes(q) || (p.locationAr ?? '').includes(q);
-        if (!inTitle && !inLocation) return false;
-      }
-      return true;
+  // ── API data ───────────────────────────────────────────────────
+  readonly projects = signal<RepairProject[]>([]);
+  readonly statistics = signal<ProjectsStatistics>({ total: 0 });
+  readonly filterOptions = signal<ProjectsFilterOptions | null>(null);
+
+  readonly totalCount = computed(() => this.statistics().total);
+  readonly totalPages = computed(() => this.statistics().lastPage ?? 1);
+
+  // للـ paginated نستخدم projects مباشرة
+  readonly paginated = this.projects;
+
+  // ── Load filter options (مرة واحدة) ───────────────────────────
+  loadFilterOptions(): void {
+    if (this.filterOptions() || this.filterOptionsLoading()) return;
+    this.filterOptionsLoading.set(true);
+    this.api.getFilterOptions().subscribe({
+      next: (opts) => {
+        this.filterOptions.set(opts);
+        this.filterOptionsLoading.set(false);
+      },
+      error: () => this.filterOptionsLoading.set(false),
     });
-  });
+  }
 
-  readonly sorted = computed(() => {
-    const list = [...this.filtered()];
-    switch (this.sortBy()) {
-      case 'most_funded':   return list.sort((a, b) => b.amountRaised - a.amountRaised);
-      case 'most_urgent':   return list.sort((a, b) => this.urgencyScore(b) - this.urgencyScore(a));
-      case 'near_complete': return list.sort((a, b) => this.pct(b) - this.pct(a));
-      default:              return list.sort((a, b) => b.daysActive - a.daysActive);
-    }
-  });
+  // ── Load projects ──────────────────────────────────────────────
+  load(): void {
+    this.loading.set(true);
 
-  readonly totalCount = computed(() => this.sorted().length);
-  readonly totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()));
+    this.api.advancedSearch(this.buildParams()).subscribe({
+      next: (res) => {
+        this.projects.set(res.projects);
+        this.statistics.set(res.statistics);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
+    });
+  }
 
-  readonly paginated = computed(() => {
-    const start = (this.page() - 1) * this.pageSize();
-    return this.sorted().slice(start, start + this.pageSize());
-  });
+  private buildParams(): AdvancedSearchParams {
+    const f = this.filters();
+    return {
+      city: f.city || undefined,
+      damage_type: f.damageType || undefined,
+      funding_status: f.fundingStatus !== 'all' ? f.fundingStatus : undefined,
+      sort_by: this.sortBy(),
+      sort_direction: this.sortDirection(),
+      per_page: this.pageSize(),
+      page: this.page(),
+      search: this.search() || undefined,
+    };
+  }
 
-  readonly uniqueLocations = computed(() =>
-    [...new Set(this.allProjects.map((p) => p.location))].sort()
-  );
-
+  // ── Filter actions ─────────────────────────────────────────────
   setSearch(q: string): void {
     this.search.set(q);
     this.page.set(1);
+    this.load();
   }
 
-  setSort(s: SortOption): void {
-    this.sortBy.set(s);
+  setFundingStatus(fundingStatus: FundingStatusFilter): void {
+    this.filters.update((f) => ({ ...f, fundingStatus }));
     this.page.set(1);
+    this.load();
+  }
+
+  setDamageType(damageType: string): void {
+    this.filters.update((f) => ({ ...f, damageType }));
+    this.page.set(1);
+    this.load();
+  }
+
+  setCity(city: string): void {
+    this.filters.update((f) => ({ ...f, city }));
+    this.page.set(1);
+    this.load();
+  }
+
+  setSort(sortBy: string): void {
+    this.sortBy.set(sortBy);
+    this.page.set(1);
+    this.load();
+  }
+
+  toggleSortDirection(): void {
+    this.sortDirection.update((d) => (d === 'asc' ? 'desc' : 'asc'));
+    this.page.set(1);
+    this.load();
   }
 
   setPage(p: number): void {
     this.page.set(p);
-  }
-
-  toggleCategory(cat: ProjectCategory): void {
-    this.filters.update((f) => {
-      const cats = f.categories.includes(cat)
-        ? f.categories.filter((c) => c !== cat)
-        : [...f.categories, cat];
-      return { ...f, categories: cats };
-    });
-    this.page.set(1);
-  }
-
-  toggleLocation(loc: string): void {
-    this.filters.update((f) => {
-      const locs = f.locations.includes(loc)
-        ? f.locations.filter((l) => l !== loc)
-        : [...f.locations, loc];
-      return { ...f, locations: locs };
-    });
-    this.page.set(1);
-  }
-
-  toggleUrgency(urg: ProjectUrgency): void {
-    this.filters.update((f) => {
-      const urgs = f.urgencies.includes(urg)
-        ? f.urgencies.filter((u) => u !== urg)
-        : [...f.urgencies, urg];
-      return { ...f, urgencies: urgs };
-    });
-    this.page.set(1);
-  }
-
-  setStatus(s: ProjectStatus | 'all'): void {
-    this.filters.update((f) => ({ ...f, status: s }));
-    this.page.set(1);
+    this.load();
   }
 
   reset(): void {
     this.filters.set({ ...DEFAULT_FILTERS });
     this.search.set('');
-    this.sortBy.set('newest');
+    this.sortBy.set(DEFAULT_SORT_BY);
+    this.sortDirection.set(DEFAULT_SORT_DIRECTION);
     this.page.set(1);
-  }
-
-  private urgencyScore(p: Project): number {
-    return p.urgency === 'high' ? 3 : p.urgency === 'medium' ? 2 : 1;
-  }
-
-  private pct(p: Project): number {
-    return p.fundingGoal > 0 ? (p.amountRaised / p.fundingGoal) * 100 : 0;
+    this.load();
   }
 }

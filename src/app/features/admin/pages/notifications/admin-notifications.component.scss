@@ -1,0 +1,15 @@
+@use '../../../../styles/variables' as *;
+
+.notif-admin-list { display: flex; flex-direction: column; }
+.notif-admin-item {
+  display: flex; align-items: flex-start; gap: $space-md; padding: $space-md;
+  border-bottom: 1px solid $color-background; cursor: pointer; position: relative;
+  transition: $transition-fast;
+  &:last-child { border-bottom: none; }
+  &:hover { background: rgba($color-primary, 0.02); }
+  &--unread { background: rgba($color-primary, 0.03); }
+  &__icon { color: $color-primary; font-size: 1.25rem; margin-top: 2px; }
+  &__body { flex: 1; p { margin: 0 0 4px; font-size: 0.875rem; color: $color-text-primary; } }
+  &__time { font-size: 0.75rem; color: $color-text-muted; }
+  &__dot { width: 8px; height: 8px; border-radius: 50%; background: $color-primary; margin-top: 6px; flex-shrink: 0; }
+}

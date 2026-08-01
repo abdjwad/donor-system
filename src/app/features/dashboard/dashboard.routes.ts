@@ -12,6 +12,11 @@ export const dashboardRoutes: Routes = [
       import('./pages/history/donation-history.component').then((m) => m.DonationHistoryComponent),
   },
   {
+    path: 'wallet',
+    loadComponent: () =>
+      import('../wallet/pages/my-wallet/my-wallet.component').then((m) => m.MyWalletComponent),
+  },
+  {
     path: 'impact',
     loadComponent: () =>
       import('./pages/impact/donation-impact.component').then((m) => m.DonationImpactComponent),

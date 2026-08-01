@@ -1,0 +1,513 @@
+<div class="admin-page">
+
+  <!-- ── Header ── -->
+  <div class="admin-page__header">
+    <div class="disb-back-title">
+      <a routerLink="/admin/disbursements" class="disb-back">
+        <span class="material-icons">arrow_back</span>
+      </a>
+      <h1 class="admin-page__title" style="margin:0">
+        {{ isRtl() ? 'تفاصيل خطة الصرف' : 'Disbursement Plan' }}
+      </h1>
+    </div>
+
+    @if (plan()) {
+      <button mat-button class="camp-btn"
+              [style.color]="planSuspended() ? '#27AE60' : '#C0392B'"
+              [style.borderColor]="planSuspended() ? 'rgba(39,174,96,0.3)' : 'rgba(192,57,43,0.3)'"
+              (click)="toggleSuspend()">
+        <span class="material-icons">{{ planSuspended() ? 'play_circle' : 'pause_circle' }}</span>
+        {{ planSuspended()
+            ? (isRtl() ? 'استئناف الخطة' : 'Resume Plan')
+            : (isRtl() ? 'تعليق الخطة' : 'Suspend Plan') }}
+      </button>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="admin-card">
+      <div class="admin-loading">{{ isRtl() ? 'جاري التحميل...' : 'Loading...' }}</div>
+    </div>
+  }
+
+  @if (!loading() && plan()) {
+
+    <!-- Suspended banner -->
+    @if (planSuspended()) {
+      <div class="disb-suspended-banner">
+        <span class="material-icons">warning</span>
+        {{ isRtl()
+            ? 'هذه الخطة موقوفة مؤقتاً — لا يمكن تنفيذ أي إجراءات على الدفعات حتى يتم استئنافها.'
+            : 'This plan is suspended — no tranche actions can be taken until it is resumed.' }}
+      </div>
+    }
+
+    <!-- Maker-Checker notice (segregation of duties) -->
+    @if (isPlanOwner()) {
+      <div class="disb-owner-banner">
+        <span class="material-icons">shield</span>
+        {{ isRtl()
+            ? 'أنت من أنشأ هذه الخطة — لا يمكنك الموافقة على دفعاتها أو رفضها أو تنفيذ تحويلاتها (مبدأ فصل المهام). يلزم أن يقوم شخص آخر بالمراجعة والتنفيذ.'
+            : 'You created this plan — you cannot approve, reject, or record transfers for its tranches (segregation of duties). Another reviewer must handle these steps.' }}
+      </div>
+    }
+
+    <!-- ── Info Cards ── -->
+    <div class="disb-info-grid">
+
+      <!-- Project -->
+      <div class="admin-card disb-info-card">
+        <div class="admin-card__title">
+          <span class="material-icons">construction</span>
+          {{ isRtl() ? 'المشروع' : 'Project' }}
+        </div>
+        <div class="disb-info-row">
+          <span class="disb-info-label">{{ isRtl() ? 'الاسم' : 'Name' }}</span>
+          <span class="disb-info-val">{{ projectTitle() }}</span>
+        </div>
+        <div class="disb-info-row">
+          <span class="disb-info-label">{{ isRtl() ? 'الموقع' : 'Location' }}</span>
+          <span class="disb-info-val">{{ plan()!.project_location }}</span>
+        </div>
+        <div class="disb-info-row">
+          <span class="disb-info-label">{{ isRtl() ? 'الهدف' : 'Goal' }}</span>
+          <span class="disb-info-val amount-cell">{{ fmt(plan()!.total_amount) }}</span>
+        </div>
+        <div class="disb-info-row">
+          <span class="disb-info-label">{{ isRtl() ? 'أنشأ الخطة' : 'Created by' }}</span>
+          <span class="disb-info-val">
+            {{ plan()!.created_by_name }}
+            @if (isPlanOwner()) {
+              <span class="disb-owner-tag">{{ isRtl() ? '(أنت)' : '(you)' }}</span>
+            }
+          </span>
+        </div>
+      </div>
+
+      <!-- Contractor -->
+      <div class="admin-card disb-info-card">
+        <div class="admin-card__title">
+          <span class="material-icons">engineering</span>
+          {{ isRtl() ? 'المقاول' : 'Contractor' }}
+        </div>
+        <div class="disb-info-row">
+          <span class="disb-info-label">{{ isRtl() ? 'الاسم' : 'Name' }}</span>
+          <span class="disb-info-val">{{ plan()!.contractor_name }}</span>
+        </div>
+        <div class="disb-info-row">
+          <span class="disb-info-label">{{ isRtl() ? 'الشركة' : 'Company' }}</span>
+          <span class="disb-info-val">{{ plan()!.contractor_company }}</span>
+        </div>
+        <div class="disb-info-row">
+          <span class="disb-info-label">IBAN</span>
+          <span class="disb-info-val disb-iban">{{ plan()!.contractor_iban }}</span>
+        </div>
+      </div>
+
+      <!-- Budget Progress -->
+      <div class="admin-card disb-info-card">
+        <div class="admin-card__title">
+          <span class="material-icons">account_balance_wallet</span>
+          {{ isRtl() ? 'الميزانية' : 'Budget' }}
+        </div>
+        <div class="disb-progress-main">
+          <div class="disb-progress-bar">
+            <div class="disb-progress-bar__fill" [style.width.%]="disbursedPct()"></div>
+          </div>
+          <div class="disb-progress-labels">
+            <span class="disb-progress-disbursed">
+              {{ fmt(plan()!.total_disbursed) }} {{ isRtl() ? 'تم صرفه' : 'disbursed' }}
+            </span>
+            <span class="disb-progress-pct">{{ disbursedPct() }}%</span>
+          </div>
+          <div class="disb-progress-remaining">
+            {{ isRtl() ? 'المتبقي:' : 'Remaining:' }}
+            <strong>{{ fmt(plan()!.total_amount - plan()!.total_disbursed) }}</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Tranches ── -->
+    <div class="admin-card">
+      <div class="admin-card__title">
+        <span class="material-icons">format_list_numbered</span>
+        {{ isRtl() ? 'الدفعات' : 'Payment Tranches' }}
+      </div>
+
+      <div class="disb-tranches-list">
+        @for (t of plan()!.tranches; track t.id) {
+          <div class="disb-tranche-card disb-tranche-card--{{ t.status }}">
+
+            <!-- Tranche Header -->
+            <div class="disb-tc-header">
+              <div class="disb-tc-num">{{ t.tranche_number }}</div>
+              <div class="disb-tc-info">
+                <div class="disb-tc-label">{{ trancheLabel(t) }}</div>
+                <div class="disb-tc-amounts">
+                  <span class="amount-cell">{{ fmt(t.amount) }}</span>
+                  <span class="disb-tc-pct">{{ t.percentage }}%</span>
+                </div>
+              </div>
+              <div class="disb-tc-status">
+                <span class="material-icons disb-tc-status__icon disb-tc-status__icon--{{ t.status }}">
+                  {{ staIcon(t.status) }}
+                </span>
+                <span class="status-badge status-badge--{{ (t.status === 'pending_review' || t.status === 'pending_ops_review') ? 'pending' : t.status === 'transferred' ? 'completed' : t.status }}">
+                  {{ staLabel(t.status) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- ── LOCKED ── -->
+            @if (t.status === 'locked') {
+              <div class="disb-tc-body">
+                <p class="disb-tc-hint">
+                  {{ isRtl()
+                      ? 'في انتظار تقرير الإنجاز من المقاول'
+                      : 'Waiting for a progress report from the contractor' }}
+                </p>
+                @if (!planSuspended()) {
+                  <button mat-button class="admin-primary-btn disb-small-btn"
+                          (click)="openForm(t.id, 'report')">
+                    <span class="material-icons">add_task</span>
+                    {{ isRtl() ? 'تسجيل تقرير إنجاز' : 'Log Progress Report' }}
+                  </button>
+
+                  @if (isFormOpen(t.id, 'report')) {
+                    <ng-container *ngTemplateOutlet="reportFormTpl; context: { $implicit: t.id }"/>
+                  }
+                }
+              </div>
+            }
+
+            <!-- ── PENDING OPS REVIEW (موافقة تنفيذية من مدير العمليات) ── -->
+            @if (t.status === 'pending_ops_review') {
+              <div class="disb-tc-body">
+                @if (t.progress_report) {
+                  <div class="disb-report-card">
+                    <div class="disb-report-header">
+                      <span class="material-icons">description</span>
+                      <strong>{{ t.progress_report.title }}</strong>
+                      <span class="disb-report-pct">
+                        {{ t.progress_report.completion_percentage }}%
+                        {{ isRtl() ? 'إنجاز' : 'complete' }}
+                      </span>
+                    </div>
+                    <p class="disb-report-desc">{{ t.progress_report.description }}</p>
+                    <div class="disb-report-meta">
+                      <span class="material-icons">calendar_today</span>
+                      {{ t.progress_report.report_date }}
+                      @if (t.progress_report.submitted_by) {
+                        <span>· {{ isRtl() ? 'رفعه' : 'by' }} {{ t.progress_report.submitted_by }}</span>
+                      }
+                    </div>
+                    @if (t.progress_report.images.length) {
+                      <div class="disb-report-images">
+                        @for (img of t.progress_report.images; track img) {
+                          <a [href]="img" target="_blank"><img [src]="img" [alt]="t.progress_report.title" loading="lazy"/></a>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (!planSuspended() && isOpsReviewer()) {
+                  <div class="disb-tc-review-actions">
+                    <button mat-button class="admin-primary-btn disb-small-btn"
+                            (click)="opsApprove(t.id)" [disabled]="saving()">
+                      <span class="material-icons">check_circle</span>
+                      {{ isRtl() ? 'موافقة تنفيذية' : 'Approve (Ops)' }}
+                    </button>
+                    <button mat-button class="disb-reject-btn"
+                            (click)="openForm(t.id, 'ops-reject')">
+                      <span class="material-icons">cancel</span>
+                      {{ isRtl() ? 'رفض التقرير' : 'Reject Report' }}
+                    </button>
+                  </div>
+
+                  @if (isFormOpen(t.id, 'ops-reject')) {
+                    <div class="disb-inline-form">
+                      <div class="disb-inline-form__title">
+                        {{ isRtl() ? 'سبب الرفض' : 'Rejection Reason' }}
+                      </div>
+                      <textarea class="disb-input disb-textarea" rows="2"
+                                [(ngModel)]="opsRejectForm.rejected_reason"
+                                [placeholder]="isRtl() ? 'اذكر سبب رفض التقرير...' : 'State the reason for rejection...'">
+                      </textarea>
+                      <div class="disb-inline-form__actions">
+                        <button mat-button class="disb-reject-btn"
+                                (click)="submitOpsReject(t.id)" [disabled]="saving()">
+                          {{ isRtl() ? 'تأكيد الرفض' : 'Confirm Reject' }}
+                        </button>
+                        <button mat-button class="camp-btn" (click)="closeForm()">
+                          {{ isRtl() ? 'إلغاء' : 'Cancel' }}
+                        </button>
+                      </div>
+                    </div>
+                  }
+                } @else if (!planSuspended()) {
+                  <p class="disb-tc-hint disb-tc-hint--owner">
+                    <span class="material-icons">engineering</span>
+                    {{ isRtl()
+                        ? 'بانتظار موافقة مدير العمليات على تقرير الإنجاز التنفيذي قبل أن تصل للمراجعة المالية.'
+                        : 'Awaiting the operations manager\'s review of the execution report before it reaches financial review.' }}
+                  </p>
+                }
+              </div>
+            }
+
+            <!-- ── PENDING REVIEW (مالية) ── -->
+            @if (t.status === 'pending_review') {
+              <div class="disb-tc-body">
+                @if (t.progress_report) {
+                  <div class="disb-report-card">
+                    <div class="disb-report-header">
+                      <span class="material-icons">description</span>
+                      <strong>{{ t.progress_report.title }}</strong>
+                      <span class="disb-report-pct">
+                        {{ t.progress_report.completion_percentage }}%
+                        {{ isRtl() ? 'إنجاز' : 'complete' }}
+                      </span>
+                    </div>
+                    <p class="disb-report-desc">{{ t.progress_report.description }}</p>
+                    <div class="disb-report-meta">
+                      <span class="material-icons">calendar_today</span>
+                      {{ t.progress_report.report_date }}
+                    </div>
+                    @if (t.progress_report.images.length) {
+                      <div class="disb-report-images">
+                        @for (img of t.progress_report.images; track img) {
+                          <a [href]="img" target="_blank"><img [src]="img" [alt]="t.progress_report.title" loading="lazy"/></a>
+                        }
+                      </div>
+                    }
+                    @if (t.ops_approved_by) {
+                      <div class="disb-report-meta">
+                        <span class="material-icons">verified</span>
+                        {{ isRtl() ? 'وافق عليه مدير العمليات:' : 'Ops-approved by:' }} {{ t.ops_approved_by }}
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (!planSuspended() && !isPlanOwner()) {
+                  <div class="disb-tc-review-actions">
+                    <button mat-button class="admin-primary-btn disb-small-btn"
+                            (click)="approveTranche(t.id)" [disabled]="saving()">
+                      <span class="material-icons">check_circle</span>
+                      {{ isRtl() ? 'وافق وأصدر الدفعة' : 'Approve & Release' }}
+                    </button>
+                    <button mat-button class="disb-reject-btn"
+                            (click)="openForm(t.id, 'reject')">
+                      <span class="material-icons">cancel</span>
+                      {{ isRtl() ? 'رفض التقرير' : 'Reject Report' }}
+                    </button>
+                  </div>
+
+                  @if (isFormOpen(t.id, 'reject')) {
+                    <div class="disb-inline-form">
+                      <div class="disb-inline-form__title">
+                        {{ isRtl() ? 'سبب الرفض' : 'Rejection Reason' }}
+                      </div>
+                      <textarea class="disb-input disb-textarea" rows="2"
+                                [(ngModel)]="rejectForm.rejected_reason"
+                                [placeholder]="isRtl() ? 'اذكر سبب رفض التقرير...' : 'State the reason for rejection...'">
+                      </textarea>
+                      <div class="disb-inline-form__actions">
+                        <button mat-button class="disb-reject-btn"
+                                (click)="submitReject(t.id)" [disabled]="saving()">
+                          {{ isRtl() ? 'تأكيد الرفض' : 'Confirm Reject' }}
+                        </button>
+                        <button mat-button class="camp-btn" (click)="closeForm()">
+                          {{ isRtl() ? 'إلغاء' : 'Cancel' }}
+                        </button>
+                      </div>
+                    </div>
+                  }
+                } @else if (isPlanOwner() && !planSuspended()) {
+                  <p class="disb-tc-hint disb-tc-hint--owner">
+                    <span class="material-icons">shield</span>
+                    {{ isRtl()
+                        ? 'لا يمكنك مراجعة هذا التقرير لأنك من أنشأ الخطة — بانتظار مراجعة شخص آخر.'
+                        : 'You cannot review this report since you created the plan — awaiting another reviewer.' }}
+                  </p>
+                }
+              </div>
+            }
+
+            <!-- ── APPROVED ── -->
+            @if (t.status === 'approved') {
+              <div class="disb-tc-body">
+                <div class="disb-approved-hint">
+                  <span class="material-icons">check_circle</span>
+                  {{ isRtl()
+                      ? 'تمت الموافقة على هذه الدفعة — يرجى تنفيذ التحويل البنكي وتسجيل الرقم المرجعي.'
+                      : 'Tranche approved — please execute the bank transfer and log the reference number.' }}
+                </div>
+                @if (!planSuspended() && !isPlanOwner()) {
+                  <button mat-button class="admin-primary-btn disb-small-btn"
+                          (click)="openForm(t.id, 'transfer')">
+                    <span class="material-icons">price_check</span>
+                    {{ isRtl() ? 'تسجيل التحويل' : 'Record Transfer' }}
+                  </button>
+
+                  @if (isFormOpen(t.id, 'transfer')) {
+                    <div class="disb-inline-form">
+                      <div class="disb-inline-form__title">
+                        {{ isRtl() ? 'تسجيل التحويل البنكي' : 'Record Bank Transfer' }}
+                      </div>
+                      <div class="disb-form-grid">
+                        <div class="disb-field">
+                          <label>{{ isRtl() ? 'الرقم المرجعي للتحويل' : 'Transfer Reference' }}</label>
+                          <input class="disb-input disb-input--mono" dir="ltr"
+                                 [(ngModel)]="transferForm.transfer_reference"
+                                 placeholder="TXN-2024-XXXX">
+                        </div>
+                        <div class="disb-field">
+                          <label>{{ isRtl() ? 'تاريخ التحويل' : 'Transfer Date' }}</label>
+                          <input type="date" class="disb-input"
+                                 [(ngModel)]="transferForm.transfer_date">
+                        </div>
+                        <div class="disb-field disb-field--full">
+                          <label>{{ isRtl() ? 'ملاحظات (اختياري)' : 'Notes (optional)' }}</label>
+                          <input class="disb-input" [(ngModel)]="transferForm.notes"
+                                 [placeholder]="isRtl() ? 'أي ملاحظات إضافية' : 'Any additional notes'">
+                        </div>
+                      </div>
+                      <div class="disb-inline-form__actions">
+                        <button mat-button class="admin-primary-btn disb-small-btn"
+                                (click)="submitTransfer(t.id)" [disabled]="saving()">
+                          <span class="material-icons">price_check</span>
+                          {{ isRtl() ? 'تأكيد التحويل' : 'Confirm Transfer' }}
+                        </button>
+                        <button mat-button class="camp-btn" (click)="closeForm()">
+                          {{ isRtl() ? 'إلغاء' : 'Cancel' }}
+                        </button>
+                      </div>
+                    </div>
+                  }
+                } @else if (isPlanOwner() && !planSuspended()) {
+                  <p class="disb-tc-hint disb-tc-hint--owner">
+                    <span class="material-icons">shield</span>
+                    {{ isRtl()
+                        ? 'لا يمكنك تنفيذ التحويل لأنك من أنشأ الخطة — بانتظار تنفيذ شخص آخر.'
+                        : 'You cannot record this transfer since you created the plan — awaiting another executor.' }}
+                  </p>
+                }
+              </div>
+            }
+
+            <!-- ── TRANSFERRED ── -->
+            @if (t.status === 'transferred') {
+              <div class="disb-tc-body">
+                <div class="disb-transferred-badge">
+                  <div class="disb-transferred-row">
+                    <span class="material-icons">receipt_long</span>
+                    <span class="disb-transferred-label">
+                      {{ isRtl() ? 'الرقم المرجعي' : 'Reference' }}
+                    </span>
+                    <span class="disb-transferred-val">{{ t.transfer_reference }}</span>
+                  </div>
+                  <div class="disb-transferred-row">
+                    <span class="material-icons">calendar_today</span>
+                    <span class="disb-transferred-label">
+                      {{ isRtl() ? 'تاريخ التحويل' : 'Transfer Date' }}
+                    </span>
+                    <span class="disb-transferred-val">{{ t.transfer_date }}</span>
+                  </div>
+                  @if (t.approved_by) {
+                    <div class="disb-transferred-row">
+                      <span class="material-icons">verified_user</span>
+                      <span class="disb-transferred-label">
+                        {{ isRtl() ? 'اعتمد بواسطة' : 'Approved by' }}
+                      </span>
+                      <span class="disb-transferred-val">{{ t.approved_by }}</span>
+                    </div>
+                  }
+                  @if (t.notes) {
+                    <div class="disb-transferred-row">
+                      <span class="material-icons">notes</span>
+                      <span class="disb-transferred-label">
+                        {{ isRtl() ? 'ملاحظات' : 'Notes' }}
+                      </span>
+                      <span class="disb-transferred-val">{{ t.notes }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- ── REJECTED ── -->
+            @if (t.status === 'rejected') {
+              <div class="disb-tc-body">
+                <div class="disb-rejected-info">
+                  <span class="material-icons">info</span>
+                  <span>
+                    {{ isRtl() ? 'سبب الرفض:' : 'Rejection reason:' }}
+                    {{ t.rejected_reason || t.ops_rejected_reason }}
+                  </span>
+                </div>
+                @if (!planSuspended()) {
+                  <button mat-button class="admin-primary-btn disb-small-btn"
+                          (click)="openForm(t.id, 'report')">
+                    <span class="material-icons">refresh</span>
+                    {{ isRtl() ? 'تسجيل تقرير جديد' : 'Submit New Report' }}
+                  </button>
+                  @if (isFormOpen(t.id, 'report')) {
+                    <ng-container *ngTemplateOutlet="reportFormTpl; context: { $implicit: t.id }"/>
+                  }
+                }
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+    </div>
+
+  }
+
+</div>
+
+<!-- ── Report Form Template ── -->
+<ng-template #reportFormTpl let-trancheId>
+  <div class="disb-inline-form">
+    <div class="disb-inline-form__title">
+      {{ isRtl() ? 'تقرير الإنجاز' : 'Progress Report' }}
+    </div>
+    <div class="disb-form-grid">
+      <div class="disb-field disb-field--full">
+        <label>{{ isRtl() ? 'عنوان التقرير' : 'Report Title' }}</label>
+        <input class="disb-input" [(ngModel)]="reportForm.title"
+               [placeholder]="isRtl() ? 'مثال: تم الانتهاء من الأساسات' : 'e.g. Foundation work completed'">
+      </div>
+      <div class="disb-field disb-field--full">
+        <label>{{ isRtl() ? 'الوصف التفصيلي' : 'Detailed Description' }}</label>
+        <textarea class="disb-input disb-textarea" rows="3" [(ngModel)]="reportForm.description"
+                  [placeholder]="isRtl() ? 'تفاصيل ما تم إنجازه...' : 'Details of what was accomplished...'">
+        </textarea>
+      </div>
+      <div class="disb-field">
+        <label>{{ isRtl() ? 'نسبة الإنجاز الكلي %' : 'Total Completion %' }}</label>
+        <input type="number" class="disb-input" [(ngModel)]="reportForm.completion_percentage"
+               min="0" max="100">
+      </div>
+      <div class="disb-field">
+        <label>{{ isRtl() ? 'تاريخ التقرير' : 'Report Date' }}</label>
+        <input type="date" class="disb-input" [(ngModel)]="reportForm.report_date">
+      </div>
+    </div>
+    <div class="disb-inline-form__actions">
+      <button mat-button class="admin-primary-btn disb-small-btn"
+              (click)="submitReport(trancheId)" [disabled]="saving()">
+        <span class="material-icons">save</span>
+        {{ isRtl() ? 'حفظ التقرير' : 'Save Report' }}
+      </button>
+      <button mat-button class="camp-btn" (click)="closeForm()">
+        {{ isRtl() ? 'إلغاء' : 'Cancel' }}
+      </button>
+    </div>
+  </div>
+</ng-template>

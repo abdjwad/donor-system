@@ -1,5 +1,15 @@
 @use '../../../../styles/variables' as *;
 
+@keyframes pulse-ring {
+  0%   { transform: scale(0.85); opacity: 1; }
+  100% { transform: scale(2.2);  opacity: 0; }
+}
+
+@keyframes stat-flash {
+  0%   { opacity: 0.55; }
+  100% { opacity: 1; }
+}
+
 .stats-section {
   background: $color-card-bg;
   padding: $space-2xl 0;
@@ -19,6 +29,10 @@
     justify-content: space-around;
     flex-wrap: wrap;
     gap: $space-xl;
+
+    &.stats-flash {
+      animation: stat-flash 0.55s ease;
+    }
   }
 
   &__separator {
@@ -28,6 +42,50 @@
     flex-shrink: 0;
 
     @media (max-width: $bp-tablet) { display: none; }
+  }
+}
+
+.stats-live-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-top: $space-md;
+  padding-bottom: 4px;
+}
+
+.live-dot {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: $color-error;
+  flex-shrink: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: $color-error;
+    animation: pulse-ring 1.6s ease-out infinite;
+  }
+}
+
+.live-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: $color-error;
+  letter-spacing: 0.08em;
+}
+
+.live-updated {
+  font-size: 0.68rem;
+  color: $color-text-muted;
+
+  &::before {
+    content: '·';
+    margin-inline-end: 6px;
   }
 }
 

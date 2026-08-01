@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 
 import { DonationService } from '../../services/donation.service';
+import { ProjectsApiService } from '../../../../core/services/projects-api.service';
 import { Project } from '../../../../core/models/project.model';
 import { DonationType } from '../../../../core/models/guest-donation.model';
 
@@ -36,11 +37,15 @@ export class DonationAmountFormComponent implements OnInit {
 
   private readonly fb = inject(FormBuilder);
   private readonly donationService = inject(DonationService);
+  private readonly projectsApi = inject(ProjectsApiService);
 
   readonly quickAmounts = QUICK_AMOUNTS;
   readonly selectedAmount = signal<number | null>(null);
   readonly isCustom = signal(false);
   readonly projects = signal<Project[]>([]);
+  /** لما يوصل المتبرع عبر زر "تبرّع" لمشروع محدد — نقفل الاختيار بدل قائمة قابلة للتعديل */
+  readonly lockedProject = signal<Project | null>(null);
+  readonly lockedProjectLoading = signal(false);
   readonly charCount = signal(0);
   readonly maxChars = 200;
   readonly remainingChars = computed(() => this.maxChars - this.charCount());
@@ -69,13 +74,32 @@ export class DonationAmountFormComponent implements OnInit {
       this.charCount.set(state.dedication_message.length);
     }
 
-    this.donationService.getProjects().subscribe((projects) => {
-      this.projects.set(projects);
-    });
+    if (state.project_id) {
+      this.lockedProjectLoading.set(true);
+      this.projectsApi.getProject(state.project_id).subscribe({
+        next: (p) => { this.lockedProject.set(p); this.lockedProjectLoading.set(false); },
+        error: () => this.lockedProjectLoading.set(false),
+      });
+    } else {
+      this.loadProjectsList();
+    }
 
     this.form.get('dedication_message')!.valueChanges.subscribe((val: string) => {
       this.charCount.set((val ?? '').length);
     });
+  }
+
+  private loadProjectsList(): void {
+    this.donationService.getProjects().subscribe((projects) => {
+      this.projects.set(projects);
+    });
+  }
+
+  /** يسمح للمتبرع اللي وصل عبر رابط مشروع محدد إنه يرجع يتبرّع للصندوق العام بدلاً منه */
+  switchToGeneralFund(): void {
+    this.lockedProject.set(null);
+    this.form.patchValue({ project_id: null });
+    this.loadProjectsList();
   }
 
   selectQuick(amount: number): void {

@@ -1,45 +1,66 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { DecimalPipe } from '@angular/common';
-import { LanguageService } from '../../../../core/services/language.service';
+import { LanguageService }  from '../../../../core/services/language.service';
+import { AdminApiService, AdminCategory, AdminOverview, AdminRecentDonation } from '../../../../core/services/admin-api.service';
 
-const RECENT = [
-  { donor: 'Ahmad Al-Ali',    donorAr: 'أحمد العلي',      amount: 150, project: 'Homes Aleppo',   projectAr: 'منازل حلب',     method: 'Stripe', status: 'completed', date: '2025-05-10' },
-  { donor: 'Sara Hassan',     donorAr: 'سارة حسن',        amount: 50,  project: 'Hope School',    projectAr: 'مدرسة الأمل',   method: 'PayPal', status: 'completed', date: '2025-05-10' },
-  { donor: 'Omar Khalil',     donorAr: 'عمر خليل',        amount: 200, project: 'General Fund',   projectAr: 'الصندوق العام', method: 'Stripe', status: 'pending',   date: '2025-05-09' },
-  { donor: 'Nour Ibrahim',    donorAr: 'نور إبراهيم',     amount: 75,  project: 'Medical Idlib',  projectAr: 'مركز إدلب',    method: 'Bank',   status: 'completed', date: '2025-05-09' },
-  { donor: 'Khaled Mustafa',  donorAr: 'خالد مصطفى',     amount: 500, project: 'Water Project',  projectAr: 'مشروع مياه',   method: 'Stripe', status: 'completed', date: '2025-05-08' },
-];
-
-const CATEGORIES = [
-  { labelAr: 'إسكان',       labelEn: 'Housing',        pct: 38, color: '#1B6B3A' },
-  { labelAr: 'تعليم',       labelEn: 'Education',      pct: 22, color: '#C5952A' },
-  { labelAr: 'صحة',         labelEn: 'Healthcare',     pct: 18, color: '#1A2D5A' },
-  { labelAr: 'بنية تحتية', labelEn: 'Infrastructure', pct: 14, color: '#2E8B57' },
-  { labelAr: 'مياه',        labelEn: 'Water',          pct: 8,  color: '#7A5810' },
-];
+const CATEGORY_COLORS: Record<string, string> = {
+  housing: '#1B6B3A', education: '#C5952A', health: '#1A2D5A',
+  infrastructure: '#2E8B57', water: '#7A5810',
+};
+const CATEGORY_AR: Record<string, string> = {
+  housing: 'إسكان', education: 'تعليم', health: 'صحة',
+  infrastructure: 'بنية تحتية', water: 'مياه',
+};
 
 @Component({
   selector: 'app-admin-overview',
   standalone: true,
-  imports: [TranslateModule, DecimalPipe],
+  imports: [TranslateModule],
   templateUrl: './admin-overview.component.html',
   styleUrl:    './admin-overview.component.scss',
 })
-export class AdminOverviewComponent {
+export class AdminOverviewComponent implements OnInit {
   private readonly langService = inject(LanguageService);
-  readonly isRtl = computed(() => this.langService.currentLang() === 'ar');
-  readonly recent = RECENT;
-  readonly categories = CATEGORIES;
+  private readonly adminApi    = inject(AdminApiService);
 
-  stats = [
-    { key: 'TOTAL_DONATIONS',  icon: 'paid',                value: '$2,847,500', change: '+12%' },
-    { key: 'TOTAL_DONORS',     icon: 'group',               value: '12,847',     change: '+8%'  },
-    { key: 'ACTIVE_PROJECTS',  icon: 'construction',        value: '48',         change: '+3'   },
-    { key: 'PENDING_REFUNDS',  icon: 'pending_actions',     value: '7',          change: '-2'   },
-  ];
+  readonly isRtl   = computed(() => this.langService.currentLang() === 'ar');
+  readonly loading = signal(true);
 
-  donorName(r: typeof RECENT[0]): string    { return this.isRtl() ? r.donorAr   : r.donor;   }
-  projectName(r: typeof RECENT[0]): string  { return this.isRtl() ? r.projectAr : r.project; }
-  catLabel(c: typeof CATEGORIES[0]): string { return this.isRtl() ? c.labelAr  : c.labelEn; }
+  stats      = signal<{ key: string; icon: string; value: string; change: string }[]>([]);
+  recent     = signal<AdminRecentDonation[]>([]);
+  categories = signal<(AdminCategory & { pct: number; color: string; labelAr: string })[]>([]);
+
+  ngOnInit(): void {
+    this.adminApi.getOverview().subscribe({
+      next: (data: AdminOverview) => {
+        const s = data.stats;
+        this.stats.set([
+          { key: 'TOTAL_DONATIONS', icon: 'paid',            value: '$' + this.fmt(s.total_donations), change: '' },
+          { key: 'TOTAL_DONORS',    icon: 'group',           value: String(s.total_donors),            change: '' },
+          { key: 'ACTIVE_PROJECTS', icon: 'construction',    value: String(s.active_projects),         change: '' },
+          { key: 'PENDING_REFUNDS', icon: 'pending_actions', value: String(s.pending_refunds),         change: '' },
+        ]);
+        this.recent.set(data.recent_donations);
+        const totalFunding = data.by_category.reduce((sum, c) => sum + c.total, 0) || 1;
+        this.categories.set(data.by_category.map(c => ({
+          ...c,
+          pct:     Math.round((c.total / totalFunding) * 100),
+          color:   CATEGORY_COLORS[c.category] ?? '#888',
+          labelAr: CATEGORY_AR[c.category] ?? c.category,
+        })));
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
+    });
+  }
+
+  donorName(r: AdminRecentDonation): string   { return r.name; }
+  projectName(r: AdminRecentDonation): string { return this.isRtl() ? r.project_ar : r.project_en; }
+  catLabel(c: { labelAr: string; category: string }): string { return this.isRtl() ? c.labelAr : c.category; }
+
+  private fmt(n: number): string {
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
+    if (n >= 1_000)     return (n / 1_000).toFixed(0) + 'K';
+    return String(n);
+  }
 }

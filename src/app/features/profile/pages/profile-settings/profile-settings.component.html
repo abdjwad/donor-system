@@ -48,6 +48,12 @@
               {{ 'PROFILE.EDIT.SAVED' | translate }}
             </div>
           }
+          @if (profileError()) {
+            <div class="error-msg">
+              <span class="material-icons">error</span>
+              {{ profileError() }}
+            </div>
+          }
 
           <button mat-flat-button class="save-btn" (click)="saveProfile()">
             <span class="material-icons">save</span>
@@ -84,6 +90,12 @@
             <div class="success-msg">
               <span class="material-icons">check_circle</span>
               {{ 'PROFILE.PASSWORD.SUCCESS' | translate }}
+            </div>
+          }
+          @if (passwordError()) {
+            <div class="error-msg">
+              <span class="material-icons">error</span>
+              {{ passwordError() }}
             </div>
           }
 

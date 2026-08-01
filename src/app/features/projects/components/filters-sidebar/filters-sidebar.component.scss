@@ -153,3 +153,49 @@
   font-size: 0.875rem !important;
   color: #fff;
 }
+
+// ── Range inputs (family size / completion) ───────────────────
+.filter-group__range {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
+.range-input {
+  width: 0;
+  flex: 1;
+  height: 36px;
+  border: 1.5px solid $color-border;
+  border-radius: $radius-sm;
+  padding: 0 $space-sm;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: $color-text-primary;
+  background: $color-card-bg;
+  outline: none;
+  transition: $transition-fast;
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    margin: 0;
+  }
+}
+
+.range-sep {
+  color: $color-text-muted;
+  font-weight: 600;
+}
+
+// ── Loading state ──────────────────────────────────────────────
+.filters-sidebar__loading {
+  font-size: 0.875rem;
+  color: $color-text-muted;
+  text-align: center;
+  padding: $space-lg 0;
+  margin: 0;
+}

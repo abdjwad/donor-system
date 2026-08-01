@@ -1,10 +1,23 @@
 <aside class="dash-sidebar-comp">
 
-  <!-- ── Section: My Account ──────────────────────────────────── -->
-  <div class="sidebar-section">
-    <div class="sidebar-section__label">
-      {{ isRtl() ? 'حسابي' : 'My Account' }}
+  <!-- ── مرحباً بالمستخدم ───────────────────────────────────────── -->
+  @if (userName()) {
+    <div class="sidebar-user">
+      <div class="sidebar-user__avatar">
+        <span class="material-icons">person</span>
+      </div>
+      <div class="sidebar-user__info">
+        <div class="sidebar-user__name">{{ userName() }}</div>
+        <div class="sidebar-user__role">
+          {{ isAdmin() ? (isRtl() ? 'مدير النظام' : 'Administrator') : (isRtl() ? 'متبرع' : 'Donor') }}
+        </div>
+      </div>
     </div>
+  }
+
+  <!-- ── My Account ───────────────────────────────────────────────── -->
+  <div class="sidebar-section">
+    <div class="sidebar-section__label">{{ isRtl() ? 'حسابي' : 'My Account' }}</div>
 
     <a routerLink="/dashboard" routerLinkActive="active"
        [routerLinkActiveOptions]="{exact:true}" class="sidebar-link">
@@ -17,23 +30,26 @@
       <span class="sidebar-link__text">{{ 'HISTORY.TITLE' | translate }}</span>
     </a>
 
+    <a routerLink="/dashboard/wallet" routerLinkActive="active" class="sidebar-link">
+      <span class="material-icons sidebar-link__icon">account_balance_wallet</span>
+      <span class="sidebar-link__text">{{ isRtl() ? 'محفظتي' : 'My Wallet' }}</span>
+    </a>
+
     <a routerLink="/dashboard/impact" routerLinkActive="active" class="sidebar-link">
       <span class="material-icons sidebar-link__icon">trending_up</span>
       <span class="sidebar-link__text">{{ 'IMPACT.TITLE' | translate }}</span>
     </a>
   </div>
 
-  <!-- ── Section: Settings & Notifications ────────────────────── -->
+  <!-- ── Settings ─────────────────────────────────────────────────── -->
   <div class="sidebar-section">
-    <div class="sidebar-section__label">
-      {{ isRtl() ? 'الإعدادات' : 'Settings' }}
-    </div>
+    <div class="sidebar-section__label">{{ isRtl() ? 'الإعدادات' : 'Settings' }}</div>
 
     <a routerLink="/notifications" routerLinkActive="active" class="sidebar-link">
       <span class="material-icons sidebar-link__icon">notifications</span>
       <span class="sidebar-link__text">{{ 'NOTIFICATIONS.TITLE' | translate }}</span>
-      @if (unreadNotifications > 0) {
-        <span class="sidebar-badge">{{ unreadNotifications }}</span>
+      @if (unreadNotifications() > 0) {
+        <span class="sidebar-badge">{{ unreadNotifications() }}</span>
       }
     </a>
 
@@ -43,11 +59,9 @@
     </a>
   </div>
 
-  <!-- ── Section: Explore ─────────────────────────────────────── -->
+  <!-- ── Explore ───────────────────────────────────────────────────── -->
   <div class="sidebar-section">
-    <div class="sidebar-section__label">
-      {{ isRtl() ? 'استكشف' : 'Explore' }}
-    </div>
+    <div class="sidebar-section__label">{{ isRtl() ? 'استكشف' : 'Explore' }}</div>
 
     <a routerLink="/projects" routerLinkActive="active" class="sidebar-link">
       <span class="material-icons sidebar-link__icon">handshake</span>
@@ -65,17 +79,65 @@
     </a>
   </div>
 
-  <!-- ── Section: Admin ────────────────────────────────────────── -->
-  <div class="sidebar-section sidebar-section--admin">
-    <div class="sidebar-section__label">
-      {{ isRtl() ? 'الإدارة' : 'Administration' }}
-    </div>
-
-    <a routerLink="/admin" routerLinkActive="active" class="sidebar-link sidebar-link--admin">
-      <span class="material-icons sidebar-link__icon">admin_panel_settings</span>
-      <span class="sidebar-link__text">{{ 'ADMIN.TITLE' | translate }}</span>
-      <span class="sidebar-admin-chip">{{ isRtl() ? 'أدمن' : 'Admin' }}</span>
-    </a>
+  <!-- ── Logout ───────────────────────────────────────────────────── -->
+  <div class="sidebar-section sidebar-section--logout">
+    <button class="sidebar-logout" type="button" (click)="logout()">
+      <span class="material-icons sidebar-logout__icon">logout</span>
+      <span>{{ isRtl() ? 'تسجيل الخروج' : 'Sign Out' }}</span>
+    </button>
   </div>
+
+  <!-- ── Admin — يظهر فقط للأدمن ──────────────────────────────────── -->
+  @if (isAdmin()) {
+    <div class="sidebar-section sidebar-section--admin">
+      <div class="sidebar-section__label">{{ isRtl() ? 'الإدارة' : 'Administration' }}</div>
+
+      <a routerLink="/admin/overview" routerLinkActive="active" class="sidebar-link sidebar-link--admin">
+        <span class="material-icons sidebar-link__icon">admin_panel_settings</span>
+        <span class="sidebar-link__text">{{ isRtl() ? 'لوحة الأدمن' : 'Overview' }}</span>
+        <span class="sidebar-admin-chip">{{ isRtl() ? 'أدمن' : 'Admin' }}</span>
+      </a>
+
+      @if (canDonAdm()) {
+        <a routerLink="/admin/donations" routerLinkActive="active" class="sidebar-link sidebar-link--admin">
+          <span class="material-icons sidebar-link__icon">volunteer_activism</span>
+          <span class="sidebar-link__text">{{ isRtl() ? 'التبرعات' : 'Donations' }}</span>
+        </a>
+      }
+
+      @if (canRefunds()) {
+        <a routerLink="/admin/refunds" routerLinkActive="active" class="sidebar-link sidebar-link--admin">
+          <span class="material-icons sidebar-link__icon">undo</span>
+          <span class="sidebar-link__text">{{ isRtl() ? 'الاستردادات' : 'Refunds' }}</span>
+        </a>
+      }
+
+      @if (canDonAdm()) {
+        <a routerLink="/admin/wallet-topups" routerLinkActive="active" class="sidebar-link sidebar-link--admin">
+          <span class="material-icons sidebar-link__icon">account_balance_wallet</span>
+          <span class="sidebar-link__text">{{ isRtl() ? 'طلبات شحن المحفظة' : 'Wallet Top-ups' }}</span>
+        </a>
+      }
+
+      @if (canCampaigns()) {
+        <a routerLink="/admin/campaigns" routerLinkActive="active" class="sidebar-link sidebar-link--admin">
+          <span class="material-icons sidebar-link__icon">campaign</span>
+          <span class="sidebar-link__text">{{ isRtl() ? 'الحملات' : 'Campaigns' }}</span>
+        </a>
+      }
+
+      @if (canProjects()) {
+        <a routerLink="/admin/projects" routerLinkActive="active" class="sidebar-link sidebar-link--admin">
+          <span class="material-icons sidebar-link__icon">construction</span>
+          <span class="sidebar-link__text">{{ isRtl() ? 'المشاريع' : 'Projects' }}</span>
+        </a>
+      }
+
+      <a routerLink="/admin/reports" routerLinkActive="active" class="sidebar-link sidebar-link--admin">
+        <span class="material-icons sidebar-link__icon">bar_chart</span>
+        <span class="sidebar-link__text">{{ isRtl() ? 'التقارير' : 'Reports' }}</span>
+      </a>
+    </div>
+  }
 
 </aside>

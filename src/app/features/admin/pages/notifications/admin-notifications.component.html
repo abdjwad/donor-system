@@ -1,0 +1,34 @@
+<div class="admin-page">
+
+  <div class="admin-page__header">
+    <h1 class="admin-page__title">{{ isRtl() ? 'الإشعارات' : 'Notifications' }}</h1>
+    @if (unreadCount() > 0) {
+      <button mat-stroked-button (click)="markAllRead()">
+        <span class="material-icons">done_all</span>
+        {{ isRtl() ? 'تعليم الكل كمقروء' : 'Mark all as read' }}
+      </button>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="admin-card"><div class="admin-loading">{{ isRtl() ? 'جاري التحميل...' : 'Loading...' }}</div></div>
+  } @else {
+    <div class="admin-card">
+      <div class="table-info">{{ isRtl() ? 'غير مقروء:' : 'Unread:' }} {{ unreadCount() }}</div>
+      <div class="notif-admin-list">
+        @for (n of notifications(); track n.id) {
+          <div class="notif-admin-item" [class.notif-admin-item--unread]="!n.readAt" (click)="markRead(n.id)">
+            <span class="material-icons notif-admin-item__icon">{{ icon(n) }}</span>
+            <div class="notif-admin-item__body">
+              <p>{{ n.messageAr }}</p>
+              <span class="notif-admin-item__time">{{ n.createdAt | date:'medium' }}</span>
+            </div>
+            @if (!n.readAt) { <span class="notif-admin-item__dot"></span> }
+          </div>
+        } @empty {
+          <p class="empty-cell">{{ isRtl() ? 'لا توجد إشعارات' : 'No notifications' }}</p>
+        }
+      </div>
+    </div>
+  }
+</div>

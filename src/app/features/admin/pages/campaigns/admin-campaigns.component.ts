@@ -1,40 +1,69 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { LanguageService } from '../../../../core/services/language.service';
-
-interface AdminCampaign {
-  id: number; title: string; titleAr: string;
-  raised: number; goal: number; donors: number;
-  status: 'active'|'paused'|'ended'; endsAt: string;
-}
-
-const MOCK: AdminCampaign[] = [
-  { id:1, title:'Ramadan Campaign', titleAr:'حملة رمضان',       raised:85000, goal:100000, donors:420, status:'active',  endsAt:'2025-05-30' },
-  { id:2, title:'Aleppo Rebuild',   titleAr:'إعادة بناء حلب',  raised:230000,goal:300000, donors:980, status:'active',  endsAt:'2025-06-15' },
-  { id:3, title:'Back to School',   titleAr:'العودة للمدرسة',  raised:45000, goal:60000,  donors:210, status:'paused',  endsAt:'2025-07-01' },
-  { id:4, title:'Winter Relief',    titleAr:'مساعدات الشتاء',  raised:120000,goal:120000, donors:650, status:'ended',   endsAt:'2025-03-01' },
-];
+import { LanguageService }  from '../../../../core/services/language.service';
+import { AdminApiService, AdminCampaign } from '../../../../core/services/admin-api.service';
 
 @Component({
   selector: 'app-admin-campaigns',
   standalone: true,
-  imports: [TranslateModule, MatButtonModule],
+  imports: [TranslateModule, MatButtonModule, ReactiveFormsModule],
   templateUrl: './admin-campaigns.component.html',
   styleUrl:    './admin-campaigns.component.scss',
 })
-export class AdminCampaignsComponent {
+export class AdminCampaignsComponent implements OnInit {
   private readonly langService = inject(LanguageService);
-  readonly isRtl = computed(() => this.langService.currentLang() === 'ar');
-  readonly campaigns = signal(MOCK);
+  private readonly adminApi    = inject(AdminApiService);
+  private readonly fb          = inject(FormBuilder);
 
-  title(c: AdminCampaign): string { return this.isRtl() ? c.titleAr : c.title; }
-  pct(c: AdminCampaign): number   { return Math.min(100, Math.round((c.raised / c.goal) * 100)); }
-  fmt(n: number): string          { return n >= 1000 ? '$' + (n/1000).toFixed(0) + 'K' : '$' + n; }
+  readonly isRtl    = computed(() => this.langService.currentLang() === 'ar');
+  readonly campaigns = signal<AdminCampaign[]>([]);
+  readonly loading   = signal(true);
+  readonly showForm  = signal(false);
+  readonly saving    = signal(false);
 
-  toggle(id: number): void {
-    this.campaigns.update(list => list.map(c =>
-      c.id === id ? { ...c, status: c.status === 'active' ? 'paused' as const : 'active' as const } : c
-    ));
+  readonly createForm = this.fb.group({
+    title_ar:       ['', Validators.required],
+    title_en:       ['', Validators.required],
+    description_ar: [''],
+    description_en: [''],
+    category:       ['housing', Validators.required],
+    funding_goal:   [null as number | null, [Validators.required, Validators.min(1)]],
+    ends_at:        [''],
+    is_urgent:      [false],
+  });
+
+  ngOnInit(): void { this.load(); }
+
+  load(): void {
+    this.loading.set(true);
+    this.adminApi.getCampaigns().subscribe({
+      next: (res) => { this.campaigns.set(res.data); this.loading.set(false); },
+      error: () => this.loading.set(false),
+    });
   }
+
+  toggle(id: number, currentStatus: string): void {
+    const newStatus = currentStatus === 'active' ? 'paused' : 'active';
+    this.adminApi.updateCampaign(id, { status: newStatus }).subscribe({ next: () => this.load() });
+  }
+
+  deleteCampaign(id: number): void {
+    if (!confirm(this.isRtl() ? 'حذف الحملة نهائياً؟' : 'Delete this campaign?')) return;
+    this.adminApi.deleteCampaign(id).subscribe({ next: () => this.load() });
+  }
+
+  submitCreate(): void {
+    if (this.createForm.invalid) { this.createForm.markAllAsTouched(); return; }
+    this.saving.set(true);
+    this.adminApi.createCampaign(this.createForm.value as Record<string, any>).subscribe({
+      next: () => { this.saving.set(false); this.showForm.set(false); this.createForm.reset({ category: 'housing', is_urgent: false }); this.load(); },
+      error: () => this.saving.set(false),
+    });
+  }
+
+  title(c: AdminCampaign): string { return this.isRtl() ? c.title_ar : c.title_en; }
+  pct(c: AdminCampaign): number   { return c.progress_pct ?? Math.min(100, Math.round((c.amount_raised / (c.funding_goal || 1)) * 100)); }
+  fmt(n: number): string          { return n >= 1000 ? '$' + (n / 1000).toFixed(0) + 'K' : '$' + n; }
 }

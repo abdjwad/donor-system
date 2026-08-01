@@ -1,0 +1,161 @@
+<div class="admin-page">
+
+  <!-- Edit Display Info Modal -->
+  @if (showEditForm()) {
+    <div class="admin-modal-backdrop" (click)="showEditForm.set(false)">
+      <div class="admin-modal admin-modal--wide" (click)="$event.stopPropagation()">
+        <h3 class="admin-modal__title">{{ 'ADMIN.PROJECTS.DISPLAY_MODAL_TITLE' | translate }}</h3>
+        <form [formGroup]="editForm" (ngSubmit)="submitEdit()" class="admin-form">
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label>{{ 'ADMIN.PROJECTS.DISPLAY_TITLE_AR' | translate }}</label>
+              <input class="admin-input" formControlName="title_ar" />
+            </div>
+            <div class="admin-form__group">
+              <label>{{ 'ADMIN.PROJECTS.DISPLAY_TITLE_EN' | translate }}</label>
+              <input class="admin-input" formControlName="title_en" />
+            </div>
+          </div>
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label>{{ 'ADMIN.PROJECTS.DISPLAY_CATEGORY' | translate }}</label>
+              <select class="admin-input" formControlName="category">
+                <option value="housing">{{ isRtl() ? 'إسكان' : 'Housing' }}</option>
+                <option value="education">{{ isRtl() ? 'تعليم' : 'Education' }}</option>
+                <option value="health">{{ isRtl() ? 'صحة' : 'Health' }}</option>
+                <option value="infrastructure">{{ isRtl() ? 'بنية تحتية' : 'Infrastructure' }}</option>
+                <option value="water">{{ isRtl() ? 'مياه' : 'Water' }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label>{{ 'ADMIN.PROJECTS.DISPLAY_DESCRIPTION_EN' | translate }}</label>
+              <textarea class="admin-input" formControlName="description_en" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="admin-modal__actions">
+            <button type="submit" class="admin-btn admin-btn--primary" [disabled]="saving()">
+              {{ saving() ? '...' : ('ADMIN.PROJECTS.SAVE' | translate) }}
+            </button>
+            <button type="button" class="admin-btn admin-btn--ghost" (click)="showEditForm.set(false)">
+              {{ 'ADMIN.PROJECTS.CANCEL' | translate }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <div class="admin-page__header">
+    <div>
+      <h1 class="admin-page__title">{{ 'ADMIN.PROJECTS.TITLE' | translate }}</h1>
+      <p class="admin-page__subtitle">{{ 'ADMIN.PROJECTS.SUBTITLE' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Stats cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card__icon"><span class="material-icons">folder_open</span></div>
+      <div class="stat-card__body">
+        <div class="stat-card__label">{{ 'ADMIN.PROJECTS.STATS.TOTAL' | translate }}</div>
+        <div class="stat-card__value">{{ statistics().total }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon"><span class="material-icons">payments</span></div>
+      <div class="stat-card__body">
+        <div class="stat-card__label">{{ 'ADMIN.PROJECTS.STATS.TOTAL_COST' | translate }}</div>
+        <div class="stat-card__value">{{ statistics().totalCost | number }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon"><span class="material-icons">priority_high</span></div>
+      <div class="stat-card__body">
+        <div class="stat-card__label">{{ 'ADMIN.PROJECTS.STATS.HIGH_PRIORITY' | translate }}</div>
+        <div class="stat-card__value">{{ statistics().highPriority }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon"><span class="material-icons">remove</span></div>
+      <div class="stat-card__body">
+        <div class="stat-card__label">{{ 'ADMIN.PROJECTS.STATS.MEDIUM_PRIORITY' | translate }}</div>
+        <div class="stat-card__value">{{ statistics().mediumPriority }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon"><span class="material-icons">low_priority</span></div>
+      <div class="stat-card__body">
+        <div class="stat-card__label">{{ 'ADMIN.PROJECTS.STATS.LOW_PRIORITY' | translate }}</div>
+        <div class="stat-card__value">{{ statistics().lowPriority }}</div>
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="admin-card"><div class="admin-loading">{{ isRtl() ? 'جاري التحميل...' : 'Loading...' }}</div></div>
+  } @else {
+    <div class="admin-card">
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{{ 'ADMIN.PROJECTS.TABLE.REQUEST_NUMBER' | translate }}</th>
+              <th>{{ 'ADMIN.PROJECTS.TABLE.BENEFICIARY' | translate }}</th>
+              <th>{{ 'ADMIN.PROJECTS.TABLE.LOCATION' | translate }}</th>
+              <th>{{ 'ADMIN.PROJECTS.TABLE.DAMAGE_TYPE' | translate }}</th>
+              <th>{{ 'ADMIN.PROJECTS.TABLE.PRIORITY' | translate }}</th>
+              <th>{{ 'ADMIN.PROJECTS.TABLE.ESTIMATED_COST' | translate }}</th>
+              <th>{{ 'ADMIN.PROJECTS.TABLE.STATUS' | translate }}</th>
+              <th>{{ 'ADMIN.PROJECTS.TABLE.CREATED_AT' | translate }}</th>
+              <th>{{ 'ADMIN.PROJECTS.TABLE.ACTIONS' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of projects(); track p.id) {
+              <tr>
+                <td class="id-cell">#{{ p.requestNumber }}</td>
+                <td>
+                  <div class="beneficiary-cell">
+                    <span class="beneficiary-cell__name">{{ p.beneficiary.name }}</span>
+                    <span class="beneficiary-cell__phone">{{ p.beneficiary.phone }}</span>
+                  </div>
+                </td>
+                <td>{{ p.location }}</td>
+                <td><span class="damage-badge damage-badge--{{ p.damageType }}">{{ damageTypeKey(p.damageType) | translate }}</span></td>
+                <td>
+                  @if (p.priority !== null) {
+                    <span class="priority-badge priority-badge--{{ priorityClass(p.priority) }}">{{ p.priority }}</span>
+                  } @else {
+                    <span class="empty-value">{{ 'ADMIN.PROJECTS.NOT_SPECIFIED' | translate }}</span>
+                  }
+                </td>
+                <td class="amount-cell">
+                  @if (p.totalEstimatedCost !== null) {
+                    {{ p.totalEstimatedCost | number }}
+                  } @else {
+                    <span class="empty-value">{{ 'ADMIN.PROJECTS.NOT_SPECIFIED' | translate }}</span>
+                  }
+                </td>
+                <td><span class="status-badge status-badge--{{ p.status }}">{{ statusKey(p.status) | translate }}</span></td>
+                <td class="date-cell">{{ p.createdAt }}</td>
+                <td>
+                  <button mat-stroked-button class="camp-btn" (click)="openEdit(p)">
+                    <span class="material-icons">edit</span>
+                    {{ 'ADMIN.PROJECTS.EDIT_DISPLAY' | translate }}
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (projects().length === 0) {
+              <tr>
+                <td colspan="9" class="empty-cell">{{ 'ADMIN.PROJECTS.NO_RESULTS' | translate }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

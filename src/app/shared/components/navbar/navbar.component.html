@@ -37,14 +37,6 @@
     <!-- ── Actions ──────────────────────────────────────────────── -->
     <div class="navbar__actions">
 
-      <!-- Wrong network warning -->
-      @if (web3.isWrongNetwork()) {
-        <button class="navbar__wrong-network" (click)="web3.switchToGanache()">
-          <span class="material-icons">warning</span>
-          {{ isRtl() ? 'شبكة خاطئة' : 'Wrong Network' }}
-        </button>
-      }
-
       <!-- Theme -->
       <button class="navbar__theme-btn" type="button" (click)="toggleTheme()"
               [title]="themeService.isDark() ? (isRtl() ? 'الوضع النهاري' : 'Light mode') : (isRtl() ? 'الوضع الليلي' : 'Dark mode')">
@@ -77,36 +69,18 @@
         <div class="navbar__divider"></div>
       }
 
-      <!-- Wallet / Login -->
-      @if (web3.isConnected()) {
-        <div class="navbar__wallet">
-          <span class="navbar__wallet-dot"></span>
-          <span class="navbar__wallet-addr">{{ shortAddress }}</span>
-          <button class="navbar__wallet-out" (click)="web3.disconnectWallet()"
-                  [title]="isRtl() ? 'فصل' : 'Disconnect'">
-            <span class="material-icons">logout</span>
-          </button>
-        </div>
-      } @else {
-        <button class="navbar__wallet-btn" type="button" (click)="connectWallet()">
-          <svg width="16" height="15" viewBox="0 0 35 33" fill="none">
-            <path fill="#E2761B" d="M32.958 1L19.57 10.7l2.44-5.735L32.957 1z"/>
-            <path fill="#E4761B" d="M2.031 1l13.277 9.809-2.322-5.844L2.03 1zM28.18 23.507l-3.562 5.453 7.625 2.1 2.19-7.433-6.254-.12zM1.58 23.627l2.178 7.433 7.625-2.1-3.562-5.453-6.241.12z"/>
-          </svg>
-          {{ isRtl() ? 'ربط المحفظة' : 'Connect' }}
+      <!-- Sign in / Sign out حسب حالة تسجيل الدخول — ربط محفظة MetaMask صار مسؤولية
+           خطوة التبرع بالكريبتو فقط (crypto-payment)، مو النافبار العام -->
+      @if (isLoggedIn()) {
+        <button class="navbar__login-btn navbar__logout-btn" type="button" (click)="logout()">
+          <span class="material-icons">logout</span>
+          {{ isRtl() ? 'خروج' : 'Sign Out' }}
         </button>
-        <!-- Sign in / Sign out حسب حالة تسجيل الدخول -->
-        @if (isLoggedIn()) {
-          <button class="navbar__login-btn navbar__logout-btn" type="button" (click)="logout()">
-            <span class="material-icons">logout</span>
-            {{ isRtl() ? 'خروج' : 'Sign Out' }}
-          </button>
-        } @else {
-          <a routerLink="/auth/login" class="navbar__login-btn">
-            <span class="material-icons">login</span>
-            {{ isRtl() ? 'دخول' : 'Sign In' }}
-          </a>
-        }
+      } @else {
+        <a routerLink="/auth/login" class="navbar__login-btn">
+          <span class="material-icons">login</span>
+          {{ isRtl() ? 'دخول' : 'Sign In' }}
+        </a>
       }
 
       <!-- Donate CTA -->

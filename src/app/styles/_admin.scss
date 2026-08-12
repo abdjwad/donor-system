@@ -79,6 +79,19 @@
   color: $color-primary; text-decoration: underline; font-weight: 600;
 }
 
+.wallet-reassign {
+  display: flex; align-items: center; gap: 4px; margin-top: 2px;
+
+  span { color: #64748B; }
+
+  select {
+    font-size: 0.75rem; font-family: inherit; color: $color-text-primary;
+    border: 1px solid $color-border; border-radius: $radius-sm;
+    padding: 1px 4px; background: $color-card-bg; max-width: 130px;
+    &:disabled { opacity: 0.5; }
+  }
+}
+
 .proof-badge {
   display: block; margin-top: 4px; font-size: 0.6875rem; font-weight: 600;
   color: $color-warning;
@@ -89,6 +102,17 @@
   display: inline-flex; vertical-align: middle; margin-inline-start: 4px;
   color: #94A3B8; cursor: help;
   .material-icons { font-size: 0.9375rem; }
+}
+
+// ملاحظة تفصيلية (لا tooltip فاضي) — توضّح إنه تبرع "الصندوق العام" هاد أصله فائض
+// تبرع لمشروع كان ممولاً بالكامل، مو تبرع مباشر اختاره المتبرع للصندوق العام
+.redirect-note {
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  margin-top: 4px; padding: 3px 8px;
+  background: rgba($color-gold, 0.12); color: $color-gold-dark;
+  border-radius: $radius-sm; font-size: 0.75rem; font-weight: 500; line-height: 1.4;
+  .material-icons { font-size: 0.875rem; }
+  strong { font-weight: 700; }
 }
 
 .admin-select {

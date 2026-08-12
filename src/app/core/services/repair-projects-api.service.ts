@@ -37,8 +37,18 @@ export class RepairProjectsApiService {
       .pipe(map((res) => this.mapNeedFundingResult(res.data)));
   }
   getFundingCompletedProjects(): Observable<FundingCompletedResult> {
+    // route محمية (auth:sanctum + role) لأنها تكشف بيانات حساب المقاول البنكي —
+    // تُستخدم فقط من صفحة الأدمن "إنشاء خطة صرف جديدة"
     return this.http
-      .get<ApiResponse<any>>(`${this.API}/projects/funding-completed`)
+      .get<ApiResponse<any>>(`${this.API}/v1/admin/projects/funding-completed`)
+      .pipe(map((res) => this.mapFundingCompletedResult(res.data)));
+  }
+
+  // عكس getFundingCompletedProjects: ممولة 100% بس بدون مقاول بعد — contractor
+  // بتضل دايماً null لأنه أصلاً هاي فكرة القائمة (لسا ما تعيّن حدا)
+  getProjectsAwaitingContractorAssignment(): Observable<FundingCompletedResult> {
+    return this.http
+      .get<ApiResponse<any>>(`${this.API}/v1/admin/projects/awaiting-contractor-assignment`)
       .pipe(map((res) => this.mapFundingCompletedResult(res.data)));
   }
 
@@ -224,6 +234,11 @@ export class RepairProjectsApiService {
         : null,
       images: (raw.images ?? []) as string[],
       beneficiary: { name: raw.beneficiary?.name ?? '', city: raw.beneficiary?.city ?? '' },
+      milestones: ((raw.milestones ?? []) as any[]).map((m) => ({
+        id: m.id,
+        name: m.name ?? '',
+        order: Number(m.order ?? 0),
+      })),
       createdAt: raw.created_at ?? '',
     };
   }

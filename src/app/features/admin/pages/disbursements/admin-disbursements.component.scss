@@ -1,0 +1,15 @@
+@use '../../../../styles/variables' as *;
+
+// الدفعات صارت مربوطة بمراحل تهيئة المشروع — صف أبسط من قبل (بدون حقلي label
+// حرّين وبدون زر حذف): رقم + اسم المرحلة (للعرض فقط) + أيقونة توضيحية للدفعة
+// الأولى + حقل النسبة
+.disb-tranche-row--milestone {
+  grid-template-columns: 28px 1fr 24px 90px;
+}
+
+.disb-tranche-label {
+  font-size: 0.875rem; font-weight: 600; color: $color-text-primary;
+  &.ar { direction: rtl; text-align: right; }
+}
+
+.mini-badge--hidden { visibility: hidden; }

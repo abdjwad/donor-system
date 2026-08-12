@@ -64,6 +64,16 @@ export const adminRoutes: Routes = [
         canActivate: [requirePermission('manage settings')],
         loadComponent: () => import('./pages/wallet-settings/admin-wallet-settings.component').then(m => m.AdminWalletSettingsComponent),
       },
+      {
+        path: 'financial-ledger',
+        canActivate: [requirePermission('manage donations')],
+        loadComponent: () => import('./pages/financial-ledger/admin-financial-ledger.component').then(m => m.AdminFinancialLedgerComponent),
+      },
+      {
+        path: 'financial-obstacles',
+        canActivate: [requirePermission('manage donations')],
+        loadComponent: () => import('./pages/financial-obstacles/admin-financial-obstacles.component').then(m => m.AdminFinancialObstaclesComponent),
+      },
     ],
   },
 ];

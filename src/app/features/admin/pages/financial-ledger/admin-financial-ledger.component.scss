@@ -1,0 +1,74 @@
+@use '../../../../styles/variables' as *;
+
+.ledger-export-btns {
+  display: flex; gap: $space-sm; flex-wrap: wrap;
+
+  .admin-btn {
+    display: flex; align-items: center; gap: 6px;
+    .material-icons { font-size: 1.125rem; }
+  }
+}
+
+.ledger-alert {
+  padding: $space-md $space-lg; border-radius: $radius-md; margin-bottom: $space-lg;
+  font-size: 0.875rem; font-weight: 600;
+  &--error { background: rgba($color-error, 0.1); color: $color-error; }
+}
+
+.ledger-filters-card { padding-bottom: $space-lg; }
+
+.ledger-filters {
+  display: flex; gap: $space-lg; flex-wrap: wrap; align-items: flex-end; margin-bottom: $space-lg;
+}
+
+.ledger-field {
+  display: flex; flex-direction: column; gap: 4px; min-width: 160px;
+  span { font-size: 0.75rem; font-weight: 600; color: $color-text-secondary; }
+  &--grow { flex: 1; min-width: 220px; }
+}
+
+.ledger-field-actions { display: flex; gap: $space-sm; }
+
+.ledger-type-tabs {
+  display: flex; gap: $space-xs; flex-wrap: wrap; border-top: 1px solid #F1F5F9; padding-top: $space-md;
+}
+
+.ledger-tab {
+  padding: 6px 16px; border-radius: $radius-full; border: 1px solid #E2E8F0;
+  background: #fff; color: $color-text-secondary; font-size: 0.8125rem; font-weight: 600;
+  cursor: pointer; transition: $transition-fast;
+  &:hover { background: #F8FAFC; }
+  &--active { background: $color-primary; color: #fff; border-color: $color-primary; }
+}
+
+.ledger-stats { margin-top: $space-xl; }
+
+.ledger-value--in  { color: $color-success !important; }
+.ledger-value--out { color: $color-error !important; }
+
+.ledger-type-badge {
+  display: inline-flex; padding: 3px 10px; border-radius: $radius-full;
+  font-size: 0.75rem; font-weight: 700;
+  &--donation     { background: rgba($color-success,0.1); color: $color-success; }
+  &--wallet_topup { background: rgba($color-navy,0.08);   color: $color-navy; }
+  &--refund       { background: rgba($color-warning,0.1); color: $color-warning; }
+  &--disbursement     { background: rgba(#7b1fa2,0.1);   color: #7b1fa2; }
+  &--obstacle_funding { background: rgba(#C62828,0.1);   color: #C62828; }
+}
+
+.ledger-party-email { font-size: 0.7rem; color: $color-text-muted; }
+
+.ledger-context-cell, .ledger-notes-cell {
+  max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.ledger-pagination {
+  display: flex; align-items: center; justify-content: center; gap: $space-lg;
+  padding-top: $space-lg; font-size: 0.875rem; color: $color-text-secondary;
+}
+
+// disbursement tranches بحالة "transferred" ما إلها modifier جاهز بـ .status-badge
+// المشترك (بس completed/active/approved) — نعاملها كنجاح متل الحالات المكتملة
+.status-badge--transferred {
+  background: rgba($color-success, 0.1); color: $color-success;
+}

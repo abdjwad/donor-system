@@ -128,7 +128,31 @@
             <span class="material-icons">content_copy</span>
           </button>
         </div>
+        @if (explorerUrl) {
+          <a [href]="explorerUrl" target="_blank" class="crypto-pay__explorer-link">
+            {{ isRtl() ? 'عرض على المستكشف العام ↗' : 'View on public explorer ↗' }}
+          </a>
+        }
       </div>
+
+      <!-- حالة تسجيل التبرع بالسجل الرسمي -->
+      @if (syncState() === 'syncing') {
+        <p class="crypto-pay__sync-note">{{ isRtl() ? 'جارٍ تسجيل التبرع بسجل المنصة الرسمي...' : 'Recording donation in the official ledger...' }}</p>
+      }
+      @if (syncState() === 'synced') {
+        <p class="crypto-pay__sync-note crypto-pay__sync-note--ok">
+          <span class="material-icons">check_circle</span>
+          {{ isRtl() ? 'تم تسجيله بسجل بنيان الرسمي — ظهر بتمويل المشروع' : 'Recorded in Bunian\'s official ledger — reflected in project funding' }}
+        </p>
+      }
+      @if (syncState() === 'sync-failed') {
+        <p class="crypto-pay__sync-note crypto-pay__sync-note--warn">
+          <span class="material-icons">warning</span>
+          {{ isRtl()
+            ? 'تبرعك وصل فعلاً على البلوكتشين، لكن تعذّر تسجيله بسجل المنصة الآن — احتفظ برقم المعاملة أعلاه للمتابعة مع الإدارة'
+            : 'Your donation reached the blockchain, but recording it in the platform ledger failed — keep the transaction hash above for follow-up' }}
+        </p>
+      }
 
       <div class="crypto-pay__success-actions">
         <a routerLink="/home" mat-stroked-button class="crypto-pay__home-btn">

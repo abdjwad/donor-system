@@ -33,6 +33,16 @@ export class RepairProjectCardComponent {
     return this.project.thumbnail || FALLBACK_THUMBNAIL;
   }
 
+  private static readonly DAMAGE_ICONS: Record<string, string> = {
+    minor: 'handyman',
+    partial: 'construction',
+    total: 'report_problem',
+  };
+
+  get damageIcon(): string {
+    return RepairProjectCardComponent.DAMAGE_ICONS[this.project.damageType.code] ?? 'construction';
+  }
+
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
     if (img.src.indexOf(FALLBACK_THUMBNAIL) === -1) {
@@ -58,6 +68,20 @@ export class RepairProjectCardComponent {
 
   get canDonate(): boolean {
     return DONATABLE_STATUSES.includes(this.project.status.code) && this.fundingProgressPct < 100;
+  }
+
+  get isAlmostFunded(): boolean {
+    return this.project.status.code === 'approved' && this.fundingProgressPct >= 90 && this.fundingProgressPct < 100;
+  }
+
+  // "awaiting_contractor" بيضل نص الحالة لحد ما التمويل يوصل 100% حتى لو انعيّن
+  // مقاول فعلياً — فبدون هالتفريق المتبرع بيشوف "بانتظار مقاول" رغم إنه المقاول
+  // موجود أصلاً (نفس اللبس يلي انصلح بلوحة الأدمن — هون بنفس المنطق للمتبرع)
+  get statusLabelKey(): string {
+    if (this.project.status.code === 'awaiting_contractor' && this.project.contractorName) {
+      return 'PROJECTS.REPAIR.STATUS.CONTRACTOR_ASSIGNED_PENDING_FUNDING';
+    }
+    return 'PROJECTS.REPAIR.STATUS.' + this.project.status.code.toUpperCase();
   }
 
   formatCurrency(n: number): string {

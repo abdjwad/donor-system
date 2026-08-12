@@ -117,7 +117,11 @@
                   <td class="ref-cell">{{ d.reference }}</td>
                   <td><div class="donor-cell">{{ d.name }}
                     @if (d.is_anonymous) { <span class="mini-badge"><span class="material-icons">visibility_off</span></span> }
-                    @if (d.redirected_from_project) { <span class="mini-badge" [title]="isRtl() ? 'معاد توجيهه' : 'Redirected'"><span class="material-icons">info_outline</span></span> }
+                    @if (d.redirected_from_project_id) {
+                      <span class="mini-badge" [title]="(isRtl() ? 'فائض من مشروع ممول بالكامل: ' : 'Surplus from a fully-funded project: ') + (isRtl() ? d.redirected_from_project_ar : d.redirected_from_project_en)">
+                        <span class="material-icons">call_split</span>
+                      </span>
+                    }
                   </div></td>
                   <td class="amount-cell">${{ d.amount | number:'1.0-2' }}</td>
                   <td>{{ donationTypeLabel(d) }}</td>

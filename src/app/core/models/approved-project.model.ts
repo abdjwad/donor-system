@@ -23,6 +23,8 @@ export interface ApprovedProject {
   donorsCount?: number;
   fundingProgress?: number;
   collectedAmount?: number;
+  hasContractor: boolean;
+  contractorName: string | null;
 }
 
 export interface ProjectDisplayUpdate {

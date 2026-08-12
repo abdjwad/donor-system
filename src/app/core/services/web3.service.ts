@@ -2,6 +2,7 @@ import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core
 import { isPlatformBrowser } from '@angular/common';
 import { BrowserProvider, Contract, formatEther, parseEther } from 'ethers';
 import type { BlockchainDonation, ContractAddresses, WalletError } from '../models/blockchain.model';
+import { environment } from '../../../environments/environment';
 
 // ── ABI — فقط الدوال التي نستخدمها ─────────────────────────────
 // ABI = Application Binary Interface: يصف للـ ethers.js كيف يتحدث مع العقد
@@ -97,9 +98,11 @@ export class Web3Service {
           method: 'wallet_addEthereumChain',
           params: [{
             chainId:         '0x539',
-            chainName:       'Ganache Local',
+            chainName:       'Ganache',
             nativeCurrency:  { name: 'ETH', symbol: 'ETH', decimals: 18 },
-            rpcUrls:         ['http://127.0.0.1:8545'],
+            // محلياً = 127.0.0.1، وعالسيرفر البعيد = IP العام حتى محفظة أي
+            // زائر (مو بس السيرفر نفسه) تقدر توصل للـ RPC — راجع environment.*.ts
+            rpcUrls:         [environment.ganacheRpcUrl],
           }],
         });
       }
@@ -175,6 +178,16 @@ export class Web3Service {
   async getDonationContractAddress(): Promise<string> {
     await this.loadAddresses();
     return this.addresses?.BunianDonation.address ?? '';
+  }
+
+  /** اسم الشبكة المتصلة حالياً بصيغة يفهمها الباك اند (ganache/amoy/polygon) */
+  networkName(): 'ganache' | 'amoy' | 'polygon' | null {
+    switch (this.chainId()) {
+      case GANACHE_CHAIN_ID: return 'ganache';
+      case AMOY_CHAIN_ID:    return 'amoy';
+      case POLYGON_CHAIN_ID: return 'polygon';
+      default:               return null;
+    }
   }
 
   // ─────────────────────────────────────────────────────────────

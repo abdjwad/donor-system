@@ -143,6 +143,20 @@
   &:hover { color: $color-primary; }
 }
 
+.crypto-pay__explorer-link {
+  display: inline-block; margin-top: $space-xs;
+  font-size: 0.75rem; font-weight: 600; color: $color-primary; text-decoration: underline;
+}
+
+.crypto-pay__sync-note {
+  display: flex; align-items: center; justify-content: center; gap: $space-xs;
+  font-size: 0.8125rem; color: $color-text-muted; margin: 0 0 $space-lg;
+  .material-icons { font-size: 1rem; }
+
+  &--ok   { color: $color-success; }
+  &--warn { color: $color-error; }
+}
+
 .crypto-pay__success-actions { display: flex; justify-content: center; gap: $space-md; }
 .crypto-pay__home-btn { height: 44px !important; font-weight: 600 !important; border-radius: $radius-md !important; }
 

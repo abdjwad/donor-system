@@ -21,8 +21,11 @@ export interface AdminDonation {
   id: number; reference: string; name: string; email: string;
   amount: number; currency: string; payment_method: string; status: string;
   donation_type: string; is_anonymous: boolean; dedication_message: string | null;
-  redirected_from_project: boolean;
-  bank_transfer_reference: string | null; bank_account_name: string | null; receipt_url: string | null;
+  is_split_overflow: boolean;
+  redirected_from_project_id: number | null;
+  redirected_from_project_ar: string | null;
+  redirected_from_project_en: string | null;
+  bank_transfer_reference: string | null; wallet_id: number | null; bank_account_name: string | null; receipt_url: string | null;
   receipt_submitted_at: string | null;
   project_ar: string; project_en: string; created_at: string;
 }
@@ -65,7 +68,7 @@ export interface PageMeta { total: number; current_page: number; last_page: numb
 export interface AdminWalletTopup {
   id: number; reference: string; user_name: string | null; user_email: string | null;
   amount: number; currency: string; payment_method: string; status: string;
-  bank_transfer_reference: string | null; bank_account_name: string | null; receipt_url: string | null;
+  bank_transfer_reference: string | null; wallet_id: number | null; bank_account_name: string | null; receipt_url: string | null;
   receipt_submitted_at: string | null; created_at: string;
 }
 
@@ -96,12 +99,15 @@ export interface DisbursementPlanDetail extends DisbursementPlan {
 export interface DisbursementTranche {
   id: number;
   plan_id: number;
+  milestone_id: number | null;
   tranche_number: number;
   label_ar: string;
   label_en: string;
   amount: number;
   percentage: number;
   status: 'locked' | 'pending_ops_review' | 'pending_review' | 'approved' | 'transferred' | 'rejected';
+  /** false فقط للدفعة الأولى — بتتفعّل مباشرة بدون تقرير إنجاز (انظر activateFirstTranche) */
+  requires_report?: boolean;
   progress_report?: ProgressReport;
   transfer_reference?: string;
   transfer_date?: string;
@@ -143,11 +149,106 @@ export interface ReportSummary {
   total_donors: number;
 }
 
+// ── Financial Ledger (السجل المالي الشامل) ─────────────────────────
+export type LedgerType = 'all' | 'donation' | 'wallet_topup' | 'refund' | 'disbursement' | 'obstacle_funding';
+
+export interface LedgerRow {
+  type: 'donation' | 'wallet_topup' | 'refund' | 'disbursement' | 'obstacle_funding';
+  direction: 'in' | 'out';
+  reference: string;
+  date: string;
+  party_name: string;
+  party_email: string;
+  amount: number;
+  currency: string;
+  method: string;
+  bank_account: string;
+  context: string;
+  status: string;
+  approved_by: string;
+  notes: string;
+}
+
+export interface LedgerSummary {
+  count: number;
+  total_in: number;
+  total_out: number;
+  net: number;
+  by_type: Record<string, { count: number; amount: number }>;
+}
+
+export interface LedgerResponse {
+  data: LedgerRow[];
+  meta: { total: number; page: number; per_page: number };
+  summary: LedgerSummary;
+  range: { from: string; to: string };
+}
+
+export interface LedgerFilters {
+  date_from?: string;
+  date_to?: string;
+  type?: LedgerType;
+  search?: string;
+  page?: number;
+  per_page?: number;
+}
+
+// ── Financial Obstacles (العوائق المالية) ──────────────────────────
+// 'open' = لسا ما تحسم فيها (pending+in_progress سوا، الافتراضي بالباك اند بدون
+// إرسال status إطلاقاً) — مختلف عن 'pending' الحرفية يلي بتفلتر pending بس
+export type FinancialObstacleStatus = 'open' | 'pending' | 'in_progress' | 'funded' | 'rejected' | 'all';
+
+export interface FinancialObstacle {
+  id: number;
+  title: string;
+  description: string;
+  type: string;
+  type_label: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity_label: string;
+  status: string;
+  status_label: string;
+  delay_days: number;
+  additional_cost: number;
+  attachments: string[];
+  created_at: string;
+  project: {
+    id: number;
+    request_number: string;
+    location: string;
+    total_estimated_cost: number;
+    collected_amount: number;
+    funding_progress: number;
+  };
+  beneficiary: { id: number | null; name: string | null; phone: string | null };
+  contractor: { id: number; name: string; company_name: string | null } | null;
+  amount_required: number;
+  reported_by: { id: number; name: string };
+  funded_amount: number | null;
+  funded_at: string | null;
+  funded_by: string | null;
+  rejection_reason: string | null;
+}
+
+export interface FinancialObstaclesResult {
+  statistics: {
+    total_financial_obstacles: number;
+    total_amount_needed: number;
+    critical_count: number;
+    high_count: number;
+    medium_count: number;
+    low_count: number;
+  };
+  obstacles: FinancialObstacle[];
+}
+
 // ── Service ─────────────────────────────────────────────────────
 @Injectable({ providedIn: 'root' })
 export class AdminApiService {
   private readonly http = inject(HttpClient);
   private readonly API  = `${environment.apiUrl}/v1/admin`;
+  // العوائق (المالية وغيرها) على مسار legacy بدون /v1/admin — راجع routes/api.php
+  private readonly BASE = environment.apiUrl;
 
   // Overview
   getOverview(): Observable<AdminOverview> {
@@ -181,6 +282,11 @@ export class AdminApiService {
       .pipe(map(() => void 0));
   }
 
+  reassignDonationWallet(id: number, wallet_id: number): Observable<void> {
+    return this.http.put<ApiResponse<null>>(`${this.API}/donations/${id}/wallet`, { wallet_id })
+      .pipe(map(() => void 0));
+  }
+
   // ── Donor wallet top-ups (شحن محفظة المتبرعين) ────────────────
   getWalletTopups(params: { status?: string; page?: number } = {}): Observable<{ data: AdminWalletTopup[]; meta: PageMeta }> {
     let p = new HttpParams();
@@ -197,6 +303,11 @@ export class AdminApiService {
 
   rejectWalletTopup(id: number, reason: string): Observable<void> {
     return this.http.put<ApiResponse<null>>(`${this.API}/wallet-topups/${id}/reject`, { reason })
+      .pipe(map(() => void 0));
+  }
+
+  reassignWalletTopupWallet(id: number, wallet_id: number): Observable<void> {
+    return this.http.put<ApiResponse<null>>(`${this.API}/wallet-topups/${id}/wallet`, { wallet_id })
       .pipe(map(() => void 0));
   }
 
@@ -296,7 +407,9 @@ export class AdminApiService {
     contractor_name: string;
     contractor_company: string;
     contractor_iban: string;
-    tranches: { label_ar: string; label_en: string; percentage: number }[];
+    // عدد النسب لازم يساوي بالضبط عدد مراحل تهيئة المشروع — الباك اند بيربط كل
+    // نسبة بمرحلة حسب ترتيبها تلقائياً (label/tranche_number مش مُدخَلين يدوياً)
+    percentages: number[];
   }): Observable<DisbursementPlan> {
     return this.http.post<ApiResponse<DisbursementPlan>>(`${this.API}/disbursements`, data)
       .pipe(map(r => r.data));
@@ -314,6 +427,12 @@ export class AdminApiService {
 
   submitProgressReport(trancheId: number, data: { title: string; description: string; completion_percentage: number; report_date: string }): Observable<void> {
     return this.http.post<ApiResponse<null>>(`${this.API}/disbursements/tranches/${trancheId}/report`, data)
+      .pipe(map(() => void 0));
+  }
+
+  // الدفعة الأولى فقط — تفعيل مباشر لإرسالها لمراجعة مدير العمليات بدون تقرير إنجاز
+  activateFirstTranche(trancheId: number): Observable<void> {
+    return this.http.put<ApiResponse<null>>(`${this.API}/disbursements/tranches/${trancheId}/activate-first`, {})
       .pipe(map(() => void 0));
   }
 
@@ -371,5 +490,70 @@ export class AdminApiService {
         return throwError(() => new Error(err.error?.message ?? 'تعذّر تصدير التقرير'));
       }),
     );
+  }
+
+  // ── Financial Ledger (السجل المالي الشامل) ────────────────────
+  private ledgerParams(filters: LedgerFilters): HttpParams {
+    let p = new HttpParams();
+    if (filters.date_from) p = p.set('date_from', filters.date_from);
+    if (filters.date_to)   p = p.set('date_to',   filters.date_to);
+    if (filters.type && filters.type !== 'all') p = p.set('type', filters.type);
+    if (filters.search)    p = p.set('search',   filters.search);
+    if (filters.page)      p = p.set('page',     String(filters.page));
+    if (filters.per_page)  p = p.set('per_page', String(filters.per_page));
+    return p;
+  }
+
+  getFinancialLedger(filters: LedgerFilters = {}): Observable<LedgerResponse> {
+    return this.http.get<ApiResponse<LedgerResponse>>(`${this.API}/financial-ledger`, { params: this.ledgerParams(filters) })
+      .pipe(map(r => r.data));
+  }
+
+  exportFinancialLedger(filters: LedgerFilters, format: 'pdf' | 'excel' | 'csv' = 'csv'): Observable<void> {
+    const params = this.ledgerParams(filters).set('format', format);
+    const url = `${this.API}/financial-ledger/export`;
+    const ext = format === 'excel' ? 'xlsx' : format;
+
+    return this.http.get(url, { params, responseType: 'blob' }).pipe(
+      map((blob) => {
+        const objectUrl = URL.createObjectURL(blob);
+        const a         = document.createElement('a');
+        a.href          = objectUrl;
+        a.download      = `bunian_financial_ledger.${ext}`;
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(objectUrl);
+      }),
+      catchError((err: HttpErrorResponse) => {
+        if (err.error instanceof Blob) {
+          return from(err.error.text()).pipe(
+            switchMap((text) => {
+              let message = 'تعذّر تصدير السجل المالي';
+              try { message = JSON.parse(text)?.message ?? message; } catch { /* ignore parse errors */ }
+              return throwError(() => new Error(message));
+            }),
+          );
+        }
+        return throwError(() => new Error(err.error?.message ?? 'تعذّر تصدير السجل المالي'));
+      }),
+    );
+  }
+
+  // ── Financial Obstacles (العوائق المالية) ──────────────────────
+  getFinancialObstacles(status: FinancialObstacleStatus = 'open'): Observable<FinancialObstaclesResult> {
+    let p = new HttpParams();
+    if (status && status !== 'open') p = p.set('status', status);
+    return this.http.get<ApiResponse<FinancialObstaclesResult>>(`${this.BASE}/obstacles/financial`, { params: p })
+      .pipe(map(r => r.data));
+  }
+
+  fundObstacle(id: number, amount: number, notes?: string): Observable<void> {
+    return this.http.put<ApiResponse<null>>(`${this.BASE}/obstacles/${id}/fund`, { amount, notes })
+      .pipe(map(() => void 0));
+  }
+
+  rejectObstacleFunding(id: number, reason: string): Observable<void> {
+    return this.http.put<ApiResponse<null>>(`${this.BASE}/obstacles/${id}/reject-funding`, { reason })
+      .pipe(map(() => void 0));
   }
 }

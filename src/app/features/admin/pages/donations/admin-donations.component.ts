@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { LanguageService } from '../../../../core/services/language.service';
-import { AdminApiService, AdminDonation, PageMeta } from '../../../../core/services/admin-api.service';
+import { AdminApiService, AdminDonation, PageMeta, Wallet } from '../../../../core/services/admin-api.service';
 
 @Component({
   selector: 'app-admin-donations',
@@ -37,13 +37,30 @@ export class AdminDonationsComponent implements OnInit {
   rejectSubmitting = signal(false);
   confirmingId     = signal<number | null>(null);
 
-  ngOnInit(): void { this.load(); }
+  // إعادة تعيين الحساب البنكي المرتبط بتبرع بنكي
+  wallets           = signal<Wallet[]>([]);
+  reassigningId     = signal<number | null>(null);
+
+  ngOnInit(): void {
+    this.load();
+    this.adminApi.getWallets().subscribe({ next: (w) => this.wallets.set(w), error: () => {} });
+  }
 
   load(): void {
     this.loading.set(true);
     this.adminApi.getDonations({ status: this.filterStatus(), page: this.meta().current_page }).subscribe({
       next: (res) => { this.donations.set(res.data); this.meta.set(res.meta); this.loading.set(false); },
       error: () => this.loading.set(false),
+    });
+  }
+
+  changeWallet(donationId: number, walletId: string): void {
+    const id = Number(walletId);
+    if (!id) return;
+    this.reassigningId.set(donationId);
+    this.adminApi.reassignDonationWallet(donationId, id).subscribe({
+      next: () => { this.reassigningId.set(null); this.load(); },
+      error: () => this.reassigningId.set(null),
     });
   }
 

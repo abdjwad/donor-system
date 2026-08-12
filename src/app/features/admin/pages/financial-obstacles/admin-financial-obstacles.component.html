@@ -1,0 +1,172 @@
+<div class="admin-page">
+
+  <!-- Fund Modal -->
+  @if (showFundModal()) {
+    <div class="admin-modal-backdrop" (click)="showFundModal.set(false)">
+      <div class="admin-modal" (click)="$event.stopPropagation()">
+        <h3 class="admin-modal__title">
+          {{ isRtl() ? 'تمويل العائق المالي من الصندوق العام' : 'Fund Financial Obstacle from General Fund' }}
+        </h3>
+        @if (fundTarget(); as t) {
+          <p class="obst-modal-hint">
+            {{ isRtl() ? 'المشروع' : 'Project' }}: #{{ t.project.request_number }} —
+            {{ isRtl() ? 'المبلغ المطلوب' : 'Requested' }}: ${{ t.amount_required }}
+          </p>
+        }
+        <label class="obst-field-label">{{ isRtl() ? 'المبلغ ($)' : 'Amount ($)' }}</label>
+        <input type="number" class="admin-input" min="0.01" step="0.01" [(ngModel)]="fundAmount">
+        <label class="obst-field-label">{{ isRtl() ? 'ملاحظات (اختياري)' : 'Notes (optional)' }}</label>
+        <textarea class="admin-modal__textarea" [placeholder]="isRtl() ? 'ملاحظات داخلية...' : 'Internal notes...'"
+                  (input)="fundNotes = $any($event.target).value">{{ fundNotes }}</textarea>
+        <div class="admin-modal__actions">
+          <button class="admin-btn admin-btn--primary" [disabled]="fundSubmitting() || fundAmount <= 0" (click)="confirmFund()">
+            {{ fundSubmitting() ? '...' : (isRtl() ? 'تأكيد التمويل' : 'Confirm Funding') }}
+          </button>
+          <button class="admin-btn admin-btn--ghost" (click)="showFundModal.set(false)">
+            {{ isRtl() ? 'إلغاء' : 'Cancel' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Reject Modal -->
+  @if (showRejectModal()) {
+    <div class="admin-modal-backdrop" (click)="showRejectModal.set(false)">
+      <div class="admin-modal" (click)="$event.stopPropagation()">
+        <h3 class="admin-modal__title">{{ isRtl() ? 'سبب رفض طلب التمويل' : 'Funding Rejection Reason' }}</h3>
+        <textarea class="admin-modal__textarea"
+          [placeholder]="isRtl() ? 'اكتب سبب الرفض...' : 'Enter rejection reason...'"
+          (input)="rejectReason.set($any($event.target).value)">{{ rejectReason() }}</textarea>
+        <div class="admin-modal__actions">
+          <button class="admin-btn admin-btn--danger" [disabled]="rejectSubmitting() || !rejectReason().trim()" (click)="confirmReject()">
+            {{ rejectSubmitting() ? '...' : (isRtl() ? 'تأكيد الرفض' : 'Confirm Rejection') }}
+          </button>
+          <button class="admin-btn admin-btn--ghost" (click)="showRejectModal.set(false)">
+            {{ isRtl() ? 'إلغاء' : 'Cancel' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="admin-page__header">
+    <h1 class="admin-page__title">{{ isRtl() ? 'العوائق المالية' : 'Financial Obstacles' }}</h1>
+    <div class="admin-filters">
+      <select class="admin-select" [value]="filterStatus()" (change)="onFilterChange($any($event.target).value)">
+        <option value="open">{{ isRtl() ? 'قيد الانتظار' : 'Open (Pending)' }}</option>
+        <option value="funded">{{ isRtl() ? 'تم تمويلها' : 'Funded' }}</option>
+        <option value="rejected">{{ isRtl() ? 'مرفوضة' : 'Rejected' }}</option>
+        <option value="all">{{ isRtl() ? 'الكل' : 'All' }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card__icon"><span class="material-icons">report_problem</span></div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'عدد العوائق' : 'Obstacles' }}</div>
+        <div class="stat-card__value">{{ result().statistics.total_financial_obstacles }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon" style="background:rgba(197,149,42,0.1)">
+        <span class="material-icons" style="color:#C5952A">payments</span>
+      </div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'إجمالي المبلغ المطلوب' : 'Total Amount Needed' }}</div>
+        <div class="stat-card__value">${{ result().statistics.total_amount_needed }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon" style="background:rgba(198,40,40,0.1)">
+        <span class="material-icons" style="color:#C62828">priority_high</span>
+      </div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'خطيرة' : 'Critical' }}</div>
+        <div class="stat-card__value">{{ result().statistics.critical_count }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon" style="background:rgba(230,126,34,0.1)">
+        <span class="material-icons" style="color:#E67E22">warning</span>
+      </div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'مرتفعة' : 'High' }}</div>
+        <div class="stat-card__value">{{ result().statistics.high_count }}</div>
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="admin-card"><div class="admin-loading">{{ isRtl() ? 'جاري التحميل...' : 'Loading...' }}</div></div>
+  } @else if (error()) {
+    <div class="admin-card"><div class="ledger-alert ledger-alert--error">{{ error() }}</div></div>
+  } @else {
+    <div class="admin-card">
+      <div class="table-info">{{ isRtl() ? 'الإجمالي:' : 'Total:' }} {{ result().obstacles.length }}</div>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{{ isRtl() ? 'الخطورة' : 'Severity' }}</th>
+              <th>{{ isRtl() ? 'المشروع' : 'Project' }}</th>
+              <th>{{ isRtl() ? 'العنوان' : 'Title' }}</th>
+              <th>{{ isRtl() ? 'المقاول' : 'Contractor' }}</th>
+              <th>{{ isRtl() ? 'المتضرر' : 'Beneficiary' }}</th>
+              <th>{{ isRtl() ? 'المبلغ المطلوب' : 'Amount Needed' }}</th>
+              <th>{{ isRtl() ? 'التاريخ' : 'Date' }}</th>
+              <th>{{ isRtl() ? 'الحالة' : 'Status' }}</th>
+              <th>{{ isRtl() ? 'إجراءات' : 'Actions' }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (o of result().obstacles; track o.id) {
+              <tr>
+                <td><span class="status-badge status-badge--{{ severityBadgeClass(o.severity) }}">{{ o.severity_label }}</span></td>
+                <td class="ref-cell">#{{ o.project.request_number }}<div class="obst-sub">{{ o.project.location }}</div></td>
+                <td>
+                  <div class="donor-cell">{{ o.title }}</div>
+                  <div class="obst-sub obst-desc">{{ o.description }}</div>
+                </td>
+                <td>{{ o.contractor?.name ?? '—' }}</td>
+                <td>
+                  <div class="donor-cell">{{ o.beneficiary.name ?? '—' }}</div>
+                  @if (o.beneficiary.phone) { <div class="obst-sub" dir="ltr">{{ o.beneficiary.phone }}</div> }
+                </td>
+                <td class="amount-cell">${{ o.amount_required }}</td>
+                <td class="date-cell">{{ o.created_at }}</td>
+                <td>
+                  <span class="status-badge status-badge--{{ statusBadgeClass(o.status) }}">{{ o.status_label }}</span>
+                  @if (o.status === 'funded' && o.funded_amount) {
+                    <div class="obst-sub">${{ o.funded_amount }} · {{ o.funded_by }}</div>
+                  }
+                  @if (o.status === 'rejected' && o.rejection_reason) {
+                    <div class="obst-sub">{{ o.rejection_reason }}</div>
+                  }
+                </td>
+                <td>
+                  @if (isDecidable(o)) {
+                    <div class="action-btns">
+                      <button class="action-btn action-btn--approve" [title]="isRtl() ? 'تمويل' : 'Fund'" (click)="openFund(o)">
+                        <span class="material-icons">paid</span>
+                      </button>
+                      <button class="action-btn action-btn--reject" [title]="isRtl() ? 'رفض' : 'Reject'" (click)="openReject(o.id)">
+                        <span class="material-icons">cancel</span>
+                      </button>
+                    </div>
+                  }
+                </td>
+              </tr>
+            }
+            @if (result().obstacles.length === 0) {
+              <tr><td colspan="9" class="empty-cell">{{ isRtl() ? 'لا توجد عوائق مالية ضمن هذا الفلتر' : 'No financial obstacles for this filter' }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

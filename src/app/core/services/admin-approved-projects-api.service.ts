@@ -17,9 +17,10 @@ export class AdminApprovedProjectsApiService {
   private readonly http = inject(HttpClient);
   private readonly API = `${environment.apiUrl}/admin`; 
 
-  getApprovedProjects(): Observable<ApprovedProjectsResult> {
+  getApprovedProjects(status?: string): Observable<ApprovedProjectsResult> {
+    const params: Record<string, string> = status && status !== 'all' ? { status } : {};
     return this.http
-      .get<ApiResponse<any>>(`${this.API}/approved-projects`)
+      .get<ApiResponse<any>>(`${this.API}/approved-projects`, { params })
       .pipe(map((res) => this.mapResult(res.data)));
   }
 
@@ -112,6 +113,8 @@ export class AdminApprovedProjectsApiService {
       donorsCount: Number(raw.donors_count ?? 0),
       fundingProgress: Number(raw.funding_progress ?? 0),
       collectedAmount: Number(raw.collected_amount ?? 0),
+      hasContractor: !!raw.has_contractor,
+      contractorName: raw.contractor_name ?? null,
     };
   }
 }

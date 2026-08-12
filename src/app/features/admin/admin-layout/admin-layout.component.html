@@ -41,6 +41,14 @@
         <span class="material-icons">account_balance_wallet</span>
         {{ isRtl() ? 'صرف التبرعات' : 'Disbursements' }}
       </a>
+      <a routerLink="financial-ledger" routerLinkActive="active" class="admin-nav__link">
+        <span class="material-icons">receipt_long</span>
+        {{ isRtl() ? 'السجل المالي الشامل' : 'Financial Ledger' }}
+      </a>
+      <a routerLink="financial-obstacles" routerLinkActive="active" class="admin-nav__link">
+        <span class="material-icons">report_problem</span>
+        {{ isRtl() ? 'العوائق المالية' : 'Financial Obstacles' }}
+      </a>
       <a routerLink="wallet-settings" routerLinkActive="active" class="admin-nav__link">
         <span class="material-icons">account_balance</span>
         {{ isRtl() ? 'المحفظة البنكية' : 'Bank Wallet' }}
@@ -55,6 +63,11 @@
     </nav>
 
     <div class="admin-sidebar__footer">
+      <button class="admin-lang-btn" (click)="toggleTheme()"
+              [title]="themeService.isDark() ? (isRtl() ? 'الوضع النهاري' : 'Light mode') : (isRtl() ? 'الوضع الليلي' : 'Dark mode')">
+        <span class="material-icons">{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</span>
+        {{ themeService.isDark() ? (isRtl() ? 'نهاري' : 'Light') : (isRtl() ? 'ليلي' : 'Dark') }}
+      </button>
       <button class="admin-lang-btn" (click)="toggleLang()">
         <span class="material-icons">language</span>
         {{ isRtl() ? 'EN' : 'ع' }}
@@ -68,7 +81,10 @@
 
   <!-- Main content -->
   <main class="admin-main">
-    <app-back-button class="admin-main__back" fallback="/admin/overview" />
+    <div class="admin-main__toolbar">
+      <app-back-button fallback="/admin/overview" />
+      <app-refresh-button />
+    </div>
     <router-outlet/>
   </main>
 

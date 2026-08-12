@@ -20,6 +20,14 @@ export class ProjectCardComponent {
   private readonly langService = inject(LanguageService);
   readonly isRtl = computed(() => this.langService.currentLang() === 'ar');
 
+  private static readonly CATEGORY_ICONS: Record<string, string> = {
+    housing: 'home',
+    education: 'school',
+    health: 'medical_services',
+    infrastructure: 'construction',
+    water: 'water_drop',
+  };
+
   get progressPct(): number {
     if (!this.project.fundingGoal) return 0;
     return Math.min(100, (this.project.amountRaised / this.project.fundingGoal) * 100);
@@ -27,6 +35,14 @@ export class ProjectCardComponent {
 
   get remaining(): number {
     return Math.max(0, this.project.fundingGoal - this.project.amountRaised);
+  }
+
+  get categoryIcon(): string {
+    return ProjectCardComponent.CATEGORY_ICONS[this.project.category] ?? 'category';
+  }
+
+  get isAlmostFunded(): boolean {
+    return this.project.status === 'active' && this.progressPct >= 90 && this.progressPct < 100;
   }
 
   get title(): string {

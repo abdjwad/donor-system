@@ -78,8 +78,12 @@ async function main() {
     JSON.stringify(output, null, 2)
   );
 
-  // نسخة للـ Angular
-  const angularDir = path.join(__dirname, "..", "..", "src", "app", "core", "blockchain");
+  // نسخة للـ Angular — src/assets/ هو المجلد الوحيد اللي Angular بينشره فعلياً
+  // كـ /assets/* على الموقع (راجع angular.json)، فهو المكان يلي web3.service.ts
+  // بيقرأ منه فعلياً (fetch('/assets/blockchain/contract-addresses.json')).
+  // ملاحظة: كان هيك بيتكتب لـ src/app/core/blockchain — مسار Angular ما بينشره
+  // إطلاقاً، فالموقع كان يضل شغّال على عناوين قديمة بعد أي إعادة نشر.
+  const angularDir = path.join(__dirname, "..", "..", "src", "assets", "blockchain");
   fs.mkdirSync(angularDir, { recursive: true });
   fs.writeFileSync(
     path.join(angularDir, "contract-addresses.json"),
@@ -92,7 +96,7 @@ async function main() {
   console.log(`📋 BunianDonation : ${donationAddr}`);
   console.log(`📋 BunianProject  : ${projectAddr}`);
   console.log(`📁 deployments/${network.name}.json ✓`);
-  console.log(`📁 src/app/core/blockchain/contract-addresses.json ✓\n`);
+  console.log(`📁 src/assets/blockchain/contract-addresses.json ✓\n`);
 }
 
 main().catch(err => { console.error("❌", err.message); process.exit(1); });

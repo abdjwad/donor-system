@@ -1,0 +1,140 @@
+@use '../../../../styles/variables' as *;
+
+.trusted-contractors-section {
+  background: $color-card-bg;
+}
+
+.contractors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-xl;
+
+  @media (max-width: $bp-desktop) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: $bp-mobile)  { grid-template-columns: 1fr; }
+}
+
+.contractor-card {
+  background: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $radius-xl;
+  padding: $space-xl;
+  box-shadow: $shadow-card;
+  transition: $transition-base;
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba($color-primary, 0.14);
+    border-color: rgba($color-primary, 0.3);
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__name {
+    font-size: 1.0625rem;
+    font-weight: 800;
+    color: $color-text-primary;
+    margin: 0;
+  }
+
+  &__stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $space-sm;
+    padding-top: $space-md;
+    border-top: 1px dashed $color-border;
+  }
+}
+
+.contractor-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.contractor-verified {
+  display: flex;
+  align-items: center;
+  color: $color-primary;
+
+  .material-icons { font-size: 1.5rem; }
+}
+
+.contractor-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.contractor-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $color-primary-dark;
+  background: rgba($color-primary, 0.08);
+  border-radius: $radius-full;
+  padding: 3px 10px;
+}
+
+.contractor-rating {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  font-size: 0.8125rem;
+  color: $color-text-muted;
+  font-weight: 600;
+
+  &--new {
+    color: $color-gold-dark;
+    .material-icons { font-size: 1.125rem; }
+  }
+
+  &__stars {
+    display: flex;
+    gap: 1px;
+  }
+
+  &__count {
+    font-family: var(--font-latin);
+  }
+}
+
+.star-icon {
+  font-size: 1.0625rem;
+  color: $color-gold;
+
+  &--empty { color: $color-border; }
+}
+
+.contractor-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+
+  &__value {
+    font-size: 1.0625rem;
+    font-weight: 800;
+    color: $color-primary;
+    font-family: var(--font-latin);
+  }
+
+  &__label {
+    font-size: 0.6875rem;
+    color: $color-text-muted;
+    font-weight: 600;
+  }
+}

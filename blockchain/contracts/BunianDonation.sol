@@ -49,8 +49,9 @@ contract BunianDonation is Ownable, ReentrancyGuard {
     /// عدد تبرعات كل متبرع (address → العدد)
     mapping(address => uint256) public donationCountByDonor;
 
-    /// هل المشروع مفعّل أم لا (projectId → true/false)
-    mapping(uint256 => bool) public projectActive;
+    /// مشاريع أُوقفت يدوياً من الإدارة (projectId → true إذا مُوقَف)
+    /// أي مشروع غير موجود هنا هو نشط افتراضياً — لا حاجة لتفعيل مسبق قبل استقبال تبرعات
+    mapping(uint256 => bool) public projectPaused;
 
     /// إجمالي كل ما جُمع على المنصة
     uint256 public totalRaised;
@@ -87,10 +88,7 @@ contract BunianDonation is Ownable, ReentrancyGuard {
     // CONSTRUCTOR — يُنفَّذ مرة واحدة عند نشر العقد
     // ─────────────────────────────────────────────────────────────
 
-    constructor() Ownable(msg.sender) {
-        // تفعيل الصندوق العام (projectId = 0) تلقائياً
-        projectActive[0] = true;
-    }
+    constructor() Ownable(msg.sender) {}
 
     // ─────────────────────────────────────────────────────────────
     // WRITE FUNCTIONS — دوال الكتابة (تكلف gas)
@@ -106,7 +104,7 @@ contract BunianDonation is Ownable, ReentrancyGuard {
     ) external payable nonReentrant {
         // التحقق من الشروط
         require(msg.value >= MIN_DONATION, "BunianDonation: amount below minimum");
-        require(projectActive[projectId], "BunianDonation: project not active");
+        require(!projectPaused[projectId], "BunianDonation: project is paused");
 
         // تسجيل التبرع
         uint256 donationId = donations.length;
@@ -153,10 +151,11 @@ contract BunianDonation is Ownable, ReentrancyGuard {
         emit FundsWithdrawn(projectId, recipient, amount, block.timestamp);
     }
 
-    /// @notice تفعيل أو إيقاف مشروع
-    function setProjectActive(uint256 projectId, bool active) external onlyOwner {
-        projectActive[projectId] = active;
-        emit ProjectStatusChanged(projectId, active);
+    /// @notice إيقاف مشروع مؤقتاً عن استقبال تبرعات، أو إعادة تفعيله
+    /// @dev أي مشروع لم يُستدعَ له هذا الإجراء إطلاقاً يبقى نشطاً افتراضياً
+    function setProjectPaused(uint256 projectId, bool paused) external onlyOwner {
+        projectPaused[projectId] = paused;
+        emit ProjectStatusChanged(projectId, !paused);
     }
 
     // ─────────────────────────────────────────────────────────────

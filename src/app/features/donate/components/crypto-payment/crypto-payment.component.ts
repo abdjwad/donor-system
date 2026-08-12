@@ -3,11 +3,13 @@ import { RouterLink } from '@angular/router';
 import { SlicePipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
+import { parseEther } from 'ethers';
 import { Web3Service } from '../../../../core/services/web3.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { DonationService } from '../../services/donation.service';
 
 type TxState = 'idle' | 'pending' | 'success' | 'error';
+type SyncState = 'idle' | 'syncing' | 'synced' | 'sync-failed';
 
 @Component({
   selector: 'app-crypto-payment',
@@ -29,6 +31,7 @@ export class CryptoPaymentComponent implements OnInit {
   txError    = signal<string | null>(null);
   balance    = signal<string>('—');
   contractAddr = signal<string>('');
+  syncState  = signal<SyncState>('idle');
 
   get amount(): string {
     return String(this.donSvc.donationState().amount ?? 1);
@@ -65,6 +68,7 @@ export class CryptoPaymentComponent implements OnInit {
       this.txHash.set(hash);
       this.txState.set('success');
       this.balance.set(await this.web3.getWalletBalance());
+      this.syncOfficialLedger(hash);
     } catch (err: any) {
       const code = this.web3.parseError(err);
       this.txError.set(this.errorMessage(code));
@@ -72,11 +76,47 @@ export class CryptoPaymentComponent implements OnInit {
     }
   }
 
+  /**
+   * التبرع نفسه نجح ومؤكَّد على البلوكتشين أصلاً بهاي المرحلة — هاي الخطوة
+   * فقط تسجّله بسجل بنيان الرسمي (collected_amount + السجل المالي الإداري).
+   * فشلها لا يعني فشل التبرع نفسه، فما منرجع لحالة error.
+   */
+  private syncOfficialLedger(txHash: string): void {
+    const network = this.web3.networkName();
+    if (!network) { this.syncState.set('sync-failed'); return; }
+
+    const state = this.donSvc.donationState();
+    this.syncState.set('syncing');
+
+    this.donSvc.confirmCrypto({
+      tx_hash:            txHash,
+      contract_address:   this.contractAddr(),
+      from_address:        this.web3.walletAddress() ?? '',
+      network,
+      amount:              Number(this.amount),
+      amount_wei:          parseEther(this.amount).toString(),
+      project_id:          this.projectId || undefined,
+      campaign_id:         state.campaign_id,
+      donation_type:       state.donation_type ?? 'one_time',
+      is_anonymous:        state.is_anonymous ?? false,
+      dedication_message:  this.message || undefined,
+      name:                state.name,
+      email:               state.email ?? '',
+      phone:               state.phone,
+    }).subscribe({
+      next: () => this.syncState.set('synced'),
+      error: () => this.syncState.set('sync-failed'),
+    });
+  }
+
   get explorerUrl(): string {
     const hash = this.txHash();
     if (!hash) return '';
-    // Ganache local — لا يوجد explorer
-    return `http://127.0.0.1:8545/tx/${hash}`;
+    // Ganache local — لا يوجد مستكشف عام؛ الشبكات العامة (Amoy/Polygon) فقط عندها رابط فعلي
+    const network = this.web3.networkName();
+    if (network === 'amoy')    return `https://amoy.polygonscan.com/tx/${hash}`;
+    if (network === 'polygon') return `https://polygonscan.com/tx/${hash}`;
+    return '';
   }
 
   copyHash(): void {

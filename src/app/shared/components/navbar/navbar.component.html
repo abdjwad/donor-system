@@ -10,8 +10,11 @@
       </div>
     </a>
 
-    <!-- ── Back to previous page ───────────────────────────────── -->
-    <app-back-button class="navbar__back" fallback="/home" />
+    <!-- ── Back to previous page + refresh ─────────────────────── -->
+    <div class="navbar__toolbar">
+      <app-back-button fallback="/home" />
+      <app-refresh-button />
+    </div>
 
     <!-- ── Desktop nav links (4 فقط) ───────────────────────────── -->
     <nav class="navbar__links" aria-label="main navigation">
@@ -24,9 +27,11 @@
       <a routerLink="/campaigns"    routerLinkActive="active" class="navbar__link">
         {{ isRtl() ? 'الحملات' : 'Campaigns' }}
       </a>
-      <a routerLink="/transparency" routerLinkActive="active" class="navbar__link">
-        {{ isRtl() ? 'الشفافية' : 'Transparency' }}
-      </a>
+      @if (isLoggedIn()) {
+        <a routerLink="/transparency" routerLinkActive="active" class="navbar__link">
+          {{ isRtl() ? 'الشفافية' : 'Transparency' }}
+        </a>
+      }
     </nav>
 
     <!-- ── Actions ──────────────────────────────────────────────── -->
@@ -40,29 +45,37 @@
         </button>
       }
 
+      <!-- Theme -->
+      <button class="navbar__theme-btn" type="button" (click)="toggleTheme()"
+              [title]="themeService.isDark() ? (isRtl() ? 'الوضع النهاري' : 'Light mode') : (isRtl() ? 'الوضع الليلي' : 'Dark mode')">
+        <span class="material-icons">{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</span>
+      </button>
+
       <!-- Language -->
       <button class="navbar__lang-btn" type="button" (click)="toggleLang()">
         {{ isRtl() ? 'EN' : 'ع' }}
       </button>
 
-      <!-- Icon group: notifications + profile + dashboard -->
-      <div class="navbar__icon-group">
-        <a routerLink="/notifications" class="navbar__icon-btn" [title]="isRtl() ? 'الإشعارات' : 'Notifications'">
-          <span class="material-icons">notifications</span>
-          @if (unreadNotifications() > 0) {
-            <span class="navbar__notif-dot"></span>
-          }
-        </a>
-        <a routerLink="/profile"   class="navbar__icon-btn" [title]="isRtl() ? 'الملف الشخصي' : 'Profile'">
-          <span class="material-icons">account_circle</span>
-        </a>
-        <a routerLink="/dashboard" class="navbar__icon-btn" [title]="isRtl() ? 'لوحة التحكم' : 'Dashboard'">
-          <span class="material-icons">dashboard</span>
-        </a>
-      </div>
+      <!-- Icon group: notifications + profile + dashboard — لمتبرع مسجّل دخول فقط -->
+      @if (isLoggedIn()) {
+        <div class="navbar__icon-group">
+          <a routerLink="/notifications" class="navbar__icon-btn" [title]="isRtl() ? 'الإشعارات' : 'Notifications'">
+            <span class="material-icons">notifications</span>
+            @if (unreadNotifications() > 0) {
+              <span class="navbar__notif-dot"></span>
+            }
+          </a>
+          <a routerLink="/profile"   class="navbar__icon-btn" [title]="isRtl() ? 'الملف الشخصي' : 'Profile'">
+            <span class="material-icons">account_circle</span>
+          </a>
+          <a routerLink="/dashboard" class="navbar__icon-btn" [title]="isRtl() ? 'لوحة التحكم' : 'Dashboard'">
+            <span class="material-icons">dashboard</span>
+          </a>
+        </div>
 
-      <!-- Divider -->
-      <div class="navbar__divider"></div>
+        <!-- Divider -->
+        <div class="navbar__divider"></div>
+      }
 
       <!-- Wallet / Login -->
       @if (web3.isConnected()) {
@@ -116,15 +129,19 @@
       <a routerLink="/home"                class="mobile-link"><span class="material-icons">home</span>{{ isRtl() ? 'الرئيسية' : 'Home' }}</a>
       <a routerLink="/projects"            class="mobile-link"><span class="material-icons">handshake</span>{{ isRtl() ? 'المشاريع' : 'Projects' }}</a>
       <a routerLink="/campaigns"           class="mobile-link"><span class="material-icons">campaign</span>{{ isRtl() ? 'الحملات' : 'Campaigns' }}</a>
-      <a routerLink="/transparency"        class="mobile-link"><span class="material-icons">balance</span>{{ isRtl() ? 'الشفافية' : 'Transparency' }}</a>
       <a routerLink="/donate/general-fund" class="mobile-link"><span class="material-icons">account_balance</span>{{ isRtl() ? 'الصندوق العام' : 'General Fund' }}</a>
       <a routerLink="/donate/guest"        class="mobile-link mobile-link--donate"><span class="material-icons">favorite</span>{{ isRtl() ? 'تبرع الآن' : 'Donate Now' }}</a>
-      <div class="mobile-divider-line"></div>
-      <a routerLink="/dashboard"           class="mobile-link"><span class="material-icons">dashboard</span>{{ isRtl() ? 'لوحة التحكم' : 'Dashboard' }}</a>
-      <a routerLink="/notifications"       class="mobile-link"><span class="material-icons">notifications</span>{{ isRtl() ? 'الإشعارات' : 'Notifications' }}@if (unreadNotifications() > 0) { <span class="mobile-badge">{{ unreadNotifications() }}</span> }</a>
-      <a routerLink="/profile"             class="mobile-link"><span class="material-icons">manage_accounts</span>{{ isRtl() ? 'الملف الشخصي' : 'Profile' }}</a>
-      <a routerLink="/admin"               class="mobile-link mobile-link--admin"><span class="material-icons">admin_panel_settings</span>{{ isRtl() ? 'الإدارة' : 'Admin' }}</a>
-      @if (!web3.isConnected()) {
+      @if (isLoggedIn()) {
+        <div class="mobile-divider-line"></div>
+        <a routerLink="/transparency"        class="mobile-link"><span class="material-icons">balance</span>{{ isRtl() ? 'الشفافية' : 'Transparency' }}</a>
+        <a routerLink="/dashboard"           class="mobile-link"><span class="material-icons">dashboard</span>{{ isRtl() ? 'لوحة التحكم' : 'Dashboard' }}</a>
+        <a routerLink="/notifications"       class="mobile-link"><span class="material-icons">notifications</span>{{ isRtl() ? 'الإشعارات' : 'Notifications' }}@if (unreadNotifications() > 0) { <span class="mobile-badge">{{ unreadNotifications() }}</span> }</a>
+        <a routerLink="/profile"             class="mobile-link"><span class="material-icons">manage_accounts</span>{{ isRtl() ? 'الملف الشخصي' : 'Profile' }}</a>
+        <a routerLink="/admin"               class="mobile-link mobile-link--admin"><span class="material-icons">admin_panel_settings</span>{{ isRtl() ? 'الإدارة' : 'Admin' }}</a>
+        <div class="mobile-divider-line"></div>
+        <a class="mobile-link" (click)="logout()"><span class="material-icons">logout</span>{{ isRtl() ? 'تسجيل خروج' : 'Sign Out' }}</a>
+      } @else {
+        <div class="mobile-divider-line"></div>
         <a routerLink="/auth/login"        class="mobile-link"><span class="material-icons">login</span>{{ isRtl() ? 'تسجيل الدخول' : 'Sign In' }}</a>
       }
     </div>

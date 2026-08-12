@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { ConfirmBankTransferPayload, GuestDonation, GuestDonationResponse, WalletInfo } from '../../../core/models/guest-donation.model';
+import { CryptoConfirmPayload, CryptoConfirmResponse } from '../../../core/models/blockchain.model';
 import { ApiResponse } from '../../../core/models/auth-response.models';
 import { ProjectsApiService } from '../../../core/services/projects-api.service';
 import { Project } from '../../../core/models/project.model';
@@ -44,6 +45,13 @@ export class DonationService {
   submitAuthDonation(payload: Partial<GuestDonation>): Observable<GuestDonationResponse> {
     return this.http
       .post<ApiResponse<GuestDonationResponse>>(`${this.API}/donate/authenticated`, payload)
+      .pipe(map((res) => res.data));
+  }
+
+  // ── تسجيل تبرع نُفّذ فعلياً على البلوكتشين بالسجل الرسمي ─────────
+  confirmCrypto(payload: CryptoConfirmPayload): Observable<CryptoConfirmResponse> {
+    return this.http
+      .post<ApiResponse<CryptoConfirmResponse>>(`${this.API}/donate/crypto-confirm`, payload)
       .pipe(map((res) => res.data));
   }
 

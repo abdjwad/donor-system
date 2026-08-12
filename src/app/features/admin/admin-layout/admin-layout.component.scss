@@ -93,7 +93,10 @@
   overflow-y: auto;
   padding: $space-2xl;
 
-  &__back { color: $color-text-secondary; margin-bottom: $space-md; }
+  &__toolbar {
+    display: flex; align-items: center; gap: $space-md;
+    color: $color-text-secondary; margin-bottom: $space-md;
+  }
 
   @media (max-width: $bp-desktop) { padding: $space-xl; }
   @media (max-width: $bp-mobile)  { padding: $space-md; }

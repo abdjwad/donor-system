@@ -54,6 +54,26 @@
     </div>
   </div>
 
+  <!-- Status filter tabs — افتراضياً "الكل" حتى ما يبين النظام فاضي وهو فيه
+       مشاريع فعلياً، بس تجاوزت مرحلة "بانتظار التمويل" -->
+  <div class="project-status-tabs">
+    <button class="project-status-tab" [class.project-status-tab--active]="statusFilter() === 'all'" (click)="setStatusFilter('all')">
+      {{ isRtl() ? 'الكل' : 'All' }}
+    </button>
+    <button class="project-status-tab" [class.project-status-tab--active]="statusFilter() === 'approved'" (click)="setStatusFilter('approved')">
+      {{ isRtl() ? 'بانتظار التمويل' : 'Awaiting Funding' }}
+    </button>
+    <button class="project-status-tab" [class.project-status-tab--active]="statusFilter() === 'awaiting_contractor'" (click)="setStatusFilter('awaiting_contractor')">
+      {{ isRtl() ? 'بانتظار مقاول / تمويل' : 'Awaiting Contractor / Funding' }}
+    </button>
+    <button class="project-status-tab" [class.project-status-tab--active]="statusFilter() === 'in_progress'" (click)="setStatusFilter('in_progress')">
+      {{ isRtl() ? 'قيد التنفيذ' : 'In Progress' }}
+    </button>
+    <button class="project-status-tab" [class.project-status-tab--active]="statusFilter() === 'completed'" (click)="setStatusFilter('completed')">
+      {{ isRtl() ? 'مكتملة' : 'Completed' }}
+    </button>
+  </div>
+
   <!-- Stats cards -->
   <div class="stats-grid">
     <div class="stat-card">
@@ -138,7 +158,12 @@
                     <span class="empty-value">{{ 'ADMIN.PROJECTS.NOT_SPECIFIED' | translate }}</span>
                   }
                 </td>
-                <td><span class="status-badge status-badge--{{ p.status }}">{{ statusKey(p.status) | translate }}</span></td>
+                <td>
+                  <span class="status-badge status-badge--{{ p.status }}">{{ statusLabelKey(p) | translate }}</span>
+                  @if (p.hasContractor && p.contractorName) {
+                    <div class="status-badge__contractor">{{ p.contractorName }}</div>
+                  }
+                </td>
                 <td class="date-cell">{{ p.createdAt }}</td>
                 <td>
                   <button mat-stroked-button class="camp-btn" (click)="openEdit(p)">
@@ -150,7 +175,11 @@
             }
             @if (projects().length === 0) {
               <tr>
-                <td colspan="9" class="empty-cell">{{ 'ADMIN.PROJECTS.NO_RESULTS' | translate }}</td>
+                <td colspan="9" class="empty-cell">
+                  {{ statusFilter() === 'all'
+                      ? (isRtl() ? 'لا يوجد أي مشروع مقبول بالنظام حالياً' : 'No accepted projects in the system yet')
+                      : (isRtl() ? 'لا توجد مشاريع بهذه المرحلة حالياً — جرّب فلتر "الكل"' : 'No projects at this stage — try the "All" filter') }}
+                </td>
               </tr>
             }
           </tbody>

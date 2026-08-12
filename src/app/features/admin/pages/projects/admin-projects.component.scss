@@ -1,5 +1,41 @@
 @use '../../../../styles/variables' as *;
 
+// ── Status filter tabs ─────────────────────────────────────────
+.project-status-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-xs;
+  margin-bottom: $space-lg;
+}
+
+.project-status-tab {
+  padding: 7px 16px;
+  border-radius: $radius-full;
+  border: 1px solid $color-border;
+  background: $color-card-bg;
+  color: $color-text-secondary;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $transition-fast;
+
+  &:hover { background: rgba($color-primary, 0.06); }
+
+  &--active {
+    background: $color-primary;
+    border-color: $color-primary;
+    color: #fff;
+  }
+}
+
+// نفس مكوّن .status-badge المشترك (_admin.scss) بس بحالات دورة حياة المشروع
+// المحدَّدة — بألوان مختلفة وواضحة لكل مرحلة، مش نفس الأخضر لـ"بانتظار تمويل"
+// و"مكتمل" سوا (كانت awaiting_contractor/in_progress بدون أي لون أصلاً)
+.status-badge {
+  &--awaiting_contractor { background: rgba($color-gold, 0.15); color: $color-gold-dark; }
+  &--in_progress         { background: rgba($color-navy, 0.1);  color: $color-navy; }
+}
+
 // Stat card body layout (not defined in shared _admin.scss)
 .stat-card__body {
   display: flex;
@@ -27,6 +63,12 @@
 .empty-value {
   color: #94A3B8;
   font-size: 0.8125rem;
+}
+
+.status-badge__contractor {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: $color-text-muted;
 }
 
 // Damage type badge

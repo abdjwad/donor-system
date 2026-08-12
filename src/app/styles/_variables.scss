@@ -11,20 +11,36 @@ $color-gold-light:     #E5B84A;
 $color-gold-dark:      #A07820;
 $color-navy:           #1A2D5A;
 
-// Neutrals
-$color-background:     #FBF7F0;
-$color-card-bg:        #FFFFFF;
-$color-text-primary:   #1C2833;
-$color-text-secondary: #34495E;
-$color-text-muted:     #7F8C8D;
-$color-border:         #E8DDD0;
+// Neutrals — القيم الخام لوضع النهار فقط، تُستخدم حصراً لتهيئة الـ CSS custom
+// properties بـ styles.scss (:root). أي component.scss ما لازم يستخدمهن مباشرة —
+// استخدم $color-background/$color-card-bg/... تحت (الجاهزة تتفاعل مع الوضع الليلي).
+$color-background-light:     #FBF7F0;
+$color-card-bg-light:        #FFFFFF;
+$color-text-primary-light:   #1C2833;
+$color-text-secondary-light: #34495E;
+$color-text-muted-light:     #7F8C8D;
+$color-border-light:         #E8DDD0;
+$color-error-bg-light:       #FDEDEC;
+$color-success-bg-light:     #EAFAF1;
+
+// Neutrals — واجهة الاستخدام الفعلية بكل الموقع. عبارة عن CSS custom properties
+// (مش قيم Sass خام) حتى تتغيّر تلقائياً حسب [data-theme="dark"|"light"] بدون
+// أي تعديل على أي component.scss موجود — راجع _theme.scss للقيم الفعلية بكل وضع.
+// ملاحظة: ما تستخدمهن جوا rgba() Sass (بترمي خطأ compile) — لهيك الألوان الأساسية
+// (primary/gold/navy/error/success/warning) تحت ضلّت قيم Sass خام قصداً.
+$color-background:     var(--color-background);
+$color-card-bg:        var(--color-card-bg);
+$color-text-primary:   var(--color-text-primary);
+$color-text-secondary: var(--color-text-secondary);
+$color-text-muted:     var(--color-text-muted);
+$color-border:         var(--color-border);
 $color-border-focus:   $color-primary;
 
 // Semantic
 $color-error:          #C0392B;
-$color-error-bg:       #FDEDEC;
+$color-error-bg:       var(--color-error-bg);
 $color-success:        #27AE60;
-$color-success-bg:     #EAFAF1;
+$color-success-bg:     var(--color-success-bg);
 $color-warning:        #E67E22;
 
 // Spacing

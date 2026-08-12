@@ -1,0 +1,77 @@
+<section class="section trusted-contractors-section">
+  <div class="section-inner">
+
+    <div class="section-header">
+      <div class="section-header__text">
+        <h2 class="section-title">{{ 'HOME.TRUSTED_CONTRACTORS.TITLE' | translate }}</h2>
+        <p class="section-subtitle">{{ 'HOME.TRUSTED_CONTRACTORS.SUBTITLE' | translate }}</p>
+      </div>
+    </div>
+
+    @if (!loading() && contractors().length > 0) {
+      <div class="contractors-grid">
+        @for (c of contractors(); track c.id) {
+          <div class="contractor-card">
+
+            <div class="contractor-card__top">
+              <div class="contractor-avatar" [style.background]="avatarColor(c.id)">
+                {{ initials(c.name) }}
+              </div>
+              <div class="contractor-verified" [title]="'HOME.TRUSTED_CONTRACTORS.VERIFIED' | translate">
+                <span class="material-icons">verified</span>
+              </div>
+            </div>
+
+            <h3 class="contractor-card__name">{{ c.name }}</h3>
+
+            @if (c.specializations.length > 0) {
+              <div class="contractor-tags">
+                @for (spec of c.specializations.slice(0, 3); track spec) {
+                  <span class="contractor-tag">{{ spec }}</span>
+                }
+              </div>
+            }
+
+            @if (c.ratingsCount > 0) {
+              <div class="contractor-rating">
+                <div class="contractor-rating__stars">
+                  @for (s of stars(c.rating); track $index) {
+                    <span class="material-icons star-icon" [class.star-icon--empty]="s === 'empty'">
+                      {{ s === 'full' ? 'star' : (s === 'half' ? 'star_half' : 'star_border') }}
+                    </span>
+                  }
+                </div>
+                <span class="contractor-rating__count">
+                  {{ c.rating | number:'1.1-1' }} · {{ c.ratingsCount }}
+                  {{ 'HOME.TRUSTED_CONTRACTORS.REVIEWS' | translate }}
+                </span>
+              </div>
+            } @else {
+              <div class="contractor-rating contractor-rating--new">
+                <span class="material-icons">military_tech</span>
+                {{ 'HOME.TRUSTED_CONTRACTORS.AWAITING_REVIEWS' | translate }}
+              </div>
+            }
+
+            <div class="contractor-card__stats">
+              <div class="contractor-stat">
+                <span class="contractor-stat__value">{{ c.completedProjectsCount }}</span>
+                <span class="contractor-stat__label">{{ 'HOME.TRUSTED_CONTRACTORS.COMPLETED' | translate }}</span>
+              </div>
+              <div class="contractor-stat">
+                <span class="contractor-stat__value">{{ c.yearsOfExperience }}</span>
+                <span class="contractor-stat__label">{{ 'HOME.TRUSTED_CONTRACTORS.YEARS' | translate }}</span>
+              </div>
+              <div class="contractor-stat">
+                <span class="contractor-stat__value">{{ c.memberSince }}</span>
+                <span class="contractor-stat__label">{{ 'HOME.TRUSTED_CONTRACTORS.MEMBER_SINCE' | translate }}</span>
+              </div>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</section>

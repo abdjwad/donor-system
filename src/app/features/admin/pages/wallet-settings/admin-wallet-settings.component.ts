@@ -24,6 +24,7 @@ export class AdminWalletSettingsComponent implements OnInit {
   readonly saving    = signal(false);
   readonly editingId = signal<number | null>(null);
   readonly showCreate = signal(false);
+  readonly activatingId = signal<number | null>(null);
 
   form = this.emptyForm();
 
@@ -84,5 +85,22 @@ export class AdminWalletSettingsComponent implements OnInit {
       next: () => { this.saving.set(false); this.cancelEdit(); this.load(); },
       error: () => this.saving.set(false),
     });
+  }
+
+  // تفعيل هذا الحساب البنكي كحساب نشط بضغطة وحدة — بدون فتح نموذج التعديل. مفيد
+  // خصوصاً لو الحساب النشط الحالي تعطّل/انضرب وبدك تبدّل فوراً لحساب بديل عندك
+  setActive(wallet: Wallet): void {
+    if (wallet.is_active) return;
+    this.activatingId.set(wallet.id);
+    this.adminApi.updateWallet(wallet.id, { is_active: true }).subscribe({
+      next: () => { this.activatingId.set(null); this.load(); },
+      error: () => this.activatingId.set(null),
+    });
+  }
+
+  maskedAccountNumber(accountNumber: string): string {
+    if (!accountNumber) return '';
+    const last4 = accountNumber.slice(-4);
+    return `•••• •••• •••• ${last4}`;
   }
 }

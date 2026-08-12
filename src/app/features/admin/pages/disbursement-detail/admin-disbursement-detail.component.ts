@@ -88,6 +88,15 @@ export class AdminDisbursementDetailComponent implements OnInit {
     });
   }
 
+  // الدفعة الأولى فقط — بتنصرف عند توقيع العقد بدون تقرير إنجاز
+  activateFirst(trancheId: number): void {
+    this.saving.set(true);
+    this.adminApi.activateFirstTranche(trancheId).subscribe({
+      next: () => { this.saving.set(false); this.loadPlan(); },
+      error: () => this.saving.set(false),
+    });
+  }
+
   opsApprove(trancheId: number): void {
     this.saving.set(true);
     this.adminApi.opsApproveTranche(trancheId).subscribe({

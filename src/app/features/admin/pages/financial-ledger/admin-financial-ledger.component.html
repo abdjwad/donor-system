@@ -1,0 +1,169 @@
+<div class="admin-page">
+
+  <div class="admin-page__header">
+    <h1 class="admin-page__title">{{ isRtl() ? 'السجل المالي الشامل' : 'Financial Ledger' }}</h1>
+    <div class="ledger-export-btns">
+      <button class="admin-btn admin-btn--ghost" [disabled]="isDownloading('csv')" (click)="download('csv')">
+        <span class="material-icons">description</span>
+        {{ isDownloading('csv') ? '...' : 'CSV' }}
+      </button>
+      <button class="admin-btn admin-btn--ghost" [disabled]="isDownloading('excel')" (click)="download('excel')">
+        <span class="material-icons">grid_on</span>
+        {{ isDownloading('excel') ? '...' : 'Excel' }}
+      </button>
+      <button class="admin-btn admin-btn--primary" [disabled]="isDownloading('pdf')" (click)="download('pdf')">
+        <span class="material-icons">picture_as_pdf</span>
+        {{ isDownloading('pdf') ? '...' : 'PDF' }}
+      </button>
+    </div>
+  </div>
+
+  @if (downloadError()) {
+    <div class="ledger-alert ledger-alert--error">{{ downloadError() }}</div>
+  }
+
+  <!-- Filters -->
+  <div class="admin-card ledger-filters-card">
+    <div class="ledger-filters">
+      <label class="ledger-field">
+        <span>{{ isRtl() ? 'من تاريخ' : 'From' }}</span>
+        <input type="date" class="admin-select" [(ngModel)]="dateFrom" />
+      </label>
+      <label class="ledger-field">
+        <span>{{ isRtl() ? 'إلى تاريخ' : 'To' }}</span>
+        <input type="date" class="admin-select" [(ngModel)]="dateTo" />
+      </label>
+      <label class="ledger-field ledger-field--grow">
+        <span>{{ isRtl() ? 'بحث (مرجع / اسم / إيميل)' : 'Search (ref / name / email)' }}</span>
+        <input type="text" class="admin-select" [(ngModel)]="search"
+               [placeholder]="isRtl() ? 'ابحث...' : 'Search...'"
+               (keyup.enter)="applyFilters()" />
+      </label>
+      <div class="ledger-field-actions">
+        <button class="admin-btn admin-btn--primary" (click)="applyFilters()">{{ isRtl() ? 'تطبيق' : 'Apply' }}</button>
+        <button class="admin-btn admin-btn--ghost" (click)="resetFilters()">{{ isRtl() ? 'إعادة تعيين' : 'Reset' }}</button>
+      </div>
+    </div>
+
+    <div class="ledger-type-tabs">
+      <button class="ledger-tab" [class.ledger-tab--active]="typeFilter() === 'all'" (click)="setType('all')">
+        {{ isRtl() ? 'الكل' : 'All' }}
+      </button>
+      <button class="ledger-tab" [class.ledger-tab--active]="typeFilter() === 'donation'" (click)="setType('donation')">
+        {{ isRtl() ? 'تبرعات' : 'Donations' }}
+      </button>
+      <button class="ledger-tab" [class.ledger-tab--active]="typeFilter() === 'wallet_topup'" (click)="setType('wallet_topup')">
+        {{ isRtl() ? 'شحن محفظة' : 'Wallet Top-ups' }}
+      </button>
+      <button class="ledger-tab" [class.ledger-tab--active]="typeFilter() === 'refund'" (click)="setType('refund')">
+        {{ isRtl() ? 'استرداد' : 'Refunds' }}
+      </button>
+      <button class="ledger-tab" [class.ledger-tab--active]="typeFilter() === 'disbursement'" (click)="setType('disbursement')">
+        {{ isRtl() ? 'صرف دفعات' : 'Disbursements' }}
+      </button>
+      <button class="ledger-tab" [class.ledger-tab--active]="typeFilter() === 'obstacle_funding'" (click)="setType('obstacle_funding')">
+        {{ isRtl() ? 'تمويل عوائق' : 'Obstacle Funding' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="stats-grid ledger-stats">
+    <div class="stat-card">
+      <div class="stat-card__icon"><span class="material-icons">south_west</span></div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'إجمالي الإيداعات' : 'Total Deposits' }}</div>
+        <div class="stat-card__value ledger-value--in">${{ summary().total_in | number:'1.2-2' }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon"><span class="material-icons">north_east</span></div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'إجمالي السحب/الصرف' : 'Total Out (Refunds + Disbursed)' }}</div>
+        <div class="stat-card__value ledger-value--out">${{ summary().total_out | number:'1.2-2' }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon"><span class="material-icons">account_balance</span></div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'الصافي' : 'Net' }}</div>
+        <div class="stat-card__value" [class.ledger-value--out]="summary().net < 0">${{ summary().net | number:'1.2-2' }}</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon"><span class="material-icons">receipt_long</span></div>
+      <div>
+        <div class="stat-card__label">{{ isRtl() ? 'عدد العمليات' : 'Total Operations' }}</div>
+        <div class="stat-card__value">{{ summary().count }}</div>
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="admin-card"><div class="admin-loading">{{ isRtl() ? 'جاري التحميل...' : 'Loading...' }}</div></div>
+  } @else if (error()) {
+    <div class="admin-card"><div class="ledger-alert ledger-alert--error">{{ error() }}</div></div>
+  } @else {
+    <div class="admin-card">
+      <div class="table-info">{{ isRtl() ? 'الإجمالي:' : 'Total:' }} {{ total() }}</div>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{{ isRtl() ? 'النوع' : 'Type' }}</th>
+              <th>{{ isRtl() ? 'المرجع' : 'Reference' }}</th>
+              <th>{{ isRtl() ? 'التاريخ' : 'Date' }}</th>
+              <th>{{ isRtl() ? 'الطرف' : 'Party' }}</th>
+              <th>{{ isRtl() ? 'المبلغ' : 'Amount' }}</th>
+              <th>{{ isRtl() ? 'الطريقة' : 'Method' }}</th>
+              <th>{{ isRtl() ? 'الحساب البنكي' : 'Bank Account' }}</th>
+              <th>{{ isRtl() ? 'السياق' : 'Context' }}</th>
+              <th>{{ isRtl() ? 'الحالة' : 'Status' }}</th>
+              <th>{{ isRtl() ? 'اعتمدها' : 'Approved By' }}</th>
+              <th>{{ isRtl() ? 'ملاحظات' : 'Notes' }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of rows(); track r.reference + r.type + r.date) {
+              <tr>
+                <td>
+                  <span class="ledger-type-badge ledger-type-badge--{{ r.type }}">{{ typeLabel(r.type) }}</span>
+                </td>
+                <td class="ref-cell">{{ r.reference }}</td>
+                <td class="date-cell">{{ r.date }}</td>
+                <td>
+                  <div class="donor-cell">{{ r.party_name }}</div>
+                  @if (r.party_email) { <div class="ledger-party-email">{{ r.party_email }}</div> }
+                </td>
+                <td class="amount-cell" [class.ledger-value--out]="r.direction === 'out'">
+                  {{ r.direction === 'in' ? '+' : '-' }}${{ r.amount | number:'1.2-2' }}
+                </td>
+                <td>{{ r.method }}</td>
+                <td>{{ r.bank_account || '—' }}</td>
+                <td class="ledger-context-cell">{{ r.context || '—' }}</td>
+                <td><span class="status-badge status-badge--{{ r.status }}">{{ r.status }}</span></td>
+                <td>{{ r.approved_by || '—' }}</td>
+                <td class="ledger-notes-cell">{{ r.notes || '—' }}</td>
+              </tr>
+            }
+            @if (rows().length === 0) {
+              <tr><td colspan="11" class="empty-cell">{{ isRtl() ? 'لا توجد عمليات ضمن هذه الفلاتر' : 'No operations found for these filters' }}</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (lastPage() > 1) {
+        <div class="ledger-pagination">
+          <button class="admin-btn admin-btn--ghost" [disabled]="page() <= 1" (click)="prevPage()">
+            {{ isRtl() ? 'السابق' : 'Previous' }}
+          </button>
+          <span>{{ isRtl() ? 'صفحة' : 'Page' }} {{ page() }} / {{ lastPage() }}</span>
+          <button class="admin-btn admin-btn--ghost" [disabled]="page() >= lastPage()" (click)="nextPage()">
+            {{ isRtl() ? 'التالي' : 'Next' }}
+          </button>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -12,10 +12,12 @@
       <p>{{ 'DONATE.GUEST.SUBTITLE' | translate }}</p>
     </div>
 
-    <div class="checkout-header__auth">
-      <span>{{ 'DONATE.GUEST.HAVE_ACCOUNT' | translate }}</span>
-      <a routerLink="/auth/login">{{ 'DONATE.GUEST.LOGIN' | translate }}</a>
-    </div>
+    @if (!isLoggedIn()) {
+      <div class="checkout-header__auth">
+        <span>{{ 'DONATE.GUEST.HAVE_ACCOUNT' | translate }}</span>
+        <a routerLink="/auth/login">{{ 'DONATE.GUEST.LOGIN' | translate }}</a>
+      </div>
+    }
   </header>
 
   <!-- ── Main content ── -->

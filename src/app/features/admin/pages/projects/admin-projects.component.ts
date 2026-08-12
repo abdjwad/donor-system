@@ -32,6 +32,7 @@ export class AdminProjectsComponent implements OnInit {
   readonly projects = signal<ApprovedProject[]>([]);
   readonly statistics = signal<ApprovedProjectsStatistics>(EMPTY_STATISTICS);
   readonly loading = signal(true);
+  readonly statusFilter = signal<string>('all');
 
   readonly showEditForm = signal(false);
   readonly saving = signal(false);
@@ -50,7 +51,7 @@ export class AdminProjectsComponent implements OnInit {
 
   load(): void {
     this.loading.set(true);
-    this.approvedProjectsApi.getApprovedProjects().subscribe({
+    this.approvedProjectsApi.getApprovedProjects(this.statusFilter()).subscribe({
       next: (res) => {
         this.projects.set(res.projects);
         this.statistics.set(res.statistics);
@@ -60,12 +61,27 @@ export class AdminProjectsComponent implements OnInit {
     });
   }
 
+  setStatusFilter(status: string): void {
+    this.statusFilter.set(status);
+    this.load();
+  }
+
   damageTypeKey(damageType: string): string {
     return 'PROJECTS.REPAIR.DAMAGE_TYPE.' + damageType.toUpperCase();
   }
 
   statusKey(status: string): string {
     return 'PROJECTS.REPAIR.STATUS.' + status.toUpperCase();
+  }
+
+  // "awaiting_contractor" بيضل هو نص الحالة بقاعدة البيانات لحد ما التمويل يوصل 100%،
+  // حتى لو انعيّن مقاول فعلياً — فبنعرض label مختلف بهالحالة بالذات حتى ما توهم الأدمن
+  // إنه ما في مقاول أصلاً
+  statusLabelKey(p: ApprovedProject): string {
+    if (p.status === 'awaiting_contractor' && p.hasContractor) {
+      return 'PROJECTS.REPAIR.STATUS.CONTRACTOR_ASSIGNED_PENDING_FUNDING';
+    }
+    return this.statusKey(p.status);
   }
 
   priorityClass(priority: number | null): 'high' | 'medium' | 'low' | 'none' {

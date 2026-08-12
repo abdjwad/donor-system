@@ -6,9 +6,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { LanguageService } from '../../../../core/services/language.service';
 import { AdminApiService, DisbursementPlan } from '../../../../core/services/admin-api.service';
 import { RepairProjectsApiService } from '../../../../core/services/repair-projects-api.service';
-import { FundingCompletedContractor, FundingCompletedProject, ProjectsStatistics } from '../../../../core/models/repair-project.model';
+import { FundingCompletedContractor, FundingCompletedProject, ProjectMilestoneRef, ProjectsStatistics } from '../../../../core/models/repair-project.model';
 
-interface TrancheDraft { label_ar: string; label_en: string; percentage: number }
+// كل دفعة (Tranche) مربوطة بمرحلة تهيئة حقيقية بالمشروع — الاسم يجي من اسم
+// المرحلة (للعرض فقط، مش قابل للتعديل)، الأدمن بس بيحدّد النسبة %
+interface TrancheDraft { milestoneId: number; label: string; percentage: number }
 
 @Component({
   selector: 'app-admin-disbursements',
@@ -29,6 +31,7 @@ readonly isRtl   = computed(() => this.langService.currentLang() === 'ar');
   readonly showCreate = signal(false);
   readonly creating   = signal(false);
   readonly projects   = signal<FundingCompletedProject[]>([]);
+  readonly awaitingContractorProjects = signal<FundingCompletedProject[]>([]);
   readonly executionStats = signal<ProjectsStatistics>({ total: 0 });
   readonly selectedContractor = signal<FundingCompletedContractor | null>(null);
 
@@ -37,20 +40,37 @@ readonly isRtl   = computed(() => this.langService.currentLang() === 'ar');
     contractor_name: '',
     contractor_company: '',
     contractor_iban: '',
-    tranches: [
-      { label_ar: 'دفعة أولى — بداية التنفيذ',    label_en: 'First Tranche — Foundation',     percentage: 30 },
-      { label_ar: 'دفعة ثانية — منتصف التنفيذ',   label_en: 'Second Tranche — Midpoint',      percentage: 40 },
-      { label_ar: 'دفعة ثالثة — التسليم النهائي', label_en: 'Third Tranche — Final Delivery', percentage: 30 },
-    ] as TrancheDraft[],
+    tranches: [] as TrancheDraft[],
   };
 
   get totalPct(): number { return this.createForm.tranches.reduce((s, t) => s + +t.percentage, 0); }
+
+  // المشروع المختار عنده مقاول وتمويل كامل بس بدون ولا مرحلة تهيئة — ما فيه
+  // إمكانية إنشاء خطة صرف قبل ما تُضاف مراحل التنفيذ من صفحة "تهيئة المشروع"
+  get selectedProjectHasNoMilestones(): boolean {
+    return !!this.createForm.project_id && this.createForm.tranches.length === 0;
+  }
+
+  // بتوزّع 100% بالتساوي على عدد مراحل التهيئة (الباقي مضاف لآخر دفعة)، والأدمن
+  // بعدين حر يعدّل كل نسبة يدوياً بالفورم
+  private buildTranchesFromMilestones(milestones: ProjectMilestoneRef[]): TrancheDraft[] {
+    const sorted = [...milestones].sort((a, b) => a.order - b.order);
+    const n = sorted.length;
+    if (n === 0) return [];
+    const base = Math.floor(100 / n);
+    const remainder = 100 - base * n;
+    return sorted.map((m, i) => ({
+      milestoneId: m.id,
+      label: m.name,
+      percentage: base + (i === n - 1 ? remainder : 0),
+    }));
+  }
 
   ngOnInit(): void {
     this.load();
     this.repairProjectsApi.getInProgressProjects().subscribe({ next: r => this.executionStats.set(r.statistics) });
     this.repairProjectsApi.getFundingCompletedProjects().subscribe({ next: r => this.projects.set(r.projects) });
-
+    this.repairProjectsApi.getProjectsAwaitingContractorAssignment().subscribe({ next: r => this.awaitingContractorProjects.set(r.projects) });
   }
 
   load(): void {
@@ -69,6 +89,8 @@ readonly isRtl   = computed(() => this.langService.currentLang() === 'ar');
       this.createForm.contractor_company = project.contractor.companyName ?? '';
       this.createForm.contractor_iban = project.contractor.bankInfo?.iban ?? '';
     }
+    // عدد الدفعات وأسماؤها تلقائياً من مراحل تهيئة هالمشروع — مش من إدخال حر
+    this.createForm.tranches = project ? this.buildTranchesFromMilestones(project.milestones) : [];
   }
 
   toggleCreate(): void {
@@ -82,23 +104,12 @@ readonly isRtl   = computed(() => this.langService.currentLang() === 'ar');
     this.createForm.contractor_company = '';
     this.createForm.contractor_iban  = '';
     this.selectedContractor.set(null);
-    this.createForm.tranches = [
-      { label_ar: 'دفعة أولى — بداية التنفيذ',    label_en: 'First Tranche — Foundation',     percentage: 30 },
-      { label_ar: 'دفعة ثانية — منتصف التنفيذ',   label_en: 'Second Tranche — Midpoint',      percentage: 40 },
-      { label_ar: 'دفعة ثالثة — التسليم النهائي', label_en: 'Third Tranche — Final Delivery', percentage: 30 },
-    ];
-  }
-
-  addTranche(): void {
-    this.createForm.tranches.push({ label_ar: '', label_en: '', percentage: 0 });
-  }
-
-  removeTranche(index: number): void {
-    this.createForm.tranches.splice(index, 1);
+    this.createForm.tranches = [];
   }
 
   get canSubmit(): boolean {
     return !!this.createForm.project_id
+      && this.createForm.tranches.length > 0
       && this.totalPct === 100
       && !!this.selectedContractor()?.hasBankInfo;
   }
@@ -111,7 +122,7 @@ readonly isRtl   = computed(() => this.langService.currentLang() === 'ar');
       contractor_name:     this.createForm.contractor_name,
       contractor_company:  this.createForm.contractor_company,
       contractor_iban:     this.createForm.contractor_iban,
-      tranches:            this.createForm.tranches.map(t => ({ ...t, percentage: +t.percentage })),
+      percentages:         this.createForm.tranches.map(t => +t.percentage),
     }).subscribe({
       next: plan => { this.creating.set(false); this.router.navigate(['/admin/disbursements', plan.id]); },
       error: ()  => this.creating.set(false),

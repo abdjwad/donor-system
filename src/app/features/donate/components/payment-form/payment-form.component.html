@@ -188,7 +188,7 @@
       </ng-template>
 
       <div class="payment-tab-content">
-        <app-crypto-payment [projectId]="0" />
+        <app-crypto-payment [projectId]="donationState().project_id ?? 0" />
       </div>
     </mat-tab>
 

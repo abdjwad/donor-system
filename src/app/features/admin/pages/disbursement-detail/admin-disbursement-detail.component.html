@@ -163,20 +163,36 @@
             <!-- ── LOCKED ── -->
             @if (t.status === 'locked') {
               <div class="disb-tc-body">
-                <p class="disb-tc-hint">
-                  {{ isRtl()
-                      ? 'في انتظار تقرير الإنجاز من المقاول'
-                      : 'Waiting for a progress report from the contractor' }}
-                </p>
-                @if (!planSuspended()) {
-                  <button mat-button class="admin-primary-btn disb-small-btn"
-                          (click)="openForm(t.id, 'report')">
-                    <span class="material-icons">add_task</span>
-                    {{ isRtl() ? 'تسجيل تقرير إنجاز' : 'Log Progress Report' }}
-                  </button>
+                @if (t.requires_report === false) {
+                  <p class="disb-tc-hint">
+                    {{ isRtl()
+                        ? 'الدفعة الأولى — تُصرف عند توقيع العقد وبدء التنفيذ، بدون تقرير إنجاز'
+                        : 'First tranche — released on contract signing, no progress report needed' }}
+                  </p>
+                  @if (!planSuspended()) {
+                    <button mat-button class="admin-primary-btn disb-small-btn"
+                            [disabled]="saving()"
+                            (click)="activateFirst(t.id)">
+                      <span class="material-icons">bolt</span>
+                      {{ isRtl() ? 'تفعيل الدفعة الأولى (بدون تقرير)' : 'Activate First Tranche (No Report)' }}
+                    </button>
+                  }
+                } @else {
+                  <p class="disb-tc-hint">
+                    {{ isRtl()
+                        ? 'في انتظار تقرير الإنجاز من المقاول'
+                        : 'Waiting for a progress report from the contractor' }}
+                  </p>
+                  @if (!planSuspended()) {
+                    <button mat-button class="admin-primary-btn disb-small-btn"
+                            (click)="openForm(t.id, 'report')">
+                      <span class="material-icons">add_task</span>
+                      {{ isRtl() ? 'تسجيل تقرير إنجاز' : 'Log Progress Report' }}
+                    </button>
 
-                  @if (isFormOpen(t.id, 'report')) {
-                    <ng-container *ngTemplateOutlet="reportFormTpl; context: { $implicit: t.id }"/>
+                    @if (isFormOpen(t.id, 'report')) {
+                      <ng-container *ngTemplateOutlet="reportFormTpl; context: { $implicit: t.id }"/>
+                    }
                   }
                 }
               </div>
@@ -450,13 +466,22 @@
                   </span>
                 </div>
                 @if (!planSuspended()) {
-                  <button mat-button class="admin-primary-btn disb-small-btn"
-                          (click)="openForm(t.id, 'report')">
-                    <span class="material-icons">refresh</span>
-                    {{ isRtl() ? 'تسجيل تقرير جديد' : 'Submit New Report' }}
-                  </button>
-                  @if (isFormOpen(t.id, 'report')) {
-                    <ng-container *ngTemplateOutlet="reportFormTpl; context: { $implicit: t.id }"/>
+                  @if (t.requires_report === false) {
+                    <button mat-button class="admin-primary-btn disb-small-btn"
+                            [disabled]="saving()"
+                            (click)="activateFirst(t.id)">
+                      <span class="material-icons">bolt</span>
+                      {{ isRtl() ? 'إعادة تفعيل الدفعة الأولى (بدون تقرير)' : 'Reactivate First Tranche (No Report)' }}
+                    </button>
+                  } @else {
+                    <button mat-button class="admin-primary-btn disb-small-btn"
+                            (click)="openForm(t.id, 'report')">
+                      <span class="material-icons">refresh</span>
+                      {{ isRtl() ? 'تسجيل تقرير جديد' : 'Submit New Report' }}
+                    </button>
+                    @if (isFormOpen(t.id, 'report')) {
+                      <ng-container *ngTemplateOutlet="reportFormTpl; context: { $implicit: t.id }"/>
+                    }
                   }
                 }
               </div>

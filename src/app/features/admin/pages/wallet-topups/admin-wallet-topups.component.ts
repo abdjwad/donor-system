@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { LanguageService } from '../../../../core/services/language.service';
-import { AdminApiService, AdminWalletTopup, PageMeta } from '../../../../core/services/admin-api.service';
+import { AdminApiService, AdminWalletTopup, PageMeta, Wallet } from '../../../../core/services/admin-api.service';
 
 @Component({
   selector: 'app-admin-wallet-topups',
@@ -32,13 +32,29 @@ export class AdminWalletTopupsComponent implements OnInit {
   rejectReason     = signal('');
   rejectSubmitting = signal(false);
 
-  ngOnInit(): void { this.load(); }
+  wallets       = signal<Wallet[]>([]);
+  reassigningId = signal<number | null>(null);
+
+  ngOnInit(): void {
+    this.load();
+    this.adminApi.getWallets().subscribe({ next: (w) => this.wallets.set(w), error: () => {} });
+  }
 
   load(): void {
     this.loading.set(true);
     this.adminApi.getWalletTopups({ status: this.filterStatus(), page: this.meta().current_page }).subscribe({
       next: (res) => { this.topups.set(res.data); this.meta.set(res.meta); this.loading.set(false); },
       error: () => this.loading.set(false),
+    });
+  }
+
+  changeWallet(topupId: number, walletId: string): void {
+    const id = Number(walletId);
+    if (!id) return;
+    this.reassigningId.set(topupId);
+    this.adminApi.reassignWalletTopupWallet(topupId, id).subscribe({
+      next: () => { this.reassigningId.set(null); this.load(); },
+      error: () => this.reassigningId.set(null),
     });
   }
 

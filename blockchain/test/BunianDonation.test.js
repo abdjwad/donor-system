@@ -23,9 +23,10 @@ describe("BunianDonation", function () {
       expect(await contract.totalRaised()).to.equal(0n);
     });
 
-    it("الصندوق العام (projectId=0) مفعّل", async function () {
+    it("أي مشروع نشط افتراضياً بدون تفعيل مسبق (غير موقوف)", async function () {
       const { contract } = await loadFixture(deployFixture);
-      expect(await contract.projectActive(0)).to.be.true;
+      expect(await contract.projectPaused(0)).to.be.false;
+      expect(await contract.projectPaused(42)).to.be.false;
     });
   });
 
@@ -57,12 +58,22 @@ describe("BunianDonation", function () {
       ).to.be.revertedWith("BunianDonation: amount below minimum");
     });
 
-    it("يرفض التبرع لمشروع غير مفعّل", async function () {
+    it("يقبل التبرع لأي رقم مشروع بدون تفعيل مسبق", async function () {
       const { contract, donor1 } = await loadFixture(deployFixture);
 
       await expect(
         contract.connect(donor1).donate(99, "", { value: ethers.parseEther("1") })
-      ).to.be.revertedWith("BunianDonation: project not active");
+      ).to.not.be.reverted;
+    });
+
+    it("يرفض التبرع لمشروع أوقفته الإدارة", async function () {
+      const { contract, owner, donor1 } = await loadFixture(deployFixture);
+
+      await contract.connect(owner).setProjectPaused(7, true);
+
+      await expect(
+        contract.connect(donor1).donate(7, "", { value: ethers.parseEther("1") })
+      ).to.be.revertedWith("BunianDonation: project is paused");
     });
 
     it("يجمع تبرعات متعددة بشكل صحيح", async function () {
@@ -78,16 +89,26 @@ describe("BunianDonation", function () {
   });
 
   describe("إدارة المشاريع", function () {
-    it("المالك يُفعّل مشروعاً جديداً", async function () {
-      const { contract, owner } = await loadFixture(deployFixture);
-      await contract.connect(owner).setProjectActive(1, true);
-      expect(await contract.projectActive(1)).to.be.true;
+    it("المالك يوقف مشروعاً ثم يعيد تفعيله", async function () {
+      const { contract, owner, donor1 } = await loadFixture(deployFixture);
+
+      await contract.connect(owner).setProjectPaused(1, true);
+      expect(await contract.projectPaused(1)).to.be.true;
+      await expect(
+        contract.connect(donor1).donate(1, "", { value: ethers.parseEther("1") })
+      ).to.be.revertedWith("BunianDonation: project is paused");
+
+      await contract.connect(owner).setProjectPaused(1, false);
+      expect(await contract.projectPaused(1)).to.be.false;
+      await expect(
+        contract.connect(donor1).donate(1, "", { value: ethers.parseEther("1") })
+      ).to.not.be.reverted;
     });
 
-    it("غير المالك لا يستطيع التفعيل", async function () {
+    it("غير المالك لا يستطيع إيقاف مشروع", async function () {
       const { contract, donor1 } = await loadFixture(deployFixture);
       await expect(
-        contract.connect(donor1).setProjectActive(1, true)
+        contract.connect(donor1).setProjectPaused(1, true)
       ).to.be.revertedWithCustomError(contract, "OwnableUnauthorizedAccount");
     });
   });

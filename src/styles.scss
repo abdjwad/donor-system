@@ -11,6 +11,9 @@
 @use 'app/styles/admin';
 
 // ── CSS Custom Properties ────────────────────────────────────
+// وضع النهار (افتراضي) — القيم الخام. الوضع الليلي بيعيد تعريف نفس المتغيرات
+// تحت [data-theme="dark"] بس (راجع الأسفل)، فأي مكان بالموقع بيستخدم
+// $color-background/$color-card-bg/$color-text-*/$color-border بيتفاعل تلقائياً.
 :root {
   --color-primary:        #{$color-primary};
   --color-primary-light:  #{$color-primary-light};
@@ -18,16 +21,17 @@
   --color-gold:           #{$color-gold};
   --color-gold-light:     #{$color-gold-light};
   --color-navy:           #{$color-navy};
-  --color-background:     #{$color-background};
-  --color-card-bg:        #{$color-card-bg};
-  --color-text-primary:   #{$color-text-primary};
-  --color-text-secondary: #{$color-text-secondary};
-  --color-text-muted:     #{$color-text-muted};
-  --color-border:         #{$color-border};
+  --color-background:     #{$color-background-light};
+  --color-card-bg:        #{$color-card-bg-light};
+  --color-text-primary:   #{$color-text-primary-light};
+  --color-text-secondary: #{$color-text-secondary-light};
+  --color-text-muted:     #{$color-text-muted-light};
+  --color-border:         #{$color-border-light};
+  --color-border-shimmer: #{color.adjust($color-border-light, $lightness: 5%)};
   --color-error:          #{$color-error};
-  --color-error-bg:       #{$color-error-bg};
+  --color-error-bg:       #{$color-error-bg-light};
   --color-success:        #{$color-success};
-  --color-success-bg:     #{$color-success-bg};
+  --color-success-bg:     #{$color-success-bg-light};
 
   --font-arabic: 'Cairo', 'Segoe UI', system-ui, sans-serif;
   --font-latin:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -47,6 +51,26 @@
 
   --shadow-card:   #{$shadow-card};
   --shadow-button: #{$shadow-button};
+
+  color-scheme: light;
+}
+
+// ── الوضع الليلي ─────────────────────────────────────────────
+// تدرّجات أخضر داكن (مش رمادي/أسود صرف) حتى يضل الطابع البصري لبنيان محفوظ.
+// الألوان الأساسية (primary/gold/navy) نفسها بالوضعين — تباينها كافٍ أصلاً على
+// خلفية داكنة، فما في داعي نعقّد الموضوع بنسخة تانية منها.
+[data-theme="dark"] {
+  --color-background:     #101713;
+  --color-card-bg:        #1A2420;
+  --color-text-primary:   #EDEFEE;
+  --color-text-secondary: #B8C4BE;
+  --color-text-muted:     #7C8B84;
+  --color-border:         #2A3B34;
+  --color-border-shimmer: #37493F;
+  --color-error-bg:       #3A1F1C;
+  --color-success-bg:     #17301F;
+
+  color-scheme: dark;
 }
 
 // ── Reset & Base ─────────────────────────────────────────────
@@ -67,6 +91,7 @@ body {
   background: $color-background;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 a {
@@ -182,7 +207,7 @@ button {
 
 .skeleton-hero {
   height: 420px;
-  background: linear-gradient(90deg, $color-border 25%, color.adjust($color-border, $lightness: 5%) 50%, $color-border 75%);
+  background: linear-gradient(90deg, $color-border 25%, var(--color-border-shimmer) 50%, $color-border 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
@@ -199,7 +224,7 @@ button {
 .skeleton-block {
   height: 18px;
   border-radius: $radius-md;
-  background: linear-gradient(90deg, $color-border 25%, color.adjust($color-border, $lightness: 5%) 50%, $color-border 75%);
+  background: linear-gradient(90deg, $color-border 25%, var(--color-border-shimmer) 50%, $color-border 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
   width: 60%;
@@ -207,7 +232,7 @@ button {
   &--short { width: 40%; }
 }
 
-.skeleton { border-radius: $radius-md; background: linear-gradient(90deg, $color-border 25%, color.adjust($color-border, $lightness: 5%) 50%, $color-border 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+.skeleton { border-radius: $radius-md; background: linear-gradient(90deg, $color-border 25%, var(--color-border-shimmer) 50%, $color-border 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
 .skeleton--image { height: 220px; width: 100%; border-radius: $radius-xl $radius-xl 0 0; }
 .skeleton--title { height: 20px; width: 75%; margin-bottom: $space-sm; }
 .skeleton--text  { height: 14px; width: 90%; margin-bottom: $space-sm; }

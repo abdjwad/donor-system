@@ -5,15 +5,29 @@
   <div class="project-card__image-wrap">
     <img [src]="thumbnailUrl" [alt]="project.requestNumber" class="project-card__image" loading="lazy"
          (error)="onImageError($event)"/>
+    <div class="project-card__image-gradient"></div>
 
     <!-- Badges on image -->
     <div class="project-card__badges">
       <span class="damage-badge damage-badge--{{ project.damageType.code }}">
+        <span class="material-icons damage-badge__icon">{{ damageIcon }}</span>
         {{ ('PROJECTS.REPAIR.DAMAGE_TYPE.' + project.damageType.code.toUpperCase()) | translate }}
       </span>
       <span class="status-badge status-badge--{{ project.status.code }}">
-        {{ ('PROJECTS.REPAIR.STATUS.' + project.status.code.toUpperCase()) | translate }}
+        {{ statusLabelKey | translate }}
       </span>
+    </div>
+
+    @if (isAlmostFunded) {
+      <div class="project-card__almost-badge">
+        <span class="material-icons">local_fire_department</span>
+        {{ 'PROJECTS.CARD.ALMOST_FUNDED' | translate }}
+      </div>
+    }
+
+    <div class="project-card__view-hint">
+      <span class="material-icons">visibility</span>
+      {{ 'PROJECTS.CARD.VIEW_DETAILS' | translate }}
     </div>
 
     @if (isCompleted) {
@@ -38,7 +52,7 @@
 
     <!-- Funding progress -->
     <div class="project-card__progress">
-      <div class="progress-bar">
+      <div class="progress-bar" [class.progress-bar--almost]="isAlmostFunded">
         <div class="progress-bar__fill" [style.width.%]="fundingProgressPct"></div>
       </div>
       <div class="project-card__progress-labels">
@@ -72,12 +86,12 @@
 
     <!-- Meta row -->
     <div class="project-card__meta">
-      <span class="meta-item">
+      <span class="meta-pill">
         <span class="material-icons meta-icon">groups</span>
         {{ project.familySize }} {{ 'PROJECTS.REPAIR.CARD.FAMILY_MEMBERS' | translate }}
       </span>
       @if (project.contractorName) {
-        <span class="meta-item">
+        <span class="meta-pill">
           <span class="material-icons meta-icon">engineering</span>
           {{ project.contractorName }}
         </span>
@@ -101,6 +115,7 @@
          mat-flat-button class="project-card__donate-btn">
         <span class="material-icons">volunteer_activism</span>
         {{ 'PROJECTS.REPAIR.CARD.DONATE' | translate }}
+        <span class="material-icons project-card__donate-btn-arrow">arrow_forward</span>
       </a>
     </div>
   }

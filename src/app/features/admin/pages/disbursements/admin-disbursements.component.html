@@ -87,6 +87,7 @@
     @for (p of projects(); track p.id) {
       <option [ngValue]="p.id">
         {{ projectTitle(p) }} — {{ isRtl() ? 'المبلغ المجمّع' : 'Collected' }}: {{ fmt(p.collectedAmount) }}
+        — {{ isRtl() ? 'مراحل' : 'stages' }}: {{ p.milestones.length }}
       </option>
     }
   </select>
@@ -143,41 +144,46 @@
         }
       </div>
 
-      <!-- Tranches -->
+      <!-- Tranches — عددها وأسماؤها تلقائياً من مراحل تهيئة المشروع، الأدمن بس بيوزّع % -->
       <div class="disb-form-section">
         <div class="disb-section-label">
-          {{ isRtl() ? 'الدفعات' : 'Payment Tranches' }}
-          <span class="disb-pct-badge" [class.disb-pct-badge--ok]="totalPct === 100"
-                                       [class.disb-pct-badge--err]="totalPct !== 100">
-            {{ totalPct }}%
-          </span>
-        </div>
-
-        <div class="disb-tranches-builder">
-          @for (t of createForm.tranches; track $index) {
-            <div class="disb-tranche-row">
-              <span class="disb-tranche-num">{{ $index + 1 }}</span>
-              <input class="disb-input" [(ngModel)]="t.label_ar"
-                     [placeholder]="isRtl() ? 'اسم الدفعة بالعربية' : 'Arabic label'">
-              <input class="disb-input" [(ngModel)]="t.label_en" placeholder="English label">
-              <div class="disb-pct-field">
-                <input type="number" class="disb-input disb-input--pct"
-                       [(ngModel)]="t.percentage" min="0" max="100">
-                <span>%</span>
-              </div>
-              @if (createForm.tranches.length > 1) {
-                <button type="button" class="disb-remove-btn" (click)="removeTranche($index)">
-                  <span class="material-icons">remove_circle_outline</span>
-                </button>
-              }
-            </div>
+          {{ isRtl() ? 'الدفعات (بعدد مراحل تهيئة المشروع)' : 'Payment Tranches (by project setup stages)' }}
+          @if (createForm.tranches.length > 0) {
+            <span class="disb-pct-badge" [class.disb-pct-badge--ok]="totalPct === 100"
+                                         [class.disb-pct-badge--err]="totalPct !== 100">
+              {{ totalPct }}%
+            </span>
           }
         </div>
 
-        <button type="button" class="disb-add-tranche-btn" (click)="addTranche()">
-          <span class="material-icons">add</span>
-          {{ isRtl() ? 'إضافة دفعة' : 'Add Tranche' }}
-        </button>
+        @if (selectedProjectHasNoMilestones) {
+          <div class="disb-warning">
+            <span class="material-icons">warning</span>
+            {{ isRtl()
+              ? 'هذا المشروع بدون مراحل تهيئة بعد — أضف مراحل التنفيذ من صفحة "تهيئة المشروع" أولاً قبل إنشاء خطة صرف.'
+              : 'This project has no setup stages yet — add execution stages from the "Project Setup" page before creating a disbursement plan.' }}
+          </div>
+        } @else if (createForm.tranches.length > 0) {
+          <div class="disb-tranches-builder">
+            @for (t of createForm.tranches; track t.milestoneId) {
+              <div class="disb-tranche-row disb-tranche-row--milestone">
+                <span class="disb-tranche-num">{{ $index + 1 }}</span>
+                <span class="disb-tranche-label" [class.ar]="isRtl()">{{ t.label }}</span>
+                <span class="mini-badge" [class.mini-badge--hidden]="$index !== 0"
+                      [title]="isRtl()
+                        ? 'الدفعة الأولى تُصرف عند توقيع العقد وبدء التنفيذ — بدون تقرير إنجاز'
+                        : 'First tranche is released on contract signing — no progress report needed'">
+                  <span class="material-icons">info</span>
+                </span>
+                <div class="disb-pct-field">
+                  <input type="number" class="disb-input disb-input--pct"
+                         [(ngModel)]="t.percentage" min="0" max="100">
+                  <span>%</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
       </div>
 
       <!-- Actions -->
@@ -196,6 +202,49 @@
               ? (isRtl() ? 'جاري الحفظ...' : 'Saving...')
               : (isRtl() ? 'حفظ الخطة' : 'Save Plan') }}
         </button>
+      </div>
+    </div>
+  }
+
+  <!-- ── مشاريع ممولة بالكامل بانتظار تعيين مقاول (قبل ما تصير جاهزة لخطة صرف) ── -->
+  @if (awaitingContractorProjects().length > 0) {
+    <div class="admin-card disb-awaiting-contractor">
+      <div class="admin-card__title">
+        <span class="material-icons">engineering</span>
+        {{ isRtl() ? 'ممولة بالكامل — بانتظار تعيين مقاول' : 'Fully Funded — Awaiting Contractor' }}
+        <span class="disb-pct-badge disb-pct-badge--err">{{ awaitingContractorProjects().length }}</span>
+      </div>
+      <div class="disb-hint">
+        {{ isRtl()
+          ? 'هاي المشاريع تمويلها مكتمل 100% بس ما إلها مقاول بعد — رسّي عرض مقاول لها أولاً (من شاشة العروض) حتى تصير جاهزة لإنشاء خطة صرف.'
+          : 'These projects are 100% funded but have no contractor yet — award a bid first (from the bids screen) before a disbursement plan can be created.' }}
+      </div>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{{ isRtl() ? 'المشروع' : 'Project' }}</th>
+              <th>{{ isRtl() ? 'الموقع' : 'Location' }}</th>
+              <th>{{ isRtl() ? 'المبلغ المجمّع' : 'Collected' }}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of awaitingContractorProjects(); track p.id) {
+              <tr>
+                <td>#{{ p.requestNumber }}</td>
+                <td>{{ p.location }}</td>
+                <td class="amount-cell">{{ fmt(p.collectedAmount) }}</td>
+                <td>
+                  <a class="action-btn action-btn--view" [routerLink]="['/admin/projects', p.id]"
+                     [title]="isRtl() ? 'عرض ملف المشروع' : 'View project file'">
+                    <span class="material-icons">folder_open</span>
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
   }

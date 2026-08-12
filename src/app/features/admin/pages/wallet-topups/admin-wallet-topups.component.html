@@ -58,15 +58,26 @@
                 <td class="amount-cell">${{ t.amount }}</td>
                 <td>
                   {{ t.payment_method }}
-                  @if (t.payment_method === 'bank' && t.bank_transfer_reference) {
+                  @if (t.payment_method === 'bank') {
                     <div class="bank-ref-cell">
-                      <span>{{ isRtl() ? 'مرجع:' : 'Ref:' }} {{ t.bank_transfer_reference }}</span>
-                      @if (t.bank_account_name) {
-                        <span>{{ isRtl() ? 'الحساب:' : 'Account:' }} {{ t.bank_account_name }}</span>
+                      @if (t.bank_transfer_reference) {
+                        <span>{{ isRtl() ? 'مرجع:' : 'Ref:' }} {{ t.bank_transfer_reference }}</span>
                       }
                       @if (t.receipt_url) {
                         <a [href]="t.receipt_url" target="_blank" class="receipt-link">{{ isRtl() ? 'عرض الإيصال' : 'View receipt' }}</a>
                       }
+                      <label class="wallet-reassign">
+                        <span>{{ isRtl() ? 'الحساب:' : 'Account:' }}</span>
+                        <select
+                          [disabled]="reassigningId() === t.id"
+                          [ngModel]="t.wallet_id"
+                          (ngModelChange)="changeWallet(t.id, $event)">
+                          <option [value]="null" disabled>{{ t.bank_account_name ?? (isRtl() ? 'غير محدَّد' : 'Unset') }}</option>
+                          @for (w of wallets(); track w.id) {
+                            <option [value]="w.id">{{ w.name }}</option>
+                          }
+                        </select>
+                      </label>
                     </div>
                   }
                 </td>

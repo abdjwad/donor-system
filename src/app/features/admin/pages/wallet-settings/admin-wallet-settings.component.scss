@@ -74,44 +74,171 @@
 
 .wallet-form__actions { display: flex; gap: $space-sm; }
 
-.wallets-list { display: flex; flex-direction: column; gap: $space-md; }
+// ============================================================
+// Bank cards — بطاقات بنكية تفاعلية بدل الجدول التقليدي
+// ============================================================
 
-.wallet-card-row__header {
+.bank-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $space-lg;
+}
+
+.bank-card {
+  position: relative;
+  border-radius: $radius-xl;
+  padding: $space-lg;
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  color: #fff;
+  overflow: hidden;
+  cursor: default;
+  transition: $transition-base;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+
+  // بطاقة غير نشطة — تدرّج رمادي مطفي حتى يبين الفرق البصري بوضوح
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 60%, #374151 100%);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 35%);
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: translateY(-4px) scale(1.015);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.24);
+  }
+
+  &--active {
+    background: linear-gradient(135deg, $color-primary-light 0%, $color-primary 45%, $color-navy 100%);
+    box-shadow: 0 10px 28px rgba($color-primary, 0.35);
+
+    &:hover { box-shadow: 0 16px 36px rgba($color-primary, 0.42); }
+  }
+}
+
+.bank-card__ribbon {
+  position: absolute;
+  top: $space-md;
+  inset-inline-end: $space-md;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 3px 10px;
+  border-radius: $radius-full;
+  background: rgba(0, 0, 0, 0.28);
+  z-index: 1;
+
+  .bank-card--active & {
+    background: $color-gold;
+    color: $color-navy;
+  }
+}
+
+.bank-card__top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: $space-md;
+  gap: $space-sm;
+  z-index: 1;
 }
 
-.wallet-card-row__name { font-size: 1rem; font-weight: 700; color: $color-text-primary; }
-
-.wallet-card-row__body {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: $space-sm $space-lg;
-  margin-bottom: $space-md;
-
-  @media (max-width: $bp-mobile) { grid-template-columns: 1fr; }
+.bank-card__chip {
+  width: 34px;
+  height: 24px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, $color-gold-light, $color-gold-dark);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15);
 }
 
-.wallet-card-row__item {
+.bank-card__bank-name {
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.bank-card__number {
+  font-family: var(--font-latin);
+  direction: ltr;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  margin: $space-sm 0;
+  z-index: 1;
+}
+
+.bank-card__bottom {
   display: flex;
   justify-content: space-between;
-  font-size: 0.875rem;
-  color: $color-text-secondary;
-  padding-bottom: $space-xs;
-  border-bottom: 1px solid $color-border;
-
-  .mono { font-family: var(--font-latin); direction: ltr; font-weight: 600; color: $color-text-primary; }
+  gap: $space-md;
+  z-index: 1;
 }
 
-.wallet-card-row__label { color: $color-text-muted; }
+.bank-card__label {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
 
-.wallet-card-row__edit {
-  height: 36px !important;
-  font-size: 0.8125rem !important;
-  display: flex !important;
+.bank-card__holder {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.bank-card__iban {
+  font-size: 0.75rem;
+  opacity: 0.85;
+  z-index: 1;
+
+  .mono { font-family: var(--font-latin); direction: ltr; font-weight: 600; }
+}
+
+.bank-card__notes {
+  font-size: 0.75rem;
+  opacity: 0.75;
+  font-style: italic;
+  z-index: 1;
+}
+
+.bank-card__actions {
+  margin-top: auto;
+  padding-top: $space-sm;
+  display: flex;
+  gap: $space-sm;
+  z-index: 1;
+}
+
+.bank-card__action {
+  display: flex;
   align-items: center;
   gap: 4px;
+  border: none;
+  border-radius: $radius-md;
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: $transition-fast;
   .material-icons { font-size: 1rem; }
+
+  &--edit {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    &:hover { background: rgba(255, 255, 255, 0.26); }
+  }
+
+  &--activate {
+    background: $color-gold;
+    color: $color-navy;
+    &:hover { background: $color-gold-light; }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
 }

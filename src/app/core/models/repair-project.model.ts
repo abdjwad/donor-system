@@ -109,6 +109,12 @@ export interface FundingCompletedContractor {
   hasBankInfo: boolean;
 }
 
+export interface ProjectMilestoneRef {
+  id: number;
+  name: string;
+  order: number;
+}
+
 export interface FundingCompletedProject {
   id: number;
   requestNumber: string;
@@ -122,6 +128,8 @@ export interface FundingCompletedProject {
   contractor: FundingCompletedContractor | null;
   images: string[];
   beneficiary: NeedFundingBeneficiary;
+  /** مراحل تهيئة المشروع — عدد دفعات خطة الصرف بيتحدَّد تلقائياً بعددها */
+  milestones: ProjectMilestoneRef[];
   createdAt: string;
 }
 

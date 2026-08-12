@@ -1,0 +1,25 @@
+@use '../../../../styles/variables' as *;
+
+.obst-sub {
+  font-size: 0.75rem; color: $color-text-muted; margin-top: 2px;
+}
+
+.obst-desc {
+  max-width: 260px; overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+
+.obst-modal-hint {
+  font-size: 0.8125rem; color: $color-text-secondary; margin-bottom: $space-md;
+}
+
+.obst-field-label {
+  display: block; font-size: 0.8125rem; font-weight: 600;
+  color: $color-text-secondary; margin: $space-sm 0 4px;
+}
+
+.ledger-alert {
+  padding: $space-md $space-lg; border-radius: $radius-md; margin-bottom: $space-lg;
+  font-size: 0.875rem; font-weight: 600;
+  &--error { background: rgba($color-error, 0.1); color: $color-error; }
+}

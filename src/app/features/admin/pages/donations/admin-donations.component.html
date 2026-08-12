@@ -91,24 +91,37 @@
                       <span class="material-icons">favorite_border</span>
                     </span>
                   }
-                  @if (d.redirected_from_project) {
-                    <span class="mini-badge" [title]="isRtl() ? 'جزء من هذا التبرع أُعيد توجيهه من/إلى مشروع آخر' : 'Part of this donation was redirected'">
-                      <span class="material-icons">info_outline</span>
-                    </span>
+                  @if (d.redirected_from_project_id) {
+                    <div class="redirect-note">
+                      <span class="material-icons">call_split</span>
+                      {{ isRtl() ? 'فائض تبرع كان مقصوداً لمشروع ممول بالكامل:' : 'Surplus from a fully-funded project:' }}
+                      <strong>{{ isRtl() ? d.redirected_from_project_ar : d.redirected_from_project_en }}</strong>
+                    </div>
                   }
                 </td>
                 <td>{{ d.donation_type === 'monthly' ? (isRtl() ? 'شهري' : 'Monthly') : (isRtl() ? 'لمرة واحدة' : 'One-time') }}</td>
                 <td>
                   {{ d.payment_method }}
-                  @if (d.payment_method === 'bank' && d.bank_transfer_reference) {
+                  @if (d.payment_method === 'bank') {
                     <div class="bank-ref-cell">
-                      <span>{{ isRtl() ? 'مرجع:' : 'Ref:' }} {{ d.bank_transfer_reference }}</span>
-                      @if (d.bank_account_name) {
-                        <span>{{ isRtl() ? 'الحساب:' : 'Account:' }} {{ d.bank_account_name }}</span>
+                      @if (d.bank_transfer_reference) {
+                        <span>{{ isRtl() ? 'مرجع:' : 'Ref:' }} {{ d.bank_transfer_reference }}</span>
                       }
                       @if (d.receipt_url) {
                         <a [href]="d.receipt_url" target="_blank" class="receipt-link">{{ isRtl() ? 'عرض الإيصال' : 'View receipt' }}</a>
                       }
+                      <label class="wallet-reassign">
+                        <span>{{ isRtl() ? 'الحساب:' : 'Account:' }}</span>
+                        <select
+                          [disabled]="reassigningId() === d.id"
+                          [ngModel]="d.wallet_id"
+                          (ngModelChange)="changeWallet(d.id, $event)">
+                          <option [value]="null" disabled>{{ d.bank_account_name ?? (isRtl() ? 'غير محدَّد' : 'Unset') }}</option>
+                          @for (w of wallets(); track w.id) {
+                            <option [value]="w.id">{{ w.name }}</option>
+                          }
+                        </select>
+                      </label>
                     </div>
                   }
                 </td>

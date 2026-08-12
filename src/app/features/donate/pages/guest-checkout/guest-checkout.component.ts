@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { LanguageService } from '../../../../core/services/language.service';
+import { TokenService } from '../../../../core/services/token.service';
 import { DonationService } from '../../services/donation.service';
 import { GuestInfoFormComponent } from '../../components/guest-info-form/guest-info-form.component';
 import { DonationAmountFormComponent } from '../../components/donation-amount-form/donation-amount-form.component';
@@ -33,10 +34,12 @@ export class GuestCheckoutComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
 
   private readonly langService = inject(LanguageService);
+  private readonly tokenService = inject(TokenService);
   private readonly route = inject(ActivatedRoute);
   readonly donationService = inject(DonationService);
 
   readonly isRtl = computed(() => this.langService.currentLang() === 'ar');
+  readonly isLoggedIn = this.tokenService.hasToken;
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {

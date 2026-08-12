@@ -27,6 +27,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { LanguageService } from './core/services/language.service';
+import { ThemeService } from './core/services/theme.service';
 import { AuthService } from './core/services/auth.service';
 import { TokenService } from './core/services/token.service';
 
@@ -59,6 +60,12 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: (langService: LanguageService) => () => langService.init(),
       deps: [LanguageService],
+      multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (themeService: ThemeService) => () => themeService.init(),
+      deps: [ThemeService],
       multi: true,
     },
     // تحميل بيانات المستخدم عند البداية إذا كان مسجّل دخول

@@ -107,37 +107,51 @@
       </div>
     }
 
-    <div class="wallets-list">
+    <div class="bank-cards-grid">
       @for (w of wallets(); track w.id) {
-        <div class="admin-card wallet-card-row">
-          <div class="wallet-card-row__header">
-            <span class="wallet-card-row__name">{{ w.name }}</span>
-            <span class="status-badge" [class.status-badge--completed]="w.is_active" [class.status-badge--rejected]="!w.is_active">
-              {{ w.is_active ? (isRtl() ? 'فعّالة' : 'Active') : (isRtl() ? 'غير فعّالة' : 'Inactive') }}
-            </span>
+        <div class="bank-card" [class.bank-card--active]="w.is_active">
+          <div class="bank-card__ribbon">
+            {{ w.is_active ? (isRtl() ? '✓ نشطة الآن' : '✓ Active now') : (isRtl() ? 'غير مفعّلة' : 'Inactive') }}
           </div>
-          <div class="wallet-card-row__body">
-            <div class="wallet-card-row__item">
-              <span class="wallet-card-row__label">{{ isRtl() ? 'البنك' : 'Bank' }}</span>
-              <span>{{ w.bank_name }}</span>
+
+          <div class="bank-card__top">
+            <div class="bank-card__chip"></div>
+            <div class="bank-card__bank-name">{{ w.bank_name }}</div>
+          </div>
+
+          <div class="bank-card__number">{{ maskedAccountNumber(w.account_number) }}</div>
+
+          <div class="bank-card__bottom">
+            <div>
+              <div class="bank-card__label">{{ isRtl() ? 'صاحب الحساب' : 'Holder' }}</div>
+              <div class="bank-card__holder">{{ w.account_holder_name }}</div>
             </div>
-            <div class="wallet-card-row__item">
-              <span class="wallet-card-row__label">{{ isRtl() ? 'صاحب الحساب' : 'Holder' }}</span>
-              <span>{{ w.account_holder_name }}</span>
-            </div>
-            <div class="wallet-card-row__item">
-              <span class="wallet-card-row__label">{{ isRtl() ? 'رقم الحساب' : 'Account #' }}</span>
-              <span class="mono">{{ w.account_number }}</span>
-            </div>
-            <div class="wallet-card-row__item">
-              <span class="wallet-card-row__label">IBAN</span>
-              <span class="mono">{{ w.iban }}</span>
+            <div>
+              <div class="bank-card__label">{{ isRtl() ? 'العملة' : 'Currency' }}</div>
+              <div class="bank-card__holder">{{ w.currency }}</div>
             </div>
           </div>
-          <button class="admin-btn admin-btn--ghost wallet-card-row__edit" (click)="startEdit(w)">
-            <span class="material-icons">edit</span>
-            {{ isRtl() ? 'تعديل' : 'Edit' }}
-          </button>
+
+          <div class="bank-card__iban">IBAN: <span class="mono">{{ w.iban }}</span></div>
+          @if (w.notes) {
+            <div class="bank-card__notes">{{ w.notes }}</div>
+          }
+
+          <div class="bank-card__actions">
+            <button class="bank-card__action bank-card__action--edit" (click)="startEdit(w)">
+              <span class="material-icons">edit</span>
+              {{ isRtl() ? 'تعديل' : 'Edit' }}
+            </button>
+            @if (!w.is_active) {
+              <button
+                class="bank-card__action bank-card__action--activate"
+                [disabled]="activatingId() === w.id"
+                (click)="setActive(w)">
+                <span class="material-icons">bolt</span>
+                {{ activatingId() === w.id ? (isRtl() ? '...جاري التفعيل' : 'Activating...') : (isRtl() ? 'تفعيل هذه المحفظة' : 'Set as Active') }}
+              </button>
+            }
+          </div>
         </div>
       }
       @if (!wallets().length) {

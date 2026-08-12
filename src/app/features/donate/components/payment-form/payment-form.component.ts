@@ -50,6 +50,7 @@ export class PaymentFormComponent implements OnInit {
   private readonly langService = inject(LanguageService);
 
   readonly isRtl = computed(() => this.langService.currentLang() === 'ar');
+  readonly donationState = this.donationService.donationState;
   readonly isLoading = signal(false);
   readonly apiError = signal<string | null>(null);
   readonly selectedMethod = signal<PaymentMethod>('stripe');

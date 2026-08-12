@@ -242,6 +242,16 @@
       "SUBTITLE": "Choose the project that speaks to your heart and help make it a success",
       "SEE_ALL": "View All Projects"
     },
+    "TRUSTED_CONTRACTORS": {
+      "TITLE": "Trusted Contractors",
+      "SUBTITLE": "Every contractor executing our projects is vetted and approved by our team — your donation is in safe hands",
+      "VERIFIED": "Verified & Approved Contractor",
+      "REVIEWS": "reviews",
+      "AWAITING_REVIEWS": "Newly Verified Contractor",
+      "COMPLETED": "Completed",
+      "YEARS": "Years Exp.",
+      "MEMBER_SINCE": "Member Since"
+    },
     "CTA": {
       "TITLE": "Your Donation Builds a Better Future",
       "SUBTITLE": "Choose the amount you'd like to contribute and help us reach those who need it most",
@@ -303,7 +313,9 @@
       "GOAL": "Goal",
       "DONORS": "donors",
       "REMAINING": "remaining",
-      "DAYS": "days"
+      "DAYS": "days",
+      "ALMOST_FUNDED": "Almost funded",
+      "VIEW_DETAILS": "View details"
     },
     "CATEGORIES": {
       "HOUSING": "Housing",
@@ -354,6 +366,7 @@
         "UNDER_REVIEW": "Under Review",
         "APPROVED": "Approved - Seeking Funding",
         "AWAITING_CONTRACTOR": "Awaiting Contractor",
+        "CONTRACTOR_ASSIGNED_PENDING_FUNDING": "Contractor Assigned — Awaiting Full Funding",
         "IN_PROGRESS": "In Progress",
         "COMPLETED": "Completed"
       },

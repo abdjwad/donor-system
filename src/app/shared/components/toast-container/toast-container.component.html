@@ -1,0 +1,11 @@
+<div class="toast-stack" role="region" aria-live="polite">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div class="toast" [class.toast--error]="toast.type === 'error'" [class.toast--success]="toast.type === 'success'">
+      <span class="toast__icon">{{ toast.type === 'error' ? '⚠' : '✓' }}</span>
+      <span class="toast__message">{{ toast.message }}</span>
+      <button type="button" class="toast__close" (click)="toastService.dismiss(toast.id)" aria-label="إغلاق">
+        &times;
+      </button>
+    </div>
+  }
+</div>

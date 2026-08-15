@@ -47,8 +47,8 @@
       <div class="disb-owner-banner">
         <span class="material-icons">shield</span>
         {{ isRtl()
-            ? 'أنت من أنشأ هذه الخطة — لا يمكنك الموافقة على دفعاتها أو رفضها أو تنفيذ تحويلاتها (مبدأ فصل المهام). يلزم أن يقوم شخص آخر بالمراجعة والتنفيذ.'
-            : 'You created this plan — you cannot approve, reject, or record transfers for its tranches (segregation of duties). Another reviewer must handle these steps.' }}
+            ? 'أنت من أنشأ هذه الخطة — تقدر تراجع دفعاتها مالياً (موافقة/رفض)، لكن لا يمكنك تنفيذ تحويلاتها الفعلية (مبدأ فصل المهام). يلزم أن يقوم شخص آخر بتنفيذ التحويل.'
+            : 'You created this plan — you can review its tranches financially (approve/reject), but cannot record their actual transfers (segregation of duties). Another person must execute the transfer.' }}
       </div>
     }
 
@@ -308,7 +308,7 @@
                   </div>
                 }
 
-                @if (!planSuspended() && !isPlanOwner()) {
+                @if (!planSuspended()) {
                   <div class="disb-tc-review-actions">
                     <button mat-button class="admin-primary-btn disb-small-btn"
                             (click)="approveTranche(t.id)" [disabled]="saving()">
@@ -342,13 +342,6 @@
                       </div>
                     </div>
                   }
-                } @else if (isPlanOwner() && !planSuspended()) {
-                  <p class="disb-tc-hint disb-tc-hint--owner">
-                    <span class="material-icons">shield</span>
-                    {{ isRtl()
-                        ? 'لا يمكنك مراجعة هذا التقرير لأنك من أنشأ الخطة — بانتظار مراجعة شخص آخر.'
-                        : 'You cannot review this report since you created the plan — awaiting another reviewer.' }}
-                  </p>
                 }
               </div>
             }

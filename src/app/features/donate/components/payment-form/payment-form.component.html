@@ -18,38 +18,14 @@
 
       <form [formGroup]="cardForm" class="payment-tab-content" novalidate>
 
-        <!-- Card Number -->
-        <mat-form-field appearance="outline" class="full-width form-field-gap">
-          <mat-label>{{ 'DONATE.PAYMENT.CARD_NUMBER' | translate }}</mat-label>
-          <mat-icon matPrefix class="field-prefix-icon">credit_card</mat-icon>
-          <input matInput type="text" formControlName="cardNumber"
-                 [placeholder]="'DONATE.PAYMENT.CARD_NUMBER_PLACEHOLDER' | translate"
-                 maxlength="19" dir="ltr"/>
-          @if (cardForm.get('cardNumber')!.touched && cardForm.get('cardNumber')!.invalid) {
-            <mat-error>{{ 'DONATE.PAYMENT.CARD_REQUIRED' | translate }}</mat-error>
+        <!-- Stripe Card Element — بطاقة الدفع نفسها بيستضيفها Stripe داخل iframe آمن خاص فيه،
+             ما بتمر بيانات البطاقة عبر أي حقل أو خادم تابعنا إطلاقاً -->
+        <div class="stripe-field-wrapper form-field-gap">
+          <label class="stripe-field-label">{{ 'DONATE.PAYMENT.CARD_NUMBER' | translate }}</label>
+          <div #cardElementContainer class="stripe-card-element"></div>
+          @if (stripeCardError()) {
+            <p class="terms-error">{{ stripeCardError() }}</p>
           }
-        </mat-form-field>
-
-        <!-- Expiry + CVV row -->
-        <div class="card-row">
-          <mat-form-field appearance="outline" class="form-field-gap">
-            <mat-label>{{ 'DONATE.PAYMENT.CARD_EXPIRY' | translate }}</mat-label>
-            <input matInput type="text" formControlName="cardExpiry"
-                   [placeholder]="'DONATE.PAYMENT.CARD_EXPIRY_PLACEHOLDER' | translate"
-                   maxlength="5" dir="ltr"/>
-            @if (cardForm.get('cardExpiry')!.touched && cardForm.get('cardExpiry')!.invalid) {
-              <mat-error>{{ 'DONATE.PAYMENT.EXPIRY_REQUIRED' | translate }}</mat-error>
-            }
-          </mat-form-field>
-          <mat-form-field appearance="outline" class="form-field-gap">
-            <mat-label>{{ 'DONATE.PAYMENT.CARD_CVV' | translate }}</mat-label>
-            <input matInput type="text" formControlName="cardCvv"
-                   [placeholder]="'DONATE.PAYMENT.CARD_CVV_PLACEHOLDER' | translate"
-                   maxlength="4" dir="ltr"/>
-            @if (cardForm.get('cardCvv')!.touched && cardForm.get('cardCvv')!.invalid) {
-              <mat-error>{{ 'DONATE.PAYMENT.CVV_REQUIRED' | translate }}</mat-error>
-            }
-          </mat-form-field>
         </div>
 
         <!-- Card name -->

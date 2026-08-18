@@ -26,6 +26,34 @@
   }
 }
 
+// ── Stripe Card Element ─────────────────────────────────────────
+.stripe-field-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+}
+
+.stripe-field-label {
+  font-size: 0.8125rem;
+  color: $color-text-muted;
+}
+
+.stripe-card-element {
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: 14px 12px;
+  background: var(--color-card-bg, #fff);
+  transition: border-color 0.15s ease;
+
+  &.StripeElement--focus {
+    border-color: $color-primary;
+  }
+
+  &.StripeElement--invalid {
+    border-color: $color-error;
+  }
+}
+
 .field-prefix-icon {
   color: $color-text-muted;
   font-size: 1.125rem !important;

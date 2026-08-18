@@ -33,6 +33,7 @@ export interface GuestDonationResponse {
   status: 'pending' | 'completed' | 'failed';
   message: string;
   wallet?: WalletInfo | null;
+  stripe_client_secret?: string | null;
   payment_method?: PaymentMethod;
   bank_transfer_reference?: string | null;
   receipt_submitted_at?: string | null;

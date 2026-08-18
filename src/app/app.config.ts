@@ -2,7 +2,7 @@ import {
   APP_INITIALIZER,
   ApplicationConfig,
   importProvidersFrom,
-  provideBrowserGlobalErrorListeners,
+  provideBrowserGlobalErrorListeners, isDevMode,
 } from '@angular/core';
 import {
   provideRouter,
@@ -31,6 +31,7 @@ import { LanguageService } from './core/services/language.service';
 import { ThemeService } from './core/services/theme.service';
 import { AuthService } from './core/services/auth.service';
 import { TokenService } from './core/services/token.service';
+import { provideServiceWorker } from '@angular/service-worker';
 
 export function createTranslateLoader(httpBackend: HttpBackend): TranslateHttpLoader {
   return new TranslateHttpLoader(
@@ -86,6 +87,9 @@ export const appConfig: ApplicationConfig = {
       },
       deps: [AuthService, TokenService],
       multi: true,
-    },
+    }, provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          }),
   ],
 };

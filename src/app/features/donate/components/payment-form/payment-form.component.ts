@@ -1,4 +1,4 @@
-import { Component, EventEmitter, computed, inject, OnInit, Output, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, ViewChild, computed, inject, OnInit, OnDestroy, Output, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,12 +11,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { loadStripe, Stripe, StripeCardElement, StripeElements } from '@stripe/stripe-js';
 
+import { environment } from '../../../../../environments/environment';
 import { DonationService } from '../../services/donation.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { TokenService } from '../../../../core/services/token.service';
 import { DonorWalletApiService } from '../../../../core/services/donor-wallet-api.service';
-import { GuestDonation, PaymentMethod, WalletInfo } from '../../../../core/models/guest-donation.model';
+import { GuestDonation, GuestDonationResponse, PaymentMethod, WalletInfo } from '../../../../core/models/guest-donation.model';
 import { DonorWalletBalance } from '../../../../core/models/donor-wallet.model';
 import { CryptoPaymentComponent } from '../crypto-payment/crypto-payment.component';
 
@@ -39,8 +41,9 @@ import { CryptoPaymentComponent } from '../crypto-payment/crypto-payment.compone
   templateUrl: './payment-form.component.html',
   styleUrl: './payment-form.component.scss',
 })
-export class PaymentFormComponent implements OnInit {
+export class PaymentFormComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() back = new EventEmitter<void>();
+  @ViewChild('cardElementContainer') cardElementContainer?: ElementRef<HTMLDivElement>;
 
   private readonly fb = inject(FormBuilder);
   private readonly donationService = inject(DonationService);
@@ -62,13 +65,19 @@ export class PaymentFormComponent implements OnInit {
   readonly walletBalance = signal<DonorWalletBalance | null>(null);
   readonly walletBalanceLoading = signal(false);
 
+  // بيانات البطاقة نفسها (الرقم/الصلاحية/CVV) ما عادت حقول Angular عادية — Stripe
+  // Elements بيستضيفها بـiframe آمن خاص فيه (mountStripeElement) بدل ما تمر عبر
+  // الفرونت اند/الباك اند تبعنا إطلاقاً (متطلب PCI compliance)
   readonly cardForm: FormGroup = this.fb.group({
-    cardNumber: ['', Validators.required],
-    cardExpiry: ['', Validators.required],
-    cardCvv:    ['', Validators.required],
-    cardName:   ['', Validators.required],
-    terms:      [false, Validators.requiredTrue],
+    cardName: ['', Validators.required],
+    terms:    [false, Validators.requiredTrue],
   });
+
+  private stripe: Stripe | null = null;
+  private elements: StripeElements | null = null;
+  private cardElement: StripeCardElement | null = null;
+  readonly stripeReady = signal(false);
+  readonly stripeCardError = signal<string | null>(null);
 
   readonly bankForm: FormGroup = this.fb.group({
     terms: [false, Validators.requiredTrue],
@@ -86,10 +95,47 @@ export class PaymentFormComponent implements OnInit {
     this.donationService.updateState({ payment_method: 'stripe' });
   }
 
+  async ngAfterViewInit(): Promise<void> {
+    await this.mountStripeCardElement();
+  }
+
+  ngOnDestroy(): void {
+    this.cardElement?.destroy();
+  }
+
+  private async mountStripeCardElement(): Promise<void> {
+    if (this.cardElement || !this.cardElementContainer) return;
+
+    this.stripe = await loadStripe(environment.stripePublishableKey);
+    if (!this.stripe) {
+      this.stripeCardError.set(this.isRtl()
+        ? 'تعذّر تحميل بوابة الدفع — تحقق من إعداد مفتاح Stripe'
+        : 'Could not load the payment gateway — check the Stripe key configuration');
+      return;
+    }
+
+    this.elements = this.stripe.elements();
+    this.cardElement = this.elements.create('card', {
+      style: {
+        base: { fontSize: '16px', fontFamily: 'Cairo, Segoe UI, sans-serif' },
+      },
+    });
+    this.cardElement.mount(this.cardElementContainer.nativeElement);
+
+    this.cardElement.on('change', (event) => {
+      this.stripeCardError.set(event.error ? event.error.message : null);
+      this.stripeReady.set(event.complete);
+    });
+  }
+
   selectMethod(method: PaymentMethod, tabIndex: number): void {
     this.selectedMethod.set(this.availableMethods()[tabIndex] ?? 'stripe');
     this.donationService.updateState({ payment_method: this.selectedMethod() });
     this.apiError.set(null);
+
+    if (this.selectedMethod() === 'stripe') {
+      void this.mountStripeCardElement();
+    }
 
     if (this.selectedMethod() === 'bank' && !this.wallet() && !this.walletLoading()) {
       this.walletLoading.set(true);
@@ -126,6 +172,11 @@ export class PaymentFormComponent implements OnInit {
     const activeForm = this.getActiveForm();
     if (activeForm.invalid) {
       activeForm.markAllAsTouched();
+      return;
+    }
+
+    if (this.selectedMethod() === 'stripe' && !this.stripeReady()) {
+      this.stripeCardError.set(this.isRtl() ? 'أكمل بيانات البطاقة أولاً' : 'Please complete the card details first');
       return;
     }
 
@@ -174,13 +225,7 @@ export class PaymentFormComponent implements OnInit {
         is_anonymous: state.is_anonymous ?? false,
         dedication_message: state.dedication_message,
       }).subscribe({
-        next: (res) => {
-          this.isLoading.set(false);
-          this.donationService.resetState();
-          this.router.navigate(['/donate/success'], {
-            queryParams: { amount: state.amount, ref: res.reference },
-          });
-        },
+        next: (res) => this.handleDonationCreated(res, state.amount!),
         error: (err: HttpErrorResponse) => {
           this.isLoading.set(false);
           this.apiError.set(err.error?.message ?? 'DONATE.ERRORS.GENERIC');
@@ -205,18 +250,57 @@ export class PaymentFormComponent implements OnInit {
 
     this.isLoading.set(true);
     this.donationService.submitGuestDonation(payload).subscribe({
-      next: (res) => {
-        this.isLoading.set(false);
-        this.donationService.resetState();
-        this.router.navigate(['/donate/success'], {
-          queryParams: { amount: payload.amount, ref: res.reference },
-        });
-      },
+      next: (res) => this.handleDonationCreated(res, payload.amount),
       error: (err: HttpErrorResponse) => {
         this.isLoading.set(false);
         this.apiError.set(err.error?.message ?? 'DONATE.ERRORS.GENERIC');
       },
     });
+  }
+
+  // بعد إنشاء سجل التبرع (pending): لو Stripe، لسا التبرع ما تأكد فعلياً — لازم
+  // نكمّل الدفع بمعلومات البطاقة المحلية عبر Stripe.js قبل ما نعتبره ناجح. لأي
+  // طريقة تانية (بنكي/كريبتو..) الإنشاء نفسه كافٍ للانتقال لصفحة النجاح.
+  private handleDonationCreated(res: GuestDonationResponse, amount: number): void {
+    if (this.selectedMethod() === 'stripe' && res.stripe_client_secret) {
+      this.confirmStripePayment(res.stripe_client_secret, res.reference, amount);
+      return;
+    }
+
+    this.isLoading.set(false);
+    this.donationService.resetState();
+    this.router.navigate(['/donate/success'], {
+      queryParams: { amount, ref: res.reference },
+    });
+  }
+
+  private async confirmStripePayment(clientSecret: string, reference: string, amount: number): Promise<void> {
+    if (!this.stripe || !this.cardElement) {
+      this.isLoading.set(false);
+      this.apiError.set(this.isRtl() ? 'تعذّر تحميل بوابة الدفع' : 'Could not load the payment gateway');
+      return;
+    }
+
+    const result = await this.stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: this.cardElement,
+        billing_details: { name: this.cardForm.value.cardName || undefined },
+      },
+    });
+
+    this.isLoading.set(false);
+
+    if (result.error) {
+      this.apiError.set(result.error.message ?? (this.isRtl() ? 'فشلت عملية الدفع' : 'Payment failed'));
+      return;
+    }
+
+    if (result.paymentIntent?.status === 'succeeded') {
+      this.donationService.resetState();
+      this.router.navigate(['/donate/success'], {
+        queryParams: { amount, ref: reference },
+      });
+    }
   }
 
   private getActiveForm(): FormGroup {

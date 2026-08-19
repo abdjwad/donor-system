@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { ConfirmBankTransferPayload, GuestDonation, GuestDonationResponse, WalletInfo } from '../../../core/models/guest-donation.model';
+import { ConfirmBankTransferPayload, DonationHistoryPage, DonorDashboardStats, GuestDonation, GuestDonationResponse, WalletInfo } from '../../../core/models/guest-donation.model';
 import { CryptoConfirmPayload, CryptoConfirmResponse } from '../../../core/models/blockchain.model';
 import { ApiResponse } from '../../../core/models/auth-response.models';
 import { ProjectsApiService } from '../../../core/services/projects-api.service';
@@ -80,16 +80,16 @@ export class DonationService {
   }
 
   // ── Dashboard stats ────────────────────────────────────────────
-  getDashboardStats(): Observable<any> {
+  getDashboardStats(): Observable<DonorDashboardStats> {
     return this.http
-      .get<ApiResponse<any>>(`${this.API}/dashboard/stats`)
+      .get<ApiResponse<DonorDashboardStats>>(`${this.API}/dashboard/stats`)
       .pipe(map((res) => res.data));
   }
 
   // ── Donation history ───────────────────────────────────────────
-  getHistory(page = 1): Observable<any> {
+  getHistory(page = 1): Observable<DonationHistoryPage> {
     return this.http
-      .get<ApiResponse<any>>(`${this.API}/dashboard/history?page=${page}`)
+      .get<ApiResponse<DonationHistoryPage>>(`${this.API}/dashboard/history?page=${page}`)
       .pipe(map((res) => res.data));
   }
 

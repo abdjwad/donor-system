@@ -10,13 +10,46 @@
           <h1 class="history-title">{{ 'HISTORY.TITLE' | translate }}</h1>
           <p class="history-subtitle">{{ 'HISTORY.SUBTITLE' | translate }}</p>
         </div>
-        <button mat-stroked-button class="export-btn">
+        <button mat-stroked-button class="export-btn" (click)="exportCsv()" [disabled]="!donations().length">
           <span class="material-icons">download</span>
           {{ 'HISTORY.EXPORT' | translate }}
         </button>
       </div>
 
-      <!-- Filters bar -->
+      <!-- Stats strip -->
+      <div class="stats-strip">
+        <div class="stat-card">
+          <span class="material-icons stat-card__icon">volunteer_activism</span>
+          <div class="stat-card__value">${{ stats().total_donated | number:'1.0-0' }}</div>
+          <div class="stat-card__label">{{ isRtl() ? 'إجمالي تبرعاتك' : 'Total donated' }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="material-icons stat-card__icon">receipt_long</span>
+          <div class="stat-card__value">{{ stats().donations_count }}</div>
+          <div class="stat-card__label">{{ isRtl() ? 'عدد التبرعات' : 'Donations' }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="material-icons stat-card__icon">home_work</span>
+          <div class="stat-card__value">{{ stats().families_helped }}</div>
+          <div class="stat-card__label">{{ isRtl() ? 'أسرة استفادت' : 'Families helped' }}</div>
+        </div>
+        @if (stats().pending_count > 0) {
+          <div class="stat-card stat-card--warning">
+            <span class="material-icons stat-card__icon">hourglass_top</span>
+            <div class="stat-card__value">{{ stats().pending_count }}</div>
+            <div class="stat-card__label">{{ isRtl() ? 'بانتظار التأكيد' : 'Pending' }}</div>
+          </div>
+        }
+        @if (stats().total_refunded > 0) {
+          <div class="stat-card stat-card--muted">
+            <span class="material-icons stat-card__icon">undo</span>
+            <div class="stat-card__value">${{ stats().total_refunded | number:'1.0-0' }}</div>
+            <div class="stat-card__label">{{ isRtl() ? 'مبالغ مُستردة' : 'Refunded' }}</div>
+          </div>
+        }
+      </div>
+
+      <!-- Filters + search -->
       <div class="history-filters">
         <div class="filter-chips">
           @for (s of ['all','completed','pending','failed','refunded']; track s) {
@@ -26,6 +59,11 @@
             </button>
           }
         </div>
+        <div class="search-box">
+          <span class="material-icons">search</span>
+          <input type="text" [placeholder]="isRtl() ? 'دوّر برقم المرجع أو اسم المشروع...' : 'Search by reference or project...'"
+                 [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" />
+        </div>
       </div>
 
       <!-- Table -->
@@ -33,6 +71,7 @@
         <table class="history-table">
           <thead>
             <tr>
+              <th></th>
               <th>{{ 'HISTORY.TABLE.DATE' | translate }}</th>
               <th>{{ 'HISTORY.TABLE.PROJECT' | translate }}</th>
               <th>{{ 'HISTORY.TABLE.AMOUNT' | translate }}</th>
@@ -43,8 +82,11 @@
           </thead>
           <tbody>
             @for (d of donations(); track d.id) {
-              <tr>
-                <td>{{ d.date }}</td>
+              <tr class="donation-row" [class.expanded]="isExpanded(d.id)" (click)="toggleExpand(d.id)">
+                <td class="expand-cell">
+                  <span class="material-icons expand-icon">{{ isExpanded(d.id) ? 'expand_less' : 'expand_more' }}</span>
+                </td>
+                <td>{{ d.created_at }}</td>
                 <td class="project-cell">
                   {{ getProject(d) }}
                   @if (d.redirected_from_project) {
@@ -58,20 +100,148 @@
                 <td><span class="status-badge status-badge--{{ d.status }}">{{ ('HISTORY.STATUS.' + d.status.toUpperCase()) | translate }}</span></td>
                 <td>
                   @if (d.status === 'completed') {
-                    <button class="invoice-btn" (click)="downloadCertificate(d)"
+                    <button class="invoice-btn" (click)="$event.stopPropagation(); downloadCertificate(d)"
                             [disabled]="generating() === d.id">
                       <span class="material-icons">{{ generating() === d.id ? 'hourglass_empty' : 'workspace_premium' }}</span>
-                      {{ generating() === d.id ? '...' : 'شهادة' }}
+                      {{ generating() === d.id ? '...' : (isRtl() ? 'شهادة' : 'Certificate') }}
                     </button>
                   }
                 </td>
               </tr>
+
+              @if (isExpanded(d.id)) {
+                <tr class="detail-row">
+                  <td colspan="7">
+                    <div class="detail-panel">
+
+                      <!-- Timeline -->
+                      <div class="detail-block">
+                        <div class="detail-block__title">
+                          <span class="material-icons">timeline</span>
+                          {{ isRtl() ? 'المسار الزمني الكامل' : 'Full timeline' }}
+                        </div>
+                        <ul class="timeline">
+                          @for (ev of d.timeline; track ev.event) {
+                            <li class="timeline__item timeline__item--{{ ev.event }}">
+                              <span class="timeline__dot"></span>
+                              <div class="timeline__content">
+                                <div class="timeline__label">{{ ev.label_ar }}</div>
+                                <div class="timeline__date">{{ formatDateTime(ev.at) }}</div>
+                              </div>
+                            </li>
+                          }
+                        </ul>
+                      </div>
+
+                      <div class="detail-block__grid">
+                        <!-- Bank transfer details -->
+                        @if (d.bank) {
+                          <div class="detail-block">
+                            <div class="detail-block__title">
+                              <span class="material-icons">account_balance</span>
+                              {{ isRtl() ? 'تفاصيل التحويل البنكي' : 'Bank transfer details' }}
+                            </div>
+                            <div class="kv-list">
+                              @if (d.bank.account_name) {
+                                <div class="kv-row"><span>{{ isRtl() ? 'الحساب المستقبِل' : 'Receiving account' }}</span><strong>{{ d.bank.account_name }}</strong></div>
+                              }
+                              @if (d.bank.transfer_reference) {
+                                <div class="kv-row"><span>{{ isRtl() ? 'رقم مرجعك' : 'Your reference' }}</span><strong dir="ltr">{{ d.bank.transfer_reference }}</strong></div>
+                              }
+                              @if (d.bank.receipt_url) {
+                                <div class="kv-row">
+                                  <span>{{ isRtl() ? 'الإيصال المرفوع' : 'Uploaded receipt' }}</span>
+                                  <a [href]="d.bank.receipt_url" target="_blank" rel="noopener" class="detail-link">{{ isRtl() ? 'عرض الصورة ↗' : 'View image ↗' }}</a>
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        }
+
+                        <!-- Blockchain proof -->
+                        @if (d.blockchain) {
+                          <div class="detail-block">
+                            <div class="detail-block__title">
+                              <span class="material-icons">link</span>
+                              {{ isRtl() ? 'إثبات البلوكتشين' : 'Blockchain proof' }}
+                            </div>
+                            <div class="kv-list">
+                              <div class="kv-row"><span>{{ isRtl() ? 'الشبكة' : 'Network' }}</span><strong>{{ d.blockchain.network }}</strong></div>
+                              <div class="kv-row">
+                                <span>Tx Hash</span>
+                                @if (explorerUrl(d)) {
+                                  <a [href]="explorerUrl(d)" target="_blank" rel="noopener" class="detail-link" dir="ltr">{{ d.blockchain.tx_hash | slice:0:14 }}...↗</a>
+                                } @else {
+                                  <strong dir="ltr">{{ d.blockchain.tx_hash | slice:0:14 }}...</strong>
+                                }
+                              </div>
+                            </div>
+                          </div>
+                        }
+
+                        <!-- Rejection reason -->
+                        @if (d.rejection_reason) {
+                          <div class="detail-block detail-block--alert">
+                            <div class="detail-block__title">
+                              <span class="material-icons">error_outline</span>
+                              {{ isRtl() ? 'سبب عدم التأكيد' : 'Reason not confirmed' }}
+                            </div>
+                            <p class="alert-text">{{ d.rejection_reason }}</p>
+                          </div>
+                        }
+
+                        <!-- Refund details -->
+                        @if (d.refund) {
+                          <div class="detail-block" [class.detail-block--alert]="d.refund.status !== 'rejected'">
+                            <div class="detail-block__title">
+                              <span class="material-icons">undo</span>
+                              {{ isRtl() ? 'تفاصيل الاسترداد' : 'Refund details' }}
+                            </div>
+                            <div class="kv-list">
+                              <div class="kv-row"><span>{{ isRtl() ? 'السبب' : 'Reason' }}</span><strong>{{ d.refund.reason }}</strong></div>
+                              <div class="kv-row"><span>{{ isRtl() ? 'الحالة' : 'Status' }}</span><strong>{{ d.refund.status }}</strong></div>
+                              @if (d.refund.processed_by) {
+                                <div class="kv-row"><span>{{ isRtl() ? 'اعتمدها' : 'Processed by' }}</span><strong>{{ d.refund.processed_by }}</strong></div>
+                              }
+                            </div>
+                          </div>
+                        }
+
+                        <!-- Dedication -->
+                        @if (d.dedication_message) {
+                          <div class="detail-block">
+                            <div class="detail-block__title">
+                              <span class="material-icons">favorite_border</span>
+                              {{ isRtl() ? 'رسالة الإهداء' : 'Dedication message' }}
+                            </div>
+                            <p class="alert-text">{{ d.dedication_message }}</p>
+                          </div>
+                        }
+                      </div>
+
+                    </div>
+                  </td>
+                </tr>
+              }
             } @empty {
-              <tr><td colspan="6" class="empty-row">{{ 'HISTORY.EMPTY' | translate }}</td></tr>
+              <tr><td colspan="7" class="empty-row">{{ 'HISTORY.EMPTY' | translate }}</td></tr>
             }
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination -->
+      @if (lastPage() > 1) {
+        <div class="pagination">
+          <button class="page-btn" [disabled]="currentPage() <= 1" (click)="loadPage(currentPage() - 1)">
+            <span class="material-icons">{{ isRtl() ? 'chevron_right' : 'chevron_left' }}</span>
+          </button>
+          <span class="page-info">{{ currentPage() }} / {{ lastPage() }}</span>
+          <button class="page-btn" [disabled]="currentPage() >= lastPage()" (click)="loadPage(currentPage() + 1)">
+            <span class="material-icons">{{ isRtl() ? 'chevron_left' : 'chevron_right' }}</span>
+          </button>
+        </div>
+      }
     </main>
   </div>
 

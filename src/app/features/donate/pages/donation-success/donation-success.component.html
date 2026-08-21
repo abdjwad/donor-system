@@ -156,6 +156,40 @@
 
     }
 
+    <!-- كيف يتابع المتبرع تبرعه -->
+    @if (ref && !loading()) {
+      <div class="track-card">
+        <div class="track-card__icon">
+          <span class="material-icons">{{ isLoggedIn() ? 'dashboard' : 'bookmark' }}</span>
+        </div>
+        <div class="track-card__body">
+          @if (isLoggedIn()) {
+            <p class="track-card__title">{{ isRtl() ? 'كيف تتابع تبرعك؟' : 'How to track your donation' }}</p>
+            <p class="track-card__text">
+              {{ isRtl()
+                  ? 'تقدر تتابع حالة هذا التبرع وكل تبرعاتك السابقة بكامل تفاصيلها (الإيصال، حالة التأكيد، الاسترداد إن وجد) من لوحة التحكم.'
+                  : 'You can track this donation and all your past donations in full detail (receipt, confirmation status, refund if any) from your dashboard.' }}
+            </p>
+            <a routerLink="/dashboard/history" class="track-card__link">
+              {{ isRtl() ? 'اذهب إلى سجل تبرعاتي' : 'Go to my donation history' }}
+              <span class="material-icons">{{ isRtl() ? 'arrow_back' : 'arrow_forward' }}</span>
+            </a>
+          } @else {
+            <p class="track-card__title">{{ isRtl() ? 'كيف تتابع تبرعك؟' : 'How to track your donation' }}</p>
+            <p class="track-card__text">
+              {{ isRtl()
+                  ? 'احتفظ برقم المرجع أعلاه — بيوصلك تأكيد على بريدك الإلكتروني فور اعتماد التبرع. أنشئ حساباً مجانياً لتتابع كل تبرعاتك القادمة بتفاصيلها من مكان واحد.'
+                  : 'Keep the reference number above — you\'ll get an email confirmation once the donation is approved. Create a free account to track all your future donations in one place.' }}
+            </p>
+            <a routerLink="/auth/register" class="track-card__link">
+              {{ isRtl() ? 'إنشاء حساب لمتابعة التبرعات' : 'Create an account to track donations' }}
+              <span class="material-icons">{{ isRtl() ? 'arrow_back' : 'arrow_forward' }}</span>
+            </a>
+          }
+        </div>
+      </div>
+    }
+
     <!-- CTAs -->
     <div class="success-card__actions">
       <a routerLink="/donate/guest" mat-flat-button class="cta-donate-again">

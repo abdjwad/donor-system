@@ -40,7 +40,7 @@ export class MyWalletComponent implements OnInit {
 
   readonly showTopupForm = signal(false);
   readonly topupAmount   = signal<number | null>(null);
-  readonly selectedMethod = signal<PaymentMethod>('stripe');
+  readonly selectedMethod = signal<PaymentMethod>('bank');
   readonly creating      = signal(false);
   readonly createError   = signal<string | null>(null);
   readonly activeTopup   = signal<WalletTopupResponse | null>(null);
@@ -54,7 +54,8 @@ export class MyWalletComponent implements OnInit {
   readonly confirmError = signal<string | null>(null);
   readonly confirmed    = signal(false);
 
-  readonly methods: PaymentMethod[] = ['stripe', 'bank', 'crypto'];
+  // Stripe مخفي مؤقتاً — السيرفر الحالي يحظر الاتصال بـapi.stripe.com
+  readonly methods: PaymentMethod[] = ['bank', 'crypto'];
 
   ngOnInit(): void {
     this.loadBalance();
@@ -84,7 +85,7 @@ export class MyWalletComponent implements OnInit {
 
   resetTopupForm(): void {
     this.topupAmount.set(null);
-    this.selectedMethod.set('stripe');
+    this.selectedMethod.set('bank');
     this.createError.set(null);
     this.activeTopup.set(null);
     this.confirmForm.reset();

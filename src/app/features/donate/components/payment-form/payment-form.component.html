@@ -7,55 +7,9 @@
   <!-- ── Payment Method Tabs ── -->
   <mat-tab-group (selectedIndexChange)="selectMethod(selectedMethod(), $event)" animationDuration="200ms">
 
-    <!-- ─── Card Tab ─── -->
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <span class="tab-label">
-          <span class="material-icons tab-icon">credit_card</span>
-          {{ 'DONATE.PAYMENT.CARD' | translate }}
-        </span>
-      </ng-template>
-
-      <form [formGroup]="cardForm" class="payment-tab-content" novalidate>
-
-        <!-- Stripe Card Element — بطاقة الدفع نفسها بيستضيفها Stripe داخل iframe آمن خاص فيه،
-             ما بتمر بيانات البطاقة عبر أي حقل أو خادم تابعنا إطلاقاً -->
-        <div class="stripe-field-wrapper form-field-gap">
-          <label class="stripe-field-label">{{ 'DONATE.PAYMENT.CARD_NUMBER' | translate }}</label>
-          <div #cardElementContainer class="stripe-card-element"></div>
-          @if (stripeCardError()) {
-            <p class="terms-error">{{ stripeCardError() }}</p>
-          }
-        </div>
-
-        <!-- Card name -->
-        <mat-form-field appearance="outline" class="full-width form-field-gap">
-          <mat-label>{{ 'DONATE.PAYMENT.CARD_NAME' | translate }}</mat-label>
-          <mat-icon matPrefix class="field-prefix-icon">person_outline</mat-icon>
-          <input matInput type="text" formControlName="cardName" autocomplete="cc-name"/>
-        </mat-form-field>
-
-        <!-- Terms -->
-        <div class="payment-terms">
-          <mat-checkbox formControlName="terms" color="primary">
-            <span class="terms-text">
-              {{ 'DONATE.PAYMENT.TERMS_PREFIX' | translate }}&nbsp;
-              <a href="#" class="terms-link" (click)="$event.preventDefault()">{{ 'DONATE.PAYMENT.TERMS_LINK' | translate }}</a>
-            </span>
-          </mat-checkbox>
-          @if (cardForm.get('terms')!.touched && cardForm.get('terms')!.invalid) {
-            <p class="terms-error">{{ 'DONATE.PAYMENT.TERMS_REQUIRED' | translate }}</p>
-          }
-        </div>
-
-        <!-- Secure badge -->
-        <div class="secure-badge">
-          <span class="material-icons">lock</span>
-          <span>{{ 'DONATE.PAYMENT.SECURE_BADGE' | translate }}</span>
-        </div>
-
-      </form>
-    </mat-tab>
+    <!-- ─── Card Tab (Stripe) ─── مخفي مؤقتاً: السيرفر الحالي يحظر الاتصال بـ api.stripe.com.
+         الكود كامل بـpayment-form.component.ts (mountStripeCardElement/confirmStripePayment)
+         لإعادة تفعيله بسهولة فور ما ينحل حظر الشبكة على الاستضافة. -->
 
     <!-- ─── Bank Tab ─── -->
     <mat-tab>

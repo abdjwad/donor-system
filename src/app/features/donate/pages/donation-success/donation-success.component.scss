@@ -266,6 +266,60 @@
   &:disabled { opacity: 0.6; cursor: wait; }
 }
 
+// ── Track-donation card ─────────────────────────────────────────
+.track-card {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-md;
+  text-align: start;
+  background: rgba($color-primary, 0.04);
+  border: 1px solid rgba($color-primary, 0.16);
+  border-radius: $radius-md;
+  padding: $space-md;
+  margin-bottom: $space-xl;
+
+  &__icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-full;
+    background: rgba($color-primary, 0.12);
+    color: $color-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .material-icons { font-size: 1.125rem; }
+  }
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: $color-text-primary;
+    margin: 0 0 2px;
+  }
+
+  &__text {
+    font-size: 0.8125rem;
+    color: $color-text-muted;
+    line-height: 1.6;
+    margin: 0 0 $space-sm;
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: $color-primary;
+    text-decoration: none;
+
+    .material-icons { font-size: 1rem; }
+    &:hover { text-decoration: underline; }
+  }
+}
+
 // ── CTAs ──────────────────────────────────────────────────────
 .cta-donate-again {
   display: flex !important;

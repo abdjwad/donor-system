@@ -8,8 +8,13 @@
     </div>
 
     <div class="checkout-header__title">
-      <h1>{{ 'DONATE.GUEST.TITLE' | translate }}</h1>
-      <p>{{ 'DONATE.GUEST.SUBTITLE' | translate }}</p>
+      @if (isLoggedIn()) {
+        <h1>{{ 'DONATE.MEMBER.TITLE' | translate }}</h1>
+        <p>{{ 'DONATE.MEMBER.SUBTITLE' | translate }}</p>
+      } @else {
+        <h1>{{ 'DONATE.GUEST.TITLE' | translate }}</h1>
+        <p>{{ 'DONATE.GUEST.SUBTITLE' | translate }}</p>
+      }
     </div>
 
     @if (!isLoggedIn()) {

@@ -8,6 +8,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 
 import { DonationService } from '../../services/donation.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-guest-info-form',
@@ -29,6 +30,7 @@ export class GuestInfoFormComponent implements OnInit {
 
   private readonly fb = inject(FormBuilder);
   private readonly donationService = inject(DonationService);
+  private readonly authService = inject(AuthService);
 
   readonly form: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
@@ -42,7 +44,13 @@ export class GuestInfoFormComponent implements OnInit {
   get anonCtrl()  { return this.form.get('is_anonymous')!; }
 
   ngOnInit(): void {
-    // Pre-fill from existing state
+    // متبرع مسجّل دخول — نعبّي بياناته المعروفة تلقائياً بدل ما نطلبها منه من جديد كأنه ضيف
+    const user = this.authService.currentUser();
+    if (user) {
+      this.form.patchValue({ name: user.name, email: user.email, phone: user.phone ?? '' });
+    }
+
+    // Pre-fill from existing state (بيتفوّق على بيانات الحساب لو المستخدم عدّلها بنفس الجلسة)
     const state = this.donationService.donationState();
     if (state.name)   this.form.patchValue({ name: state.name });
     if (state.email)  this.form.patchValue({ email: state.email });

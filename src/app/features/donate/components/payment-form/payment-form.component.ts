@@ -56,7 +56,7 @@ export class PaymentFormComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly donationState = this.donationService.donationState;
   readonly isLoading = signal(false);
   readonly apiError = signal<string | null>(null);
-  readonly selectedMethod = signal<PaymentMethod>('stripe');
+  readonly selectedMethod = signal<PaymentMethod>('bank');
   readonly isAuthenticated = computed(() => this.tokenService.hasToken());
 
   readonly walletForm: FormGroup = this.fb.group({
@@ -86,13 +86,15 @@ export class PaymentFormComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly wallet = signal<WalletInfo | null>(null);
   readonly walletLoading = signal(false);
 
-  // الترتيب لازم يطابق ترتيب التابات الفعلي بالـ HTML تماماً (Card, Bank, [Wallet], Crypto)
+  // الترتيب لازم يطابق ترتيب التابات الفعلي بالـ HTML تماماً (Bank, [Wallet], Crypto) —
+  // Stripe مخفي مؤقتاً من الواجهة لأن السيرفر الحالي يحظر الاتصال بـ api.stripe.com
+  // (الكود كامل وموجود، فقط غير معروض للمتبرع لحد ما ينحل حظر الشبكة على الاستضافة)
   readonly availableMethods = computed<PaymentMethod[]>(() =>
-    this.isAuthenticated() ? ['stripe', 'bank', 'wallet', 'crypto'] : ['stripe', 'bank', 'crypto']
+    this.isAuthenticated() ? ['bank', 'wallet', 'crypto'] : ['bank', 'crypto']
   );
 
   ngOnInit(): void {
-    this.donationService.updateState({ payment_method: 'stripe' });
+    this.donationService.updateState({ payment_method: 'bank' });
   }
 
   async ngAfterViewInit(): Promise<void> {

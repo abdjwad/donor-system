@@ -30,6 +30,7 @@ export class DonationSuccessComponent implements OnInit {
   private readonly fb           = inject(FormBuilder);
 
   readonly isRtl      = computed(() => this.langService.currentLang() === 'ar');
+  readonly isLoggedIn = computed(() => !!this.authService.currentUser());
   readonly generating = signal(false);
 
   readonly loading   = signal(true);

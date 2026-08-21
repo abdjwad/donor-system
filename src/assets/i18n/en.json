@@ -108,6 +108,10 @@
       "HAVE_ACCOUNT": "Already have an account?",
       "LOGIN": "Sign In"
     },
+    "MEMBER": {
+      "TITLE": "Complete Your Donation",
+      "SUBTITLE": "This donation will be linked to your account so you can track it later from your dashboard"
+    },
     "STEPS": {
       "INFO": "Your Details",
       "AMOUNT": "Donation Amount",

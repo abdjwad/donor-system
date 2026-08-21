@@ -63,21 +63,43 @@
         <!-- Summary strip -->
         <div class="summary-card">
           <div class="summary-card__main">
-            <span class="status-badge status-badge--{{ d.status }}">{{ ('HISTORY.STATUS.' + d.status.toUpperCase()) | translate }}</span>
+            <div class="status-row">
+              <span class="status-badge status-badge--{{ d.status }}">{{ ('HISTORY.STATUS.' + d.status.toUpperCase()) | translate }}</span>
+              @if (d.status === 'pending') {
+                <span class="live-pill"><span class="live-pill__dot"></span>{{ isRtl() ? 'تحديث تلقائي كل ٢٠ ثانية' : 'Auto-updating every 20s' }}</span>
+              }
+            </div>
             <div class="summary-card__amount">${{ d.amount | number:'1.0-2' }}</div>
             <div class="summary-card__target">{{ isRtl() ? 'لصالح' : 'For' }} <strong>{{ getProjectTitle(d) }}</strong></div>
+            @if (lastCheckedAt()) {
+              <div class="last-checked">{{ isRtl() ? 'آخر تحديث' : 'Last checked' }}: {{ formatDateTime(lastCheckedAt()!.toISOString()) }}</div>
+            }
           </div>
           <div class="summary-card__meta">
-            <div class="meta-row"><span>{{ isRtl() ? 'رقم المرجع' : 'Reference' }}</span><strong dir="ltr">{{ d.reference }}</strong></div>
+            <div class="meta-row">
+              <span>{{ isRtl() ? 'رقم المرجع' : 'Reference' }}</span>
+              <span class="meta-row__value">
+                <strong dir="ltr">{{ d.reference }}</strong>
+                <button type="button" class="copy-btn" [title]="isRtl() ? 'نسخ رقم المرجع' : 'Copy reference'" (click)="copyReference()">
+                  <span class="material-icons">{{ copiedRef() ? 'check' : 'content_copy' }}</span>
+                </button>
+              </span>
+            </div>
             <div class="meta-row"><span>{{ isRtl() ? 'التاريخ' : 'Date' }}</span><strong>{{ d.created_at }}</strong></div>
             <div class="meta-row"><span>{{ isRtl() ? 'طريقة الدفع' : 'Method' }}</span><strong>{{ methodLabel(d) }}</strong></div>
           </div>
-          @if (d.status === 'completed') {
-            <button class="cert-btn" (click)="downloadCertificate()" [disabled]="generating()">
-              <span class="material-icons">{{ generating() ? 'hourglass_empty' : 'workspace_premium' }}</span>
-              {{ generating() ? '...' : (isRtl() ? 'تحميل شهادة المساهمة' : 'Download certificate') }}
+          <div class="summary-card__actions">
+            @if (d.status === 'completed') {
+              <button class="cert-btn" (click)="downloadCertificate()" [disabled]="generating()">
+                <span class="material-icons">{{ generating() ? 'hourglass_empty' : 'workspace_premium' }}</span>
+                {{ generating() ? '...' : (isRtl() ? 'تحميل شهادة المساهمة' : 'Download certificate') }}
+              </button>
+            }
+            <button type="button" class="share-btn" (click)="copyTrackingLink()">
+              <span class="material-icons">{{ copiedLink() ? 'check' : 'share' }}</span>
+              {{ copiedLink() ? (isRtl() ? 'تم النسخ' : 'Copied') : (isRtl() ? 'مشاركة رابط التتبّع' : 'Share tracking link') }}
             </button>
-          }
+          </div>
         </div>
 
         <div class="result-grid">
@@ -158,7 +180,7 @@
         </div>
 
         <!-- Extra detail blocks -->
-        @if (d.bank || d.blockchain || d.rejection_reason || d.refund) {
+        @if (d.bank || d.blockchain || d.rejection_reason) {
           <div class="result-grid result-grid--details">
 
             @if (d.bank) {
@@ -198,21 +220,38 @@
               </div>
             }
 
-            @if (d.refund) {
-              <div class="panel" [class.panel--alert]="d.refund.status !== 'rejected'">
-                <div class="panel__title"><span class="material-icons">undo</span>{{ isRtl() ? 'تفاصيل الاسترداد' : 'Refund details' }}</div>
-                <div class="kv-list">
-                  <div class="kv-row"><span>{{ isRtl() ? 'الحالة' : 'Status' }}</span><strong>{{ ('ADMIN.REFUNDS.' + d.refund.status.toUpperCase()) | translate }}</strong></div>
-                  <div class="kv-row"><span>{{ isRtl() ? 'السبب' : 'Reason' }}</span><strong>{{ d.refund.reason }}</strong></div>
-                  @if (d.refund.rejection_reason) {
-                    <div class="kv-row"><span>{{ isRtl() ? 'سبب الرفض' : 'Rejection reason' }}</span><strong>{{ d.refund.rejection_reason }}</strong></div>
-                  }
+          </div>
+        }
+
+        <!-- شفافية: كيف نضمن وصول تبرعك؟ -->
+        <div class="panel panel--transparency">
+          <div class="panel__title"><span class="material-icons">verified</span>{{ isRtl() ? 'كيف نضمن وصول تبرّعك؟' : 'How we guarantee your donation arrives' }}</div>
+          <div class="trust-grid">
+            <div class="trust-item">
+              <span class="material-icons trust-item__icon">groups</span>
+              <div>
+                <strong>{{ isRtl() ? 'فصل المهام' : 'Segregation of duties' }}</strong>
+                <p>{{ isRtl() ? 'صرف أي دفعة لمقاول يحتاج موافقة أكثر من شخص مختلف — لا يقدر شخص واحد يتحكم بالمسار كامل.' : 'Releasing any contractor payment requires more than one distinct approver — no single person controls the whole path.' }}</p>
+              </div>
+            </div>
+            <div class="trust-item">
+              <span class="material-icons trust-item__icon">fact_check</span>
+              <div>
+                <strong>{{ isRtl() ? 'سجل تدقيق دائم' : 'Permanent audit trail' }}</strong>
+                <p>{{ isRtl() ? 'كل إجراء حسّاس على تبرعك (تأكيد، صرف) يُسجَّل بأثر دائم — من نفّذه ومتى.' : 'Every sensitive action on your donation (confirmation, disbursement) leaves a permanent record of who and when.' }}</p>
+              </div>
+            </div>
+            @if (d.blockchain) {
+              <div class="trust-item">
+                <span class="material-icons trust-item__icon">link</span>
+                <div>
+                  <strong>{{ isRtl() ? 'تحقق مستقل عبر البلوكتشين' : 'Independent blockchain verification' }}</strong>
+                  <p>{{ isRtl() ? 'هذا التبرع مسجَّل كمان على سلسلة عامة — تقدر تتحقق منه مباشرة بدون الاعتماد على قاعدة بياناتنا فقط.' : "This donation is also recorded on a public chain — verify it directly, without relying on our database alone." }}</p>
                 </div>
               </div>
             }
-
           </div>
-        }
+        </div>
 
       </section>
     }

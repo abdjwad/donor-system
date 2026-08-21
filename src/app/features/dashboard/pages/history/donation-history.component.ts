@@ -11,6 +11,7 @@ import { SiteFooterComponent } from '../../../home/components/site-footer/site-f
 import { DashSidebarComponent } from '../../../../shared/components/dash-sidebar/dash-sidebar.component';
 import { DonationService } from '../../../donate/services/donation.service';
 import { CertificateService } from '../../../../shared/services/certificate.service';
+import { ToastService } from '../../../../core/services/toast.service';
 import { DonationHistoryItem, DonorDashboardStats } from '../../../../core/models/guest-donation.model';
 
 @Component({
@@ -26,8 +27,10 @@ export class DonationHistoryComponent implements OnInit {
   private readonly authService      = inject(AuthService);
   private readonly donationService  = inject(DonationService);
   private readonly certService      = inject(CertificateService);
+  private readonly toast            = inject(ToastService);
 
   readonly generating = signal<number | null>(null);
+  readonly copiedRefId = signal<number | null>(null);
 
   readonly isRtl        = computed(() => this.langService.currentLang() === 'ar');
   readonly loading       = signal(true);
@@ -179,32 +182,12 @@ export class DonationHistoryComponent implements OnInit {
     });
   }
 
-  // تصدير حقيقي لكل التبرعات المعروضة حالياً (بعد الفلترة/البحث) كملف CSV —
-  // بيفتح مباشرة بـExcel، ويشمل كل الحقول المهمة لمراجعة سجل تبرعاتك بالكامل
-  exportCsv(): void {
-    const rows = this.donations();
-    const headers = ['المرجع', 'التاريخ', 'المشروع/الحملة', 'المبلغ', 'العملة', 'طريقة الدفع', 'الحالة'];
-    const lines = [headers.join(',')];
-
-    for (const d of rows) {
-      lines.push([
-        d.reference,
-        d.created_at,
-        `"${this.getProject(d).replace(/"/g, '""')}"`,
-        d.amount,
-        d.currency,
-        this.methodLabel(d),
-        d.status,
-      ].join(','));
-    }
-
-    const csvContent = '﻿' + lines.join('\n'); // BOM حتى Excel يعرض العربي صح
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `bunian-donations-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+  copyReference(d: DonationHistoryItem, event: Event): void {
+    event.stopPropagation();
+    navigator.clipboard.writeText(d.reference).then(() => {
+      this.copiedRefId.set(d.id);
+      this.toast.success(this.isRtl() ? 'تم نسخ رقم المرجع' : 'Reference number copied');
+      setTimeout(() => this.copiedRefId.set(null), 2000);
+    });
   }
 }

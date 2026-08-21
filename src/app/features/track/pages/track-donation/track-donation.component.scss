@@ -55,18 +55,51 @@
 .summary-card__amount { font-size: 2rem; font-weight: 800; color: $color-primary; font-family: var(--font-latin); }
 .summary-card__target { font-size: 0.875rem; color: $color-text-muted; strong { color: $color-text-primary; } }
 .summary-card__meta { display: flex; flex-direction: column; gap: 6px; }
+.summary-card__actions { display: flex; align-items: center; gap: $space-sm; flex-shrink: 0; flex-wrap: wrap; }
 .meta-row {
-  display: flex; gap: $space-md; justify-content: space-between; font-size: 0.8125rem;
+  display: flex; gap: $space-md; justify-content: space-between; align-items: center; font-size: 0.8125rem;
   span { color: $color-text-muted; } strong { color: $color-text-primary; font-weight: 700; }
 }
-.cert-btn {
+.meta-row__value { display: flex; align-items: center; gap: 4px; }
+.copy-btn {
+  display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;
+  border: none; background: none; color: $color-text-muted; cursor: pointer; border-radius: $radius-sm;
+  .material-icons { font-size: 1rem; }
+  &:hover { background: $color-background; color: $color-primary; }
+}
+
+.status-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.live-pill {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 600;
+  color: $color-warning; background: rgba($color-warning, 0.1); border-radius: $radius-full; padding: 3px 10px;
+}
+.live-pill__dot {
+  width: 6px; height: 6px; border-radius: 50%; background: $color-warning;
+  animation: track-pulse 1.6s ease-in-out infinite;
+}
+@keyframes track-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(1.4); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-pill__dot { animation: none; }
+}
+.last-checked { font-size: 0.72rem; color: $color-text-muted; margin-top: 6px; }
+
+.cert-btn, .share-btn {
   display: flex; align-items: center; gap: $space-sm; height: 44px; padding: 0 18px;
-  border-radius: $radius-md; border: 1.5px solid $color-gold; background: rgba($color-gold, 0.06);
-  color: $color-gold-dark; font-size: 0.875rem; font-weight: 700; cursor: pointer; font-family: inherit;
+  border-radius: $radius-md; font-size: 0.875rem; font-weight: 700; cursor: pointer; font-family: inherit;
   transition: $transition-base; flex-shrink: 0;
   .material-icons { font-size: 1.125rem; }
+}
+.cert-btn {
+  border: 1.5px solid $color-gold; background: rgba($color-gold, 0.06); color: $color-gold-dark;
   &:hover:not(:disabled) { background: rgba($color-gold, 0.14); border-color: $color-gold-dark; }
   &:disabled { opacity: 0.6; cursor: wait; }
+}
+.share-btn {
+  border: 1.5px solid $color-border; background: none; color: $color-text-secondary;
+  &:hover { border-color: $color-primary; color: $color-primary; }
 }
 
 .status-badge {
@@ -156,3 +189,17 @@
   span { color: $color-text-muted; } strong { color: $color-text-primary; font-weight: 700; }
 }
 .kv-link { color: $color-primary; font-weight: 700; font-size: 0.8125rem; text-decoration: none; &:hover { text-decoration: underline; } }
+
+// ── Transparency panel ────────────────────────────────────────
+.panel--transparency {
+  margin-top: $space-lg;
+  background: rgba($color-primary, 0.03);
+  border-color: rgba($color-primary, 0.18);
+}
+.trust-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: $space-lg; }
+.trust-item {
+  display: flex; gap: $space-sm; align-items: flex-start;
+  &__icon { color: $color-primary; font-size: 1.375rem; flex-shrink: 0; margin-top: 2px; }
+  strong { display: block; font-size: 0.875rem; color: $color-text-primary; margin-bottom: 3px; }
+  p { font-size: 0.8125rem; color: $color-text-muted; line-height: 1.7; margin: 0; }
+}

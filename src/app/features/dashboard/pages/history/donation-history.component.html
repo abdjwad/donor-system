@@ -10,10 +10,6 @@
           <h1 class="history-title">{{ 'HISTORY.TITLE' | translate }}</h1>
           <p class="history-subtitle">{{ 'HISTORY.SUBTITLE' | translate }}</p>
         </div>
-        <button mat-stroked-button class="export-btn" (click)="exportCsv()" [disabled]="!donations().length">
-          <span class="material-icons">download</span>
-          {{ 'HISTORY.EXPORT' | translate }}
-        </button>
       </div>
 
       <!-- Stats strip -->
@@ -72,6 +68,7 @@
           <thead>
             <tr>
               <th></th>
+              <th>{{ isRtl() ? 'رقم المرجع' : 'Reference' }}</th>
               <th>{{ 'HISTORY.TABLE.DATE' | translate }}</th>
               <th>{{ 'HISTORY.TABLE.PROJECT' | translate }}</th>
               <th>{{ 'HISTORY.TABLE.AMOUNT' | translate }}</th>
@@ -85,6 +82,13 @@
               <tr class="donation-row" [class.expanded]="isExpanded(d.id)" (click)="toggleExpand(d.id)">
                 <td class="expand-cell">
                   <span class="material-icons expand-icon">{{ isExpanded(d.id) ? 'expand_less' : 'expand_more' }}</span>
+                </td>
+                <td class="ref-cell" dir="ltr">
+                  <span class="ref-cell__text">{{ d.reference }}</span>
+                  <button type="button" class="ref-copy-btn" [title]="isRtl() ? 'نسخ رقم المرجع' : 'Copy reference'"
+                          (click)="copyReference(d, $event)">
+                    <span class="material-icons">{{ copiedRefId() === d.id ? 'check' : 'content_copy' }}</span>
+                  </button>
                 </td>
                 <td>{{ d.created_at }}</td>
                 <td class="project-cell">
@@ -111,7 +115,7 @@
 
               @if (isExpanded(d.id)) {
                 <tr class="detail-row">
-                  <td colspan="7">
+                  <td colspan="8">
                     <div class="detail-panel">
 
                       <!-- Timeline -->
@@ -265,7 +269,7 @@
                 </tr>
               }
             } @empty {
-              <tr><td colspan="7" class="empty-row">{{ 'HISTORY.EMPTY' | translate }}</td></tr>
+              <tr><td colspan="8" class="empty-row">{{ 'HISTORY.EMPTY' | translate }}</td></tr>
             }
           </tbody>
         </table>

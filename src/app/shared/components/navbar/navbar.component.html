@@ -48,6 +48,11 @@
         {{ isRtl() ? 'EN' : 'ع' }}
       </button>
 
+      <!-- تتبّع التبرع برقم المرجع — متاحة للكل، مسجّل دخول أو ضيف -->
+      <a routerLink="/track" class="navbar__icon-btn navbar__icon-btn--standalone" [title]="isRtl() ? 'تتبّع تبرّعك' : 'Track your donation'">
+        <span class="material-icons">search</span>
+      </a>
+
       <!-- Icon group: notifications + profile + dashboard — لمتبرع مسجّل دخول فقط -->
       @if (isLoggedIn()) {
         <div class="navbar__icon-group">
@@ -105,6 +110,7 @@
       <a routerLink="/campaigns"           class="mobile-link"><span class="material-icons">campaign</span>{{ isRtl() ? 'الحملات' : 'Campaigns' }}</a>
       <a routerLink="/donate/general-fund" class="mobile-link"><span class="material-icons">account_balance</span>{{ isRtl() ? 'الصندوق العام' : 'General Fund' }}</a>
       <a routerLink="/donate/guest"        class="mobile-link mobile-link--donate"><span class="material-icons">favorite</span>{{ isRtl() ? 'تبرع الآن' : 'Donate Now' }}</a>
+      <a routerLink="/track"               class="mobile-link"><span class="material-icons">search</span>{{ isRtl() ? 'تتبّع تبرّعك' : 'Track Your Donation' }}</a>
       @if (isLoggedIn()) {
         <div class="mobile-divider-line"></div>
         <a routerLink="/transparency"        class="mobile-link"><span class="material-icons">balance</span>{{ isRtl() ? 'الشفافية' : 'Transparency' }}</a>

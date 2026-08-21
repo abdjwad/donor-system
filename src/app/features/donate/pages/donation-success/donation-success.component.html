@@ -178,12 +178,15 @@
             <p class="track-card__title">{{ isRtl() ? 'كيف تتابع تبرعك؟' : 'How to track your donation' }}</p>
             <p class="track-card__text">
               {{ isRtl()
-                  ? 'احتفظ برقم المرجع أعلاه — بيوصلك تأكيد على بريدك الإلكتروني فور اعتماد التبرع. أنشئ حساباً مجانياً لتتابع كل تبرعاتك القادمة بتفاصيلها من مكان واحد.'
-                  : 'Keep the reference number above — you\'ll get an email confirmation once the donation is approved. Create a free account to track all your future donations in one place.' }}
+                  ? 'احتفظ برقم المرجع أعلاه — تقدر تتابع فيه حالة تبرعك ومشروعه بأي وقت لاحقاً بدون حساب. أو أنشئ حساباً مجانياً لتتابع كل تبرعاتك القادمة من مكان واحد.'
+                  : 'Keep the reference number above — use it to track your donation and its project anytime, no account needed. Or create a free account to track all your future donations in one place.' }}
             </p>
-            <a routerLink="/auth/register" class="track-card__link">
-              {{ isRtl() ? 'إنشاء حساب لمتابعة التبرعات' : 'Create an account to track donations' }}
+            <a [routerLink]="['/track']" [queryParams]="{ ref: ref }" class="track-card__link">
+              {{ isRtl() ? 'تتبّع هذا التبرع الآن' : 'Track this donation now' }}
               <span class="material-icons">{{ isRtl() ? 'arrow_back' : 'arrow_forward' }}</span>
+            </a>
+            <a routerLink="/auth/register" class="track-card__link track-card__link--secondary">
+              {{ isRtl() ? 'أو أنشئ حساباً لمتابعة كل تبرعاتك' : 'Or create an account to track everything' }}
             </a>
           }
         </div>

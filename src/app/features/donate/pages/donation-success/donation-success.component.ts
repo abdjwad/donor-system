@@ -9,7 +9,7 @@ import { LanguageService } from '../../../../core/services/language.service';
 import { AuthService }     from '../../../../core/services/auth.service';
 import { CertificateService } from '../../../../shared/services/certificate.service';
 import { DonationService } from '../../services/donation.service';
-import { GuestDonationResponse } from '../../../../core/models/guest-donation.model';
+import { DonationHistoryItem } from '../../../../core/models/guest-donation.model';
 
 @Component({
   selector: 'app-donation-success',
@@ -34,7 +34,7 @@ export class DonationSuccessComponent implements OnInit {
   readonly generating = signal(false);
 
   readonly loading   = signal(true);
-  readonly donation  = signal<GuestDonationResponse | null>(null);
+  readonly donation  = signal<DonationHistoryItem | null>(null);
 
   readonly confirmForm: FormGroup = this.fb.group({
     bank_transfer_reference: ['', Validators.required],
@@ -55,12 +55,12 @@ export class DonationSuccessComponent implements OnInit {
 
   get needsBankProof(): boolean {
     const d = this.donation();
-    return !!d && d.payment_method === 'bank' && d.status === 'pending' && !d.receipt_submitted_at && !this.confirmed();
+    return !!d && d.payment_method === 'bank' && d.status === 'pending' && !d.bank?.receipt_submitted_at && !this.confirmed();
   }
 
   get awaitingBankConfirmation(): boolean {
     const d = this.donation();
-    return !!d && d.payment_method === 'bank' && d.status === 'pending' && (!!d.receipt_submitted_at || this.confirmed());
+    return !!d && d.payment_method === 'bank' && d.status === 'pending' && (!!d.bank?.receipt_submitted_at || this.confirmed());
   }
 
   get isCompleted(): boolean {

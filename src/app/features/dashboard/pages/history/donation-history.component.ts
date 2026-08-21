@@ -38,6 +38,11 @@ export class DonationHistoryComponent implements OnInit {
   readonly currentPage   = signal(1);
   readonly lastPage      = signal(1);
 
+  readonly refundFormOpenId = signal<number | null>(null);
+  readonly refundReason     = signal('');
+  readonly refundSubmitting = signal(false);
+  readonly refundError      = signal<string | null>(null);
+
   readonly stats = signal<DonorDashboardStats>({
     total_donated: 0, total_refunded: 0, pending_count: 0,
     donations_count: 0, projects_supported: 0, families_helped: 0,
@@ -136,6 +141,42 @@ export class DonationHistoryComponent implements OnInit {
     } finally {
       this.generating.set(null);
     }
+  }
+
+  canRequestRefund(d: DonationHistoryItem): boolean {
+    return d.status === 'completed' && !d.refund;
+  }
+
+  openRefundForm(id: number): void {
+    this.refundFormOpenId.set(id);
+    this.refundReason.set('');
+    this.refundError.set(null);
+  }
+
+  closeRefundForm(): void {
+    this.refundFormOpenId.set(null);
+  }
+
+  submitRefundRequest(d: DonationHistoryItem): void {
+    const reason = this.refundReason().trim();
+    if (!reason) {
+      this.refundError.set(this.isRtl() ? 'اكتب سبب طلب الاسترداد' : 'Please describe why you want a refund');
+      return;
+    }
+
+    this.refundSubmitting.set(true);
+    this.refundError.set(null);
+    this.donationService.requestRefund(d.id, reason).subscribe({
+      next: () => {
+        this.refundSubmitting.set(false);
+        this.refundFormOpenId.set(null);
+        this.loadPage(this.currentPage());
+      },
+      error: (err) => {
+        this.refundSubmitting.set(false);
+        this.refundError.set(err.error?.message ?? (this.isRtl() ? 'حدث خطأ، حاول مرة أخرى' : 'Something went wrong, please try again'));
+      },
+    });
   }
 
   // تصدير حقيقي لكل التبرعات المعروضة حالياً (بعد الفلترة/البحث) كملف CSV —

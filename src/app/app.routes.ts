@@ -10,6 +10,7 @@ export const routes: Routes = [
   { path: 'projects',     loadChildren: () => import('./features/projects/projects.routes').then(m => m.projectsRoutes) },
   { path: 'campaigns',    loadChildren: () => import('./features/campaigns/campaigns.routes').then(m => m.campaignsRoutes) },
   { path: 'transparency', loadComponent: () => import('./features/transparency/transparency.component').then(m => m.TransparencyComponent) },
+  { path: 'track',        loadComponent: () => import('./features/track/pages/track-donation/track-donation.component').then(m => m.TrackDonationComponent) },
 
   // ── Auth ──────────────────────────────────────────────────────
   { path: 'auth',         loadChildren: () => import('./auth/auth.routes').then(m => m.authRoutes) },

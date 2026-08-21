@@ -1,0 +1,158 @@
+@use '../../../../styles/variables' as *;
+
+.track-page { min-height: 100vh; background: $color-background; &.rtl { direction: rtl; } }
+
+// ── Hero / search ────────────────────────────────────────────
+.hero {
+  background: linear-gradient(160deg, $color-primary-dark 0%, $color-primary 55%, $color-primary-dark 130%);
+  padding: $space-3xl $space-xl $space-2xl;
+}
+.hero__inner { max-width: 720px; margin: 0 auto; text-align: center; }
+.hero__eyebrow {
+  display: inline-block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: rgba(#fff, 0.75); margin-bottom: 10px;
+}
+.hero__title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: #fff; margin: 0 0 12px; }
+.hero__subtitle { font-size: 0.9375rem; color: rgba(#fff, 0.85); line-height: 1.75; max-width: 56ch; margin: 0 auto $space-xl; }
+
+.search-box {
+  display: flex; align-items: center; gap: $space-sm; background: $color-card-bg;
+  border-radius: $radius-full; padding: 6px 6px 6px $space-lg; max-width: 520px; margin: 0 auto;
+  box-shadow: 0 12px 32px -12px rgba(0,0,0,0.35);
+}
+.search-box__icon { color: $color-text-muted; font-size: 1.25rem; }
+.search-box__input {
+  flex: 1; border: none; outline: none; background: none; font-family: inherit; font-size: 0.9375rem;
+  color: $color-text-primary; min-width: 0;
+  &::placeholder { color: $color-text-muted; }
+}
+.search-box__btn {
+  height: 42px; padding: 0 20px; border: none; border-radius: $radius-full; background: $color-primary;
+  color: #fff; font-weight: 700; font-size: 0.875rem; display: flex; align-items: center; gap: 6px;
+  cursor: pointer; transition: $transition-fast; flex-shrink: 0;
+  .material-icons { font-size: 1.125rem; }
+  &:hover:not(:disabled) { background: $color-primary-dark; }
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+}
+
+// ── Main / states ────────────────────────────────────────────
+.track-main { max-width: 960px; margin: 0 auto; padding: $space-2xl $space-xl $space-3xl; }
+
+.empty-state {
+  text-align: center; padding: $space-3xl $space-xl; color: $color-text-muted;
+  &__icon { font-size: 2.5rem; color: $color-text-muted; opacity: 0.5; margin-bottom: $space-md; }
+  &__text { font-size: 0.9375rem; max-width: 46ch; margin: 0 auto; line-height: 1.8; }
+  &--error &__icon { color: $color-error; opacity: 0.7; }
+}
+
+// ── Summary card ─────────────────────────────────────────────
+.summary-card {
+  background: $color-card-bg; border: 1px solid $color-border; border-radius: $radius-xl;
+  box-shadow: $shadow-card; padding: $space-xl $space-2xl; display: flex; align-items: center;
+  justify-content: space-between; gap: $space-lg; flex-wrap: wrap; margin-bottom: $space-lg;
+}
+.summary-card__main { display: flex; flex-direction: column; gap: 6px; }
+.summary-card__amount { font-size: 2rem; font-weight: 800; color: $color-primary; font-family: var(--font-latin); }
+.summary-card__target { font-size: 0.875rem; color: $color-text-muted; strong { color: $color-text-primary; } }
+.summary-card__meta { display: flex; flex-direction: column; gap: 6px; }
+.meta-row {
+  display: flex; gap: $space-md; justify-content: space-between; font-size: 0.8125rem;
+  span { color: $color-text-muted; } strong { color: $color-text-primary; font-weight: 700; }
+}
+.cert-btn {
+  display: flex; align-items: center; gap: $space-sm; height: 44px; padding: 0 18px;
+  border-radius: $radius-md; border: 1.5px solid $color-gold; background: rgba($color-gold, 0.06);
+  color: $color-gold-dark; font-size: 0.875rem; font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: $transition-base; flex-shrink: 0;
+  .material-icons { font-size: 1.125rem; }
+  &:hover:not(:disabled) { background: rgba($color-gold, 0.14); border-color: $color-gold-dark; }
+  &:disabled { opacity: 0.6; cursor: wait; }
+}
+
+.status-badge {
+  display: inline-block; border-radius: $radius-full; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; width: fit-content;
+  &--completed { background: rgba($color-success,0.1); color: $color-success; }
+  &--pending   { background: rgba($color-warning,0.1); color: $color-warning; }
+  &--failed    { background: rgba($color-error,0.1); color: $color-error; }
+  &--refunded  { background: rgba($color-navy,0.08); color: $color-navy; }
+}
+
+// ── Result grid / panels ─────────────────────────────────────
+.result-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: $space-lg;
+  &--details { margin-top: $space-lg; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  @media (max-width: $bp-tablet) { grid-template-columns: 1fr; }
+}
+.panel {
+  background: $color-card-bg; border: 1px solid $color-border; border-radius: $radius-lg;
+  padding: $space-lg; box-shadow: $shadow-card;
+  &--alert { background: rgba($color-warning, 0.05); border-color: rgba($color-warning, 0.25); }
+}
+.panel__title {
+  display: flex; align-items: center; gap: 8px; font-size: 0.875rem; font-weight: 700;
+  color: $color-text-secondary; margin-bottom: $space-md;
+  .material-icons { font-size: 1.125rem; color: $color-primary; }
+}
+.muted-note { font-size: 0.8125rem; color: $color-text-muted; line-height: 1.7; margin: 0; }
+.alert-text { font-size: 0.875rem; color: $color-text-secondary; line-height: 1.7; margin: 0; }
+
+// ── Timeline (same visual language as dashboard history) ─────
+.timeline { list-style: none; margin: 0; padding: 0; }
+.timeline__item {
+  display: flex; gap: $space-sm; position: relative; padding-bottom: $space-md;
+  &:not(:last-child)::before {
+    content: ''; position: absolute; top: 14px; inset-inline-start: 5px; width: 2px; bottom: -4px; background: $color-border;
+  }
+  &--refunded .timeline__dot, &--refund_requested .timeline__dot { background: $color-navy; }
+  &--rejected .timeline__dot, &--refund_rejected .timeline__dot { background: $color-error; }
+}
+.timeline__dot { width: 12px; height: 12px; border-radius: 50%; background: $color-primary; flex-shrink: 0; margin-top: 3px; }
+.timeline__label { font-size: 0.8125rem; font-weight: 700; color: $color-text-primary; }
+.timeline__date { font-size: 0.75rem; color: $color-text-muted; margin-top: 1px; }
+
+// ── Project status ────────────────────────────────────────────
+.project-status__head { display: flex; align-items: center; justify-content: space-between; gap: $space-sm; margin-bottom: $space-md; flex-wrap: wrap; }
+.project-status__link {
+  display: inline-flex; align-items: center; gap: 4px; font-size: 0.8125rem; font-weight: 700;
+  color: $color-primary; text-decoration: none;
+  .material-icons { font-size: 1rem; }
+  &:hover { text-decoration: underline; }
+}
+.proj-status-badge {
+  display: inline-block; border-radius: $radius-full; padding: 4px 12px; font-size: 0.75rem; font-weight: 700;
+  &--new                 { background: rgba($color-navy, 0.08);    color: $color-navy; }
+  &--under_review        { background: rgba($color-warning, 0.12); color: $color-warning; }
+  &--approved            { background: rgba($color-primary, 0.1);  color: $color-primary; }
+  &--awaiting_contractor { background: rgba($color-gold, 0.15);    color: $color-gold-dark; }
+  &--in_progress         { background: rgba($color-navy, 0.1);     color: $color-navy; }
+  &--completed           { background: rgba($color-success, 0.12); color: $color-success; }
+}
+
+.progress-row { margin-bottom: $space-md; }
+.progress-row__labels {
+  display: flex; justify-content: space-between; font-size: 0.75rem; color: $color-text-muted;
+  margin-bottom: 4px; strong { color: $color-text-primary; font-family: var(--font-latin); }
+}
+.progress-bar { height: 8px; border-radius: $radius-full; background: $color-background; overflow: hidden; }
+.progress-bar__fill { height: 100%; background: $color-primary; border-radius: $radius-full; transition: width 0.4s ease; }
+.progress-bar--gold .progress-bar__fill { background: $color-gold; }
+
+.roadmap { list-style: none; margin: $space-md 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.roadmap__item {
+  display: flex; align-items: center; gap: 8px; font-size: 0.8125rem; color: $color-text-muted;
+  &--completed { color: $color-text-primary; font-weight: 600; }
+  &--in_progress { color: $color-navy; font-weight: 600; }
+}
+.roadmap__dot { width: 7px; height: 7px; border-radius: 50%; background: $color-border; flex-shrink: 0; }
+.roadmap__item--completed .roadmap__dot { background: $color-success; }
+.roadmap__item--in_progress .roadmap__dot { background: $color-navy; }
+.roadmap__name { flex: 1; }
+.roadmap__icon { font-size: 1rem; color: $color-success; }
+
+// ── kv-list (reused for bank/blockchain/refund blocks) ────────
+.kv-list { display: flex; flex-direction: column; gap: 6px; }
+.kv-row {
+  display: flex; justify-content: space-between; gap: $space-sm; font-size: 0.8125rem;
+  span { color: $color-text-muted; } strong { color: $color-text-primary; font-weight: 700; }
+}
+.kv-link { color: $color-primary; font-weight: 700; font-size: 0.8125rem; text-decoration: none; &:hover { text-decoration: underline; } }

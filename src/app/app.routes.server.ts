@@ -8,6 +8,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'campaigns',              renderMode: RenderMode.Client },
   { path: 'campaigns/:id',          renderMode: RenderMode.Client },
   { path: 'transparency',           renderMode: RenderMode.Client },
+  { path: 'track',                  renderMode: RenderMode.Client },
 
   // Auth
   { path: 'auth/login',             renderMode: RenderMode.Client },

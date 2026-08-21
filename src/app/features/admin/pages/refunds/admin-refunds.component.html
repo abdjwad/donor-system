@@ -1,4 +1,24 @@
 <div class="admin-page">
+
+  @if (showRejectModal()) {
+    <div class="admin-modal-backdrop" (click)="showRejectModal.set(false)">
+      <div class="admin-modal" (click)="$event.stopPropagation()">
+        <h3 class="admin-modal__title">{{ isRtl() ? 'سبب رفض طلب الاسترداد' : 'Refund Rejection Reason' }}</h3>
+        <textarea class="admin-modal__textarea"
+          [placeholder]="isRtl() ? 'اكتب سبب الرفض...' : 'Enter rejection reason...'"
+          (input)="rejectReason.set($any($event.target).value)">{{ rejectReason() }}</textarea>
+        <div class="admin-modal__actions">
+          <button class="admin-btn admin-btn--danger" [disabled]="rejectSubmitting() || !rejectReason().trim()" (click)="confirmReject()">
+            {{ rejectSubmitting() ? '...' : (isRtl() ? 'تأكيد الرفض' : 'Confirm Rejection') }}
+          </button>
+          <button class="admin-btn admin-btn--ghost" (click)="showRejectModal.set(false)">
+            {{ isRtl() ? 'إلغاء' : 'Cancel' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
   <div class="admin-page__header">
     <h1 class="admin-page__title">{{ 'ADMIN.REFUNDS.TITLE' | translate }}</h1>
     <span class="admin-badge">{{ total() }} {{ isRtl() ? 'إجمالي' : 'total' }}</span>

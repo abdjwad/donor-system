@@ -64,7 +64,10 @@ export interface DonationHistoryItem {
   donation_type: DonationType;
   is_anonymous: boolean;
   dedication_message: string | null;
-  project: { id: number; title_ar: string; title_en: string } | null;
+  project: {
+    id: number; title_ar: string; title_en: string; status: string;
+    funding_progress: number; collected_amount: number; total_estimated_cost: number;
+  } | null;
   campaign: { id: number; title_ar: string; title_en: string } | null;
   redirected_from_project: boolean;
   blockchain: { tx_hash: string; network: string; contract_address: string } | null;
@@ -78,6 +81,7 @@ export interface DonationHistoryItem {
   refund: {
     status: 'pending' | 'approved' | 'rejected';
     reason: string;
+    rejection_reason: string | null;
     requested_at: string | null;
     processed_at: string | null;
     processed_by: string | null;
@@ -87,6 +91,8 @@ export interface DonationHistoryItem {
   confirmed_at: string | null;
   created_at: string;
   created_at_iso: string;
+  /** حساب المنصّة البنكي — يُرجَعه success() فقط لو التبرع بنكي وبانتظار إثبات تحويل */
+  wallet?: WalletInfo | null;
 }
 
 export interface DonationHistoryPage {

@@ -20,6 +20,11 @@ export class AdminRefundsComponent implements OnInit {
   readonly loading = signal(true);
   readonly total   = signal(0);
 
+  readonly showRejectModal = signal(false);
+  readonly rejectTargetId  = signal<number | null>(null);
+  readonly rejectReason    = signal('');
+  readonly rejectSubmitting = signal(false);
+
   ngOnInit(): void { this.load(); }
 
   load(): void {
@@ -35,7 +40,20 @@ export class AdminRefundsComponent implements OnInit {
   }
 
   reject(id: number): void {
-    this.adminApi.rejectRefund(id).subscribe({ next: () => this.load() });
+    this.rejectTargetId.set(id);
+    this.rejectReason.set('');
+    this.showRejectModal.set(true);
+  }
+
+  confirmReject(): void {
+    const id = this.rejectTargetId();
+    const reason = this.rejectReason().trim();
+    if (!id || !reason) return;
+    this.rejectSubmitting.set(true);
+    this.adminApi.rejectRefund(id, reason).subscribe({
+      next: () => { this.showRejectModal.set(false); this.rejectSubmitting.set(false); this.load(); },
+      error: () => this.rejectSubmitting.set(false),
+    });
   }
 
   donorName(r: AdminRefund): string  { return r.donor_name; }

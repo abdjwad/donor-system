@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { ConfirmBankTransferPayload, DonationHistoryPage, DonorDashboardStats, GuestDonation, GuestDonationResponse, WalletInfo } from '../../../core/models/guest-donation.model';
+import { ConfirmBankTransferPayload, DonationHistoryItem, DonationHistoryPage, DonorDashboardStats, GuestDonation, GuestDonationResponse, WalletInfo } from '../../../core/models/guest-donation.model';
 import { CryptoConfirmPayload, CryptoConfirmResponse } from '../../../core/models/blockchain.model';
 import { ApiResponse } from '../../../core/models/auth-response.models';
 import { ProjectsApiService } from '../../../core/services/projects-api.service';
@@ -55,11 +55,19 @@ export class DonationService {
       .pipe(map((res) => res.data));
   }
 
-  // ── Verify donation by reference ───────────────────────────────
-  getDonationByRef(ref: string): Observable<GuestDonationResponse> {
+  // ── تتبّع تبرع برقم مرجعه — يرجّع نفس البنية الغنية المستخدَمة بسجل لوحة التحكم
+  // (خط زمني، تفاصيل بنكية/بلوكتشين/استرداد، وحالة المشروع)، صالح للضيف والمسجَّل دخول
+  getDonationByRef(ref: string): Observable<DonationHistoryItem> {
     return this.http
-      .get<ApiResponse<GuestDonationResponse>>(`${this.API}/donate/success/${ref}`)
+      .get<ApiResponse<DonationHistoryItem>>(`${this.API}/donate/success/${ref}`)
       .pipe(map((res) => res.data));
+  }
+
+  // ── طلب استرداد تبرع مكتمل (المتبرّع المسجَّل دخول فقط) ─────────
+  requestRefund(donationId: number, reason: string): Observable<void> {
+    return this.http
+      .post<ApiResponse<null>>(`${this.API}/donations/${donationId}/request-refund`, { reason })
+      .pipe(map(() => void 0));
   }
 
   // ── Active platform wallet (bank transfer donations) ────────────

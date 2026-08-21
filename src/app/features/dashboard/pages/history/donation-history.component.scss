@@ -92,7 +92,35 @@
   strong { color: $color-text-primary; font-weight: 700; }
 }
 .detail-link { color: $color-primary; font-weight: 700; font-size: 0.8125rem; text-decoration: none; &:hover { text-decoration: underline; } }
-.alert-text { font-size: 0.8125rem; color: $color-text-secondary; margin: 0; line-height: 1.7; }
+.alert-text { font-size: 0.8125rem; color: $color-text-secondary; margin: 0; line-height: 1.7;
+  &--error { color: $color-error; margin-top: 8px; }
+}
+
+// ── Refund request ───────────────────────────────────────────
+.refund-request-btn {
+  display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center;
+  height: 38px; border-radius: $radius-md; border: 1.5px dashed $color-border;
+  background: none; color: $color-text-secondary; font-size: 0.8125rem; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: $transition-fast;
+  .material-icons { font-size: 1rem; }
+  &:hover { border-color: $color-error; color: $color-error; border-style: solid; }
+}
+.refund-reason-input {
+  width: 100%; border: 1.5px solid $color-border; border-radius: $radius-md; padding: 10px 12px;
+  font-family: inherit; font-size: 0.8125rem; color: $color-text-primary; resize: vertical;
+  &:focus { outline: none; border-color: $color-primary; }
+}
+.refund-form-actions { display: flex; gap: 8px; margin-top: 10px; }
+.refund-submit-btn {
+  height: 36px; padding: 0 18px; border-radius: $radius-md; border: none; background: $color-error;
+  color: #fff; font-size: 0.8125rem; font-weight: 700; cursor: pointer; font-family: inherit;
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+.refund-cancel-btn {
+  height: 36px; padding: 0 16px; border-radius: $radius-md; border: 1.5px solid $color-border;
+  background: none; color: $color-text-secondary; font-size: 0.8125rem; font-weight: 600; cursor: pointer; font-family: inherit;
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
 
 // ── Timeline ─────────────────────────────────────────────────
 .timeline { list-style: none; margin: 0; padding: 0; }

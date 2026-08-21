@@ -345,8 +345,8 @@ export class AdminApiService {
       .pipe(map(() => void 0));
   }
 
-  rejectRefund(id: number): Observable<void> {
-    return this.http.put<ApiResponse<null>>(`${this.API}/refunds/${id}/reject`, {})
+  rejectRefund(id: number, reason: string): Observable<void> {
+    return this.http.put<ApiResponse<null>>(`${this.API}/refunds/${id}/reject`, { reason })
       .pipe(map(() => void 0));
   }
 

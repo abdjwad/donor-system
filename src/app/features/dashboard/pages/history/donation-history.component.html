@@ -199,11 +199,52 @@
                             </div>
                             <div class="kv-list">
                               <div class="kv-row"><span>{{ isRtl() ? 'السبب' : 'Reason' }}</span><strong>{{ d.refund.reason }}</strong></div>
-                              <div class="kv-row"><span>{{ isRtl() ? 'الحالة' : 'Status' }}</span><strong>{{ d.refund.status }}</strong></div>
+                              <div class="kv-row"><span>{{ isRtl() ? 'الحالة' : 'Status' }}</span><strong>{{ ('ADMIN.REFUNDS.' + d.refund.status.toUpperCase()) | translate }}</strong></div>
                               @if (d.refund.processed_by) {
-                                <div class="kv-row"><span>{{ isRtl() ? 'اعتمدها' : 'Processed by' }}</span><strong>{{ d.refund.processed_by }}</strong></div>
+                                <div class="kv-row"><span>{{ isRtl() ? 'راجعها' : 'Reviewed by' }}</span><strong>{{ d.refund.processed_by }}</strong></div>
+                              }
+                              @if (d.refund.rejection_reason) {
+                                <div class="kv-row"><span>{{ isRtl() ? 'سبب الرفض' : 'Rejection reason' }}</span><strong>{{ d.refund.rejection_reason }}</strong></div>
                               }
                             </div>
+                          </div>
+                        }
+
+                        <!-- طلب استرداد (للتبرعات المكتملة بدون طلب سابق) -->
+                        @if (canRequestRefund(d)) {
+                          <div class="detail-block">
+                            @if (refundFormOpenId() !== d.id) {
+                              <button type="button" class="refund-request-btn" (click)="$event.stopPropagation(); openRefundForm(d.id)">
+                                <span class="material-icons">undo</span>
+                                {{ isRtl() ? 'طلب استرداد هذا التبرع' : 'Request a refund for this donation' }}
+                              </button>
+                            } @else {
+                              <div class="detail-block__title">
+                                <span class="material-icons">undo</span>
+                                {{ isRtl() ? 'طلب استرداد' : 'Request refund' }}
+                              </div>
+                              <textarea
+                                class="refund-reason-input"
+                                rows="3"
+                                [placeholder]="isRtl() ? 'ليش بدك تسترد هذا التبرع؟' : 'Why do you want a refund for this donation?'"
+                                [ngModel]="refundReason()"
+                                (ngModelChange)="refundReason.set($event)"
+                                (click)="$event.stopPropagation()"
+                              ></textarea>
+                              @if (refundError()) {
+                                <p class="alert-text alert-text--error">{{ refundError() }}</p>
+                              }
+                              <div class="refund-form-actions">
+                                <button type="button" class="refund-submit-btn" [disabled]="refundSubmitting()"
+                                        (click)="$event.stopPropagation(); submitRefundRequest(d)">
+                                  {{ refundSubmitting() ? '...' : (isRtl() ? 'إرسال الطلب' : 'Submit request') }}
+                                </button>
+                                <button type="button" class="refund-cancel-btn" [disabled]="refundSubmitting()"
+                                        (click)="$event.stopPropagation(); closeRefundForm()">
+                                  {{ isRtl() ? 'إلغاء' : 'Cancel' }}
+                                </button>
+                              </div>
+                            }
                           </div>
                         }
 

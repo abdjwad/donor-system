@@ -1,0 +1,16 @@
+.admin-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.pdf-export-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .material-icons { font-size: 1.125rem; }
+}

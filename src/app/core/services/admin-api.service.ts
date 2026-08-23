@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 
 // ── Interfaces ──────────────────────────────────────────────────
 export interface AdminOverview {
-  stats: { total_donations: number; total_donors: number; active_projects: number; pending_refunds: number };
+  stats: { total_donations: number; total_donors: number; active_projects: number; pending_refunds: number; families_helped: number };
   recent_donations: AdminRecentDonation[];
   by_category: AdminCategory[];
 }

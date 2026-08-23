@@ -1,6 +1,12 @@
 <div class="admin-page">
 
-  <h1 class="admin-page__title">{{ 'ADMIN.OVERVIEW.TITLE' | translate }}</h1>
+  <div class="admin-page__header">
+    <h1 class="admin-page__title">{{ 'ADMIN.OVERVIEW.TITLE' | translate }}</h1>
+    <button type="button" class="admin-btn admin-btn--primary pdf-export-btn" [disabled]="generatingPdf() || loading()" (click)="downloadPdf()">
+      <span class="material-icons">{{ generatingPdf() ? 'hourglass_empty' : 'picture_as_pdf' }}</span>
+      {{ generatingPdf() ? (isRtl() ? 'جارٍ التجهيز...' : 'Preparing...') : (isRtl() ? 'تحميل تقرير PDF' : 'Download PDF report') }}
+    </button>
+  </div>
 
   <!-- Stats cards -->
   <div class="stats-grid">

@@ -147,7 +147,11 @@ export class DonationHistoryComponent implements OnInit {
   }
 
   canRequestRefund(d: DonationHistoryItem): boolean {
-    return d.status === 'completed' && !d.refund;
+    return d.status === 'completed' && !d.refund && !this.projectExecutionStarted(d);
+  }
+
+  projectExecutionStarted(d: DonationHistoryItem): boolean {
+    return !!d.project && ['in_progress', 'completed'].includes(d.project.status);
   }
 
   openRefundForm(id: number): void {

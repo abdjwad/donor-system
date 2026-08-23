@@ -214,6 +214,21 @@
                           </div>
                         }
 
+                        <!-- تبرع مكتمل بدون طلب استرداد سابق، لكن المشروع بدأ تنفيذه فعلياً -->
+                        @if (d.status === 'completed' && !d.refund && projectExecutionStarted(d)) {
+                          <div class="detail-block">
+                            <div class="detail-block__title">
+                              <span class="material-icons">construction</span>
+                              {{ isRtl() ? 'الاسترداد غير متاح' : 'Refund unavailable' }}
+                            </div>
+                            <p class="alert-text">
+                              {{ isRtl()
+                                  ? 'بدأ تنفيذ المشروع المستفيد من هذا التبرع فعلياً، فما عاد ممكناً استرداده.'
+                                  : "Execution of the project this donation supports has already started, so it can no longer be refunded." }}
+                            </p>
+                          </div>
+                        }
+
                         <!-- طلب استرداد (للتبرعات المكتملة بدون طلب سابق) -->
                         @if (canRequestRefund(d)) {
                           <div class="detail-block">

@@ -46,7 +46,7 @@
               <button type="button" class="recurring-btn"
                       [class.recurring-btn--active]="recurringType() === t"
                       (click)="setRecurring(t)">
-                {{ ('GENERAL_FUND.' + t.toUpperCase()) | translate }}
+                {{ (t === 'one_time' ? 'GENERAL_FUND.ONCE' : 'GENERAL_FUND.MONTHLY') | translate }}
               </button>
             }
           </div>

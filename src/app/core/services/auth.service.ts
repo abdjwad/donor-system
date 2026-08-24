@@ -135,7 +135,6 @@ export class AuthService {
     return this.http
       .post<MessageResponse>(`${this.API}/auth/reset-password`, payload)
       .pipe(
-        tap(() => this.router.navigate(['/auth/login'])),
         finalize(() => this.isLoading.set(false)),
         catchError((err) => this.handleError(err))
       );

@@ -13,6 +13,7 @@ import { DonationService } from '../../../donate/services/donation.service';
 import { CertificateService } from '../../../../shared/services/certificate.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { DonationHistoryItem, DonorDashboardStats } from '../../../../core/models/guest-donation.model';
+import { copyToClipboard } from '../../../../core/utils/clipboard.util';
 
 @Component({
   selector: 'app-donation-history',
@@ -186,12 +187,15 @@ export class DonationHistoryComponent implements OnInit {
     });
   }
 
-  copyReference(d: DonationHistoryItem, event: Event): void {
+  async copyReference(d: DonationHistoryItem, event: Event): Promise<void> {
     event.stopPropagation();
-    navigator.clipboard.writeText(d.reference).then(() => {
-      this.copiedRefId.set(d.id);
-      this.toast.success(this.isRtl() ? 'تم نسخ رقم المرجع' : 'Reference number copied');
-      setTimeout(() => this.copiedRefId.set(null), 2000);
-    });
+    const ok = await copyToClipboard(d.reference);
+    if (!ok) {
+      this.toast.error(this.isRtl() ? 'تعذّر نسخ رقم المرجع' : 'Could not copy reference number');
+      return;
+    }
+    this.copiedRefId.set(d.id);
+    this.toast.success(this.isRtl() ? 'تم نسخ رقم المرجع' : 'Reference number copied');
+    setTimeout(() => this.copiedRefId.set(null), 2000);
   }
 }

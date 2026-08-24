@@ -15,6 +15,7 @@ import { NavbarComponent } from '../../../../shared/components/navbar/navbar.com
 import { SiteFooterComponent } from '../../../home/components/site-footer/site-footer.component';
 import { DonationHistoryItem } from '../../../../core/models/guest-donation.model';
 import { ProjectProgress } from '../../../../core/models/repair-project.model';
+import { copyToClipboard } from '../../../../core/utils/clipboard.util';
 
 const AUTO_REFRESH_MS = 20000;
 
@@ -132,25 +133,29 @@ export class TrackDonationComponent implements OnInit, OnDestroy {
     });
   }
 
-  copyReference(): void {
+  async copyReference(): Promise<void> {
     const ref = this.donation()?.reference;
     if (!ref) return;
-    navigator.clipboard.writeText(ref).then(() => {
-      this.copiedRef.set(true);
-      this.toast.success(this.isRtl() ? 'تم نسخ رقم المرجع' : 'Reference number copied');
-      setTimeout(() => this.copiedRef.set(false), 2000);
-    });
+    if (!(await copyToClipboard(ref))) {
+      this.toast.error(this.isRtl() ? 'تعذّر نسخ رقم المرجع' : 'Could not copy reference number');
+      return;
+    }
+    this.copiedRef.set(true);
+    this.toast.success(this.isRtl() ? 'تم نسخ رقم المرجع' : 'Reference number copied');
+    setTimeout(() => this.copiedRef.set(false), 2000);
   }
 
-  copyTrackingLink(): void {
+  async copyTrackingLink(): Promise<void> {
     const ref = this.donation()?.reference;
     if (!ref) return;
     const link = `${location.origin}/track?ref=${ref}`;
-    navigator.clipboard.writeText(link).then(() => {
-      this.copiedLink.set(true);
-      this.toast.success(this.isRtl() ? 'تم نسخ رابط التتبّع — شاركه مع أي حد' : 'Tracking link copied — share it with anyone');
-      setTimeout(() => this.copiedLink.set(false), 2000);
-    });
+    if (!(await copyToClipboard(link))) {
+      this.toast.error(this.isRtl() ? 'تعذّر نسخ رابط التتبّع' : 'Could not copy tracking link');
+      return;
+    }
+    this.copiedLink.set(true);
+    this.toast.success(this.isRtl() ? 'تم نسخ رابط التتبّع — شاركه مع أي حد' : 'Tracking link copied — share it with anyone');
+    setTimeout(() => this.copiedLink.set(false), 2000);
   }
 
   private loadProgress(projectId: number): void {

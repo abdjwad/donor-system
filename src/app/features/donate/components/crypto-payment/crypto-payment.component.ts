@@ -7,6 +7,7 @@ import { parseEther } from 'ethers';
 import { Web3Service } from '../../../../core/services/web3.service';
 import { LanguageService } from '../../../../core/services/language.service';
 import { DonationService } from '../../services/donation.service';
+import { copyToClipboard } from '../../../../core/utils/clipboard.util';
 
 type TxState = 'idle' | 'pending' | 'success' | 'error';
 type SyncState = 'idle' | 'syncing' | 'synced' | 'sync-failed';
@@ -121,7 +122,7 @@ export class CryptoPaymentComponent implements OnInit {
 
   copyHash(): void {
     const hash = this.txHash();
-    if (hash) navigator.clipboard.writeText(hash);
+    if (hash) copyToClipboard(hash);
   }
 
   private errorMessage(code: string): string {

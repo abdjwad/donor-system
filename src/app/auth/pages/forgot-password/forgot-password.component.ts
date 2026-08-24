@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TranslateModule } from '@ngx-translate/core';
@@ -31,9 +31,9 @@ import { applyAuthError } from '../../../core/utils/auth-error.util';
 export class ForgotPasswordComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly isLoading = this.authService.isLoading;
-  readonly isSuccess = signal(false);
   readonly apiError = signal<string | null>(null);
 
   readonly form: FormGroup = this.fb.group({
@@ -55,17 +55,15 @@ export class ForgotPasswordComponent {
       return;
     }
 
-    this.authService.forgotPassword({ email: this.form.value.email }).subscribe({
-      next: () => this.isSuccess.set(true),
+    const email = this.form.value.email;
+    this.authService.forgotPassword({ email }).subscribe({
+      // ننقل المستخدم مباشرة لصفحة إدخال الرمز — ما في رابط ينضغط، الرمز بيوصل
+      // بالإيميل والمستخدم بيدخله يدوياً هون
+      next: () => this.router.navigate(['/auth/reset-password'], { queryParams: { email } }),
       error: (err: HttpErrorResponse) => {
         const bannerKey = applyAuthError(err, this.form);
         if (bannerKey) this.apiError.set(bannerKey);
       },
     });
-  }
-
-  resend(): void {
-    this.isSuccess.set(false);
-    this.onSubmit();
   }
 }

@@ -42,8 +42,8 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
   styleUrl: './reset-password.component.scss',
 })
 export class ResetPasswordComponent implements OnInit {
-  // Auto-bound via withComponentInputBinding() in router config
-  @Input() token = '';
+  // Auto-bound via withComponentInputBinding() في إعدادات الراوتر — واصل من صفحة
+  // "نسيت كلمة السر" مباشرة عبر التنقّل الداخلي، مو من رابط بالإيميل
   @Input() email = '';
 
   private readonly fb = inject(FormBuilder);
@@ -54,9 +54,11 @@ export class ResetPasswordComponent implements OnInit {
   readonly showConfirmPassword = signal(false);
   readonly apiError = signal<string | null>(null);
   readonly isSuccess = signal(false);
+  readonly resent = signal(false);
 
   readonly form: FormGroup = this.fb.group(
     {
+      code: ['', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]],
       password: [
         '',
         [
@@ -70,13 +72,27 @@ export class ResetPasswordComponent implements OnInit {
     { validators: passwordMatchValidator }
   );
 
+  get codeCtrl()     { return this.form.get('code')!; }
   get passwordCtrl() { return this.form.get('password')!; }
   get confirmCtrl()  { return this.form.get('confirmPassword')!; }
 
   ngOnInit(): void {
-    if (!this.token) {
-      this.apiError.set('رابط إعادة التعيين غير صالح أو منتهي الصلاحية');
+    if (!this.email) {
+      this.apiError.set('ابدأ من صفحة نسيت كلمة السر لطلب رمز جديد');
     }
+  }
+
+  getCodeError(): string {
+    if (this.codeCtrl.hasError('required')) return 'AUTH.ERRORS.CODE_REQUIRED';
+    if (this.codeCtrl.hasError('pattern'))   return 'AUTH.ERRORS.CODE_INVALID';
+    return '';
+  }
+
+  resendCode(): void {
+    if (!this.email) return;
+    this.authService.forgotPassword({ email: this.email }).subscribe({
+      next: () => { this.resent.set(true); setTimeout(() => this.resent.set(false), 4000); },
+    });
   }
 
   getPasswordError(): string {
@@ -99,10 +115,10 @@ export class ResetPasswordComponent implements OnInit {
       return;
     }
 
-    const { password, confirmPassword } = this.form.value;
+    const { code, password, confirmPassword } = this.form.value;
     this.authService
       .resetPassword({
-        token: this.token,
+        code,
         email: this.email,
         password,
         password_confirmation: confirmPassword,
